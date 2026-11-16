@@ -1,0 +1,50 @@
+# Secrets & Environment Variables (CRITICAL - JANGAN PERNAH DI-COMMIT)
+.env
+*.env
+.env.*
+!.env.example
+secrets.toml
+.streamlit/secrets.toml
+
+# Python cache & build
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE & OS
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary data / drafts
+*.csv
+*.srt
