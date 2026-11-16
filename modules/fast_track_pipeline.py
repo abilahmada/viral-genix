@@ -921,19 +921,26 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        col_sync_act1, col_sync_act2 = st.columns([1.6, 1])
+                        col_sync_act1, col_sync_act2 = st.columns([1.5, 1])
                         with col_sync_act1:
-                            if st.button("⚡ Selaraskan Otomatis Durasi Visual Klip dengan Panjang Naskah Dialog", type="primary", use_container_width=True, key="btn_auto_sync_timeline"):
+                            if st.button("🧩 1-Klik Pecah Scene Panjang (Shot Sharding — 100% Pertahankan Kata Dramatis)", type="primary", use_container_width=True, key="btn_auto_shard_dialogues"):
+                                from utils.export_helpers import shard_storyboard_scenes_by_clauses
+                                sharded_md = shard_storyboard_scenes_by_clauses(sb_result, max_words_per_shot=14)
+                                st.session_state["pipe_step3_result"] = sharded_md
+                                if st.session_state.get("current_pipeline_draft_id"):
+                                    update_draft(st.session_state["current_pipeline_draft_id"], {"storyboard_table_md": sharded_md})
+                                st.success("✅ Seluruh scene panjang berhasil dipecah menjadi klip sinematik mandiri (Shot A & Shot B)! Seluruh kata dramatis dan data dipertahankan 100%!")
+                                st.rerun()
+                        with col_sync_act2:
+                            if st.button("⚡ Selaraskan Durasi Klip Visual", type="secondary", use_container_width=True, key="btn_auto_sync_timeline"):
                                 from utils.export_helpers import sync_storyboard_scenes_timeline, apply_synced_timeline_to_markdown
                                 synced = sync_storyboard_scenes_timeline(parsed_scenes)
                                 new_md = apply_synced_timeline_to_markdown(sb_result, synced)
                                 st.session_state["pipe_step3_result"] = new_md
                                 if st.session_state.get("current_pipeline_draft_id"):
                                     update_draft(st.session_state["current_pipeline_draft_id"], {"storyboard_table_md": new_md})
-                                st.success("✅ Seluruh durasi scene dan timeline visual berhasil diselaraskan 100% dengan tempo bicara dialog!")
+                                st.success("✅ Seluruh durasi scene dan timeline visual berhasil diselaraskan!")
                                 st.rerun()
-                        with col_sync_act2:
-                            st.caption("💡 AI akan menghitung durasi ideal tiap scene (~1.85 kata/detik + 1s buffer visual) dan merapikan urutan detik 00:00 s/d akhir.")
 
                     # Render kartu per scene siap copas
                     for sc in parsed_scenes:
@@ -955,7 +962,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                             if sc.get("sync_status") == "overflow":
                                 st.markdown(f"""
                                 <div style="background:#fef2f2; border-left:3px solid #ef4444; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#991b1b; margin:6px 0 10px 0;">
-                                    🚨 <b>Peringatan Dialog Kepanjangan:</b> {sc.get('sync_note')}
+                                    🚨 <b>Peringatan Dialog Kepanjangan:</b> {sc.get('sync_note')} (Gunakan tombol '1-Klik Pecah Scene Panjang' di atas untuk memecahnya menjadi 2 shot tanpa mengurangi kata).
                                 </div>
                                 """, unsafe_allow_html=True)
                             elif sc.get("sync_status") == "underflow":
@@ -964,10 +971,10 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                                     ⚠️ <b>Perhatian Hening Visual:</b> {sc.get('sync_note')}
                                 </div>
                                 """, unsafe_allow_html=True)
-                            elif sc.get("word_count", 0) > 25:
+                            elif sc.get("word_count", 0) > 16:
                                 st.markdown(f"""
                                 <div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#92400e; margin:6px 0 10px 0;">
-                                    ⚠️ <b>Tips Anti-Terpotong AI Video:</b> Dialog ini memiliki <b>{sc.get('word_count')} kata (~{sc.get('est_audio_dur')} detik)</b>. Untuk render di Kling AI / Runway Gen-3 (klip 10-15s), potong 2-4 kata agar vokal tidak terpotong saat rendering.
+                                    ⚠️ <b>Tips Anti-Terpotong AI Video:</b> Dialog ini memiliki <b>{sc.get('word_count')} kata (~{sc.get('est_audio_dur')} detik)</b>. Untuk render di Kling AI / Runway Gen-3 (klip 5-10s), klik tombol <b>'🧩 1-Klik Pecah Scene Panjang'</b> di atas agar scene ini dipecah menjadi 2 shot sinematik (Shot A & Shot B) tanpa mengurangi satu kata pun!
                                 </div>
                                 """, unsafe_allow_html=True)
 
