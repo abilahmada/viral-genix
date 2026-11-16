@@ -248,31 +248,47 @@ with st.sidebar:
     else:
         model_name = "simulated-engine"
 
-    # Expander Kunci API & Model (Tetap ringkas & tidak mengacaukan sidebar)
+    # Expander Kunci API & Model (Tetap ringkas & tersinkronisasi otomatis dengan Streamlit Cloud)
     with st.expander("⚙️ Ubah Kunci / Model AI", expanded=False):
         if active_provider == "gemini":
-            user_api_key = st.text_input("Gemini API Key:", type="password", value=user_api_key, placeholder="AIzaSy...")
+            inp_gemini = st.text_input("Gemini API Key:", type="password", value=user_api_key or "", key="inp_gemini_key", placeholder="AIzaSy...")
             model_name = st.selectbox("Model Gemini:", ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"])
-            if user_api_key: save_env_var("GEMINI_API_KEY", user_api_key)
+            if inp_gemini and inp_gemini != user_api_key:
+                user_api_key = inp_gemini
+                save_env_var("GEMINI_API_KEY", inp_gemini)
         elif active_provider == "groq":
-            user_api_key = st.text_input("Groq API Key:", type="password", value=user_api_key, placeholder="gsk_...")
-            model_name = st.selectbox("Model Groq:", ["llama-3.3-70b-versatile", "deepseek-r1-distill-llama-70b", "mixtral-8x7b-32768"])
-            if user_api_key: save_env_var("GROQ_API_KEY", user_api_key)
+            inp_groq = st.text_input("Groq API Key:", type="password", value=user_api_key or "", key="inp_groq_key", placeholder="gsk_...")
+            model_name = st.selectbox("Model Groq:", ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "deepseek-r1-distill-llama-70b"])
+            if inp_groq and inp_groq != user_api_key:
+                user_api_key = inp_groq
+                save_env_var("GROQ_API_KEY", inp_groq)
         elif active_provider == "deepseek":
-            user_api_key = st.text_input("DeepSeek Key:", type="password", value=user_api_key, placeholder="sk-...")
+            inp_ds = st.text_input("DeepSeek Key:", type="password", value=user_api_key or "", key="inp_ds_key", placeholder="sk-...")
             model_name = st.selectbox("Model DeepSeek:", ["deepseek-chat", "deepseek-reasoner"])
-            if user_api_key: save_env_var("DEEPSEEK_API_KEY", user_api_key)
+            if inp_ds and inp_ds != user_api_key:
+                user_api_key = inp_ds
+                save_env_var("DEEPSEEK_API_KEY", inp_ds)
         elif active_provider == "openai":
-            user_api_key = st.text_input("OpenAI Key:", type="password", value=user_api_key, placeholder="sk-...")
+            inp_oa = st.text_input("OpenAI Key:", type="password", value=user_api_key or "", key="inp_oa_key", placeholder="sk-...")
             model_name = st.selectbox("Model OpenAI:", ["gpt-4o", "gpt-4o-mini"])
-            if user_api_key: save_env_var("OPENAI_API_KEY", user_api_key)
+            if inp_oa and inp_oa != user_api_key:
+                user_api_key = inp_oa
+                save_env_var("OPENAI_API_KEY", inp_oa)
         elif active_provider == "qwen":
-            user_api_key = st.text_input("DashScope Key:", type="password", value=user_api_key, placeholder="sk-...")
+            inp_qw = st.text_input("DashScope Key:", type="password", value=user_api_key or "", key="inp_qw_key", placeholder="sk-...")
             model_name = st.selectbox("Model Qwen:", ["qwen-plus", "qwen-max", "qwen-turbo"])
-            if user_api_key: save_env_var("DASHSCOPE_API_KEY", user_api_key)
+            if inp_qw and inp_qw != user_api_key:
+                user_api_key = inp_qw
+                save_env_var("DASHSCOPE_API_KEY", inp_qw)
         elif active_provider == "ollama":
-            custom_base_url = st.text_input("Ollama Base URL:", value=custom_base_url or "http://localhost:11434/v1")
-            model_name = st.text_input("Nama Model di Ollama:", value=model_name or "qwen2.5:latest")
+            custom_base_url = st.text_input("Ollama Base URL:", value=custom_base_url or "http://localhost:11434/v1", key="inp_ollama_url")
+            model_name = st.text_input("Nama Model di Ollama:", value=model_name or "qwen2.5:latest", key="inp_ollama_model")
+        elif active_provider == "openrouter":
+            inp_or = st.text_input("OpenRouter Key:", type="password", value=user_api_key or "", key="inp_or_key", placeholder="sk-or-v1-...")
+            model_name = st.selectbox("Model OpenRouter:", ["deepseek/deepseek-chat", "meta-llama/llama-3.3-70b-instruct", "qwen/qwen-2.5-72b-instruct"])
+            if inp_or and inp_or != user_api_key:
+                user_api_key = inp_or
+                save_env_var("OPENROUTER_API_KEY", inp_or)
         else:
             st.caption("Mode simulasi aktif tanpa kunci API.")
 

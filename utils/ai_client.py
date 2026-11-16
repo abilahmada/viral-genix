@@ -289,12 +289,17 @@ class AIClient:
         Menggunakan endpoint OpenAI-compatible https://api.groq.com/openai/v1.
         """
         from openai import OpenAI
+        target_model = self.model or "llama-3.3-70b-versatile"
+        # Auto-fallback jika ada model lama yang sudah di-decommission oleh Groq
+        if any(bad in target_model.lower() for bad in ["mixtral", "llama-3.1-70b", "llama2", "gemma-7b"]):
+            target_model = "llama-3.3-70b-versatile"
+
         client = OpenAI(
             api_key=self.api_key,
             base_url="https://api.groq.com/openai/v1"
         )
         response = client.chat.completions.create(
-            model=self.model or "llama-3.3-70b-versatile",
+            model=target_model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt}
