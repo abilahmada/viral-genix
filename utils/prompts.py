@@ -306,6 +306,15 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
      * Fashion/OOTD: Full-body runway tracking dolly, 50mm f/1.2, golden hour natural backlight, Pro-Mist diffusion.
      * Bisnis & Finansial: Bloomberg / Masterclass documentary aesthetic, slow 1.2x parallax dolly, Rembrandt 45-degree key light, moody teal-amber tone.
 
+7. HUKUM CURIOSITY LOCK & AGITASI MASALAH DI SCENE 2 (ANTI-PREMATURE SOLUTION & ANTI-BOCOR SOLUSI):
+   - 🚨 DILARANG KERAS MEMBEBERKAN SOLUSI DI SCENE 2!
+     Jika video langsung melompat dari Hook (Scene 1) ke Solusi (Scene 2), jurang rasa penasaran (curiosity gap) penonton akan runtuh seketika, penonton merasa sudah tahu jawabannya, dan langsung swipe away di detik ke-6!
+   - 🔒 FORMULA 3 ELEMEN KUNCI SCENE 2 (THE RETENTION LOCK TRIAD):
+     1. [Validasi Frustrasi - 'Ini Gue Banget!']: Tunjukkan kebiasaan atau cara salah yang biasa dilakukan penonton yang selalu membuat mereka gagal/stuck. (Contoh: 'Lu pasti sering ngetik prompt tiga paragraf panjang...', 'Sebagian besar orang langsung buang bagian ini karena dikira sampah...', 'Banyak orang ngira makin tinggi persentasenya makin cepet glowing...').
+     2. [Jebakan Tersembunyi - The Hidden Trap]: Bongkar MENGAPA cara umum itu gagal secara logis. Jelaskan bahwa kegagalan bukan salah penonton, melainkan karena ada faktor tersembunyi yang 90% orang tidak tahu.
+     3. [Akibat Fatal & Angka Kerugian - The Cost of Inaction]: Perjelas kerugian nyata jika masalah ini dibiarkan (misal: 'waktu kebuang 2 jam tiap hari', 'bikin boncos 42%', 'skin barrier malah rusak meradang menahun').
+   - ⚡ TUJUAN UTAMA SCENE 2: Membuat tensi rasa penasaran memuncak (Tension Spike), sehingga penonton merasa WAJIB bertahan menonton sampai detik ke-15 saat solusi mekanisme pertama kali diungkap di Scene 3!
+
 Susun output dalam 4 BAGIAN TERSTRUKTUR:
 
 ### BAGIAN 0: MASTER PRODUCTION & AUDIENCE CONSISTENCY ANCHOR (KUNCI KONSISTENSI UTUH)
@@ -342,31 +351,31 @@ Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang 
 - **🎯 Catatan Editor & Pacing**: (Instruksi pemotongan jeda hening / ritme beat)
 - **🔑 Prompt AI Video/Image (English)**: (Prompt sutradara pro komersial 6-layer siap copas untuk Kling / Runway Gen-3 / Midjourney / Sora: [Camera Motion] + [Subject Micro-Action] + [Contextual Environment & Props] + [Lens & Optics: 35mm anamorphic f/1.8] + [Studio Lighting & LUT] + [Texture Physics: subsurface scattering, 24fps, 8k uhd --ar 9:16])
 
-### 🎬 SCENE 2 [00:0X - 00:YY]: The Agitation (Anatomi Akar Masalah & Data Empiris)
+### 🎬 SCENE 2 [00:0X - 00:YY]: The Curiosity Lock & Deep Agitation (Penguatan Masalah & Pembuktian Jebakan)
 - **⏱️ Durasi**: Y Detik (Detik X s/d YY, WAJIB SINKRON dengan kata dialog: 16-22 kata = 9-12s, 8-12 kata = 5-7s)
 - **🎨 Tipe Visual**: (Konsisten dengan Master Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor)
 - **🎨 Color Grading**: (Konsisten dengan Master Anchor)
 - **🗣️ Voice Style**: (Konsisten dengan Master Anchor)
-- **🎭 Delivery & Level Energi Talent**: ...
-- **🎯 Relevansi Audiens & Diksi**: ...
-- **🎥 Visual & Kamera**: ...
-- **🎙️ Dialog Audio (Word for Word)**: (Bongkar AKAR MASALAH sesungguhnya secara logis dengan fakta empiris / data riil. Mengapa cara lama gagal? Dilarang cuma menyalahkan tanpa alasan logis. Sinkron durasi)
-- **🎞️ B-Roll & Aset Visual**: ...
-- **🔊 SFX & Transisi**: ...
-- **🎯 Catatan Editor & Pacing**: ...
+- **🎭 Delivery & Level Energi Talent**: (Level energi 8.5/10, ekspresi empati serius, tatapan tajam membongkar salah kaprah)
+- **🎯 Relevansi Audiens & Diksi**: (Validasi kebiasaan umum audiens yang selama ini keliru)
+- **🎥 Visual & Kamera**: (Angle kamera membongkar masalah, ekspresi frustasi/kontras, B-roll problem close-up)
+- **🎙️ Dialog Audio (Word for Word)**: (DILARANG MEMBOCORKAN SOLUSI DI SINI! Terapkan Formula Agitasi: 1. Validasi cara lama yang sering dilakukan penonton -> 2. Tunjukkan jebakan tersembunyi mengapa itu gagal -> 3. Sebutkan angka kerugian/akibat fatal jika dibiarkan. Tahan tensi rasa penasaran penonton agar tidak swipe away! Sinkron durasi)
+- **🎞️ B-Roll & Aset Visual**: (Visualisasi masalah, layar error, bahan terbuang, atau grafik kerugian nyata)
+- **🔊 SFX & Transisi**: (SFX ketegangan, vinyl stop / muted drop, transisi hard cut)
+- **🎯 Catatan Editor & Pacing**: (Pertahankan pacing tegang, potong jeda hening)
 - **🔑 Prompt AI Video/Image (English)**: ...
 
-### 🎬 SCENE 3 [00:YY - 00:ZZ]: The Mechanism & Breakthrough (Mekanisme Solusi Spesifik)
+### 🎬 SCENE 3 [00:YY - 00:ZZ]: The Mechanism & Breakthrough (Mekanisme Solusi Spesifik & Aha! Moment)
 - **⏱️ Durasi**: Z Detik (Detik YY s/d ZZ, WAJIB SINKRON dengan kata dialog)
 - **🎨 Tipe Visual**: (Konsisten dengan Master Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor)
 - **🎨 Color Grading**: (Konsisten dengan Master Anchor)
 - **🗣️ Voice Style**: (Konsisten dengan Master Anchor)
-- **🎭 Delivery & Level Energi Talent**: ...
+- **🎭 Delivery & Level Energi Talent**: (Level energi 9/10, ekspresi antusias, pencerahan Aha! Moment)
 - **🎯 Relevansi Audiens & Diksi**: ...
 - **🎥 Visual & Kamera**: ...
-- **🎙️ Dialog Audio (Word for Word)**: (Sebutkan NAMA SPESIFIK alat/bahan/teknik solusi dan jelaskan MEKANISME KERJA logis mengapa ini memecahkan masalah. Berikan Aha! Moment. Sinkron durasi)
+- **🎙️ Dialog Audio (Word for Word)**: (BARU DI SINI SOLUSI PERTAMA KALI DIUNGKAP! Jangan cuma beri tips biasa, tapi sebutkan NAMA SPESIFIK alat/bahan/teknik dan jelaskan MEKANISME KERJA kausalitas logis mengapa ini memecahkan jebakan di Scene 2. Berikan Aha! Moment. Sinkron durasi)
 - **🎞️ B-Roll & Aset Visual**: ...
 - **🔊 SFX & Transisi**: ...
 - **🎯 Catatan Editor & Pacing**: ...

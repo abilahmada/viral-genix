@@ -608,8 +608,8 @@ class AIClient:
             voice_anchor = "Santai, bersahabat, tempo bicara riang 130 WPM, intonasi menggugah selera"
             all_dialogues = [
                 "Stop buang tangkai daun bawang, ini rahasia kaldu gurih alami restoran bintang lima!",
-                "Asam amino glutamat alami tertinggi justru menumpuk di serat tangkai, bukan di helai daunnya.",
-                "Rebus bareng air dingin di suhu delapan puluh derajat Celsius, umaminya keluar maksimal tanpa kuah keruh.",
+                "Sebagian besar orang langsung buang bagian ini ke tong sampah karena dikira keras, akhirnya kaldu masakan lu hambar dan boros micin sintetis.",
+                "Padahal asam amino glutamat alami tertinggi ngumpul di serat tangkai—cukup rebus bareng air dingin di suhu delapan puluh derajat Celsius.",
                 "Uji rasa membuktikan intensitas gurihnya naik empat puluh persen, hemat micin sintetis sampai tujuh puluh persen.",
                 "Teknik shock termal: celupkan tangkai ke air es sepuluh detik sebelum direbus untuk kunci klorofil aromatik.",
                 "Gunakan rasio emas: seratus gram tangkai daun bawang untuk setiap satu liter air kaldu dasar.",
@@ -620,7 +620,7 @@ class AIClient:
             ]
             all_scene_labels = [
                 ("The Hook (Scroll-Stopper Kuliner)", "Zoom-in cepat ke potongan tangkai daun bawang di talenan", "SFX: Rapid Whoosh + Crisp Knife Chop", "Pola Kejut & Relevansi Dapur"),
-                ("The Agitation (Anatomi Asam Glutamat)", "Cut ke B-Roll makro serat tangkai daun bawang dan diagram asam amino", "SFX: Low Sub Swoosh", "Bongkar Mitos & Validasi Ilmiah"),
+                ("The Curiosity Lock & Agitation (Jebakan Buang Tangkai)", "Cut ke B-Roll tempat sampah dan close-up kuah sup bening hambar", "SFX: Low Sub Swoosh + Dull Hit", "Validasi Frustrasi & Stakes"),
                 ("The Mechanism (Ekstraksi Umami Suhu 80°C)", "Medium shot panci stainless steel kuah bening perlahan beruap di atas kompor", "SFX: Gentle Water Simmer / Bubble", "Aha! Moment Kausalitas Fisik"),
                 ("Proof & Demonstration (Uji Rasa & Metrik 40%)", "Close-up sendok sup bening diseruput hangat, ekspresi puas tersenyum", "SFX: Satisfying Rich Chime", "Bukti Empiris & Kelezatan"),
                 ("Step 1: Shock Termal Air Es", "POV tangan mencelupkan tangkai segar ke mangkuk kaca berisi air es batu", "SFX: Ice Clink & Splash", "Teknik Rahasia Chef"),
@@ -642,8 +642,8 @@ class AIClient:
             voice_anchor = "Punchy, percaya diri, artikulasi renyah, tempo 135 WPM"
             all_dialogues = [
                 "Stop bikin prompt panjang lebar, trik ini bikin respon AI sepuluh kali lebih cerdas!",
-                "Prompt biasa gagal bukan karena AI bodoh, tapi context window tercemar instruksi ambigu tanpa batasan output.",
-                "Gunakan teknik Few-Shot Formatting: berikan dua contoh input-output konkret dan kunci format Markdown tabel di akhir.",
+                "Lu pasti sering ngetik prompt tiga paragraf panjang, tapi responnya tetep ngaco dan halusinasi, bikin waktu lu kebuang dua jam sia-sia.",
+                "Masalahnya bukan di AI-nya, tapi context window yang tercemar—solusinya pakai teknik Few-Shot Formatting dengan dua contoh konkret.",
                 "Data akurasi melonjak dari enam puluh persen ke sembilan puluh lima persen, selesai dalam dua menit.",
                 "Terapkan Negative Constraints: instruksikan AI melarang kata klise seperti 'menyelami', 'krusial', atau 'game-changer'.",
                 "Pasang Role-Prompting Anchor dengan spesifikasi otoritas: posisikan AI sebagai Chief Editor berpengalaman sepuluh tahun.",
@@ -654,8 +654,8 @@ class AIClient:
             ]
             all_scene_labels = [
                 ("The Hook (Scroll-Stopper AI)", "Rapid punch-in 1.2x ke layar monitor berisi baris prompt dan ekspresi talent", "SFX: Fast Digital Glitch + Bass Hit", "Curiosity Gap & Efisiensi 10x"),
-                ("The Agitation (Anatomi Kegagalan Context Window)", "Cut ke B-Roll monitor menyorot teks merah error dan respons halusinasi", "SFX: Warning Drone + Vinyl Stop", "Bongkar Akar Masalah Teknis"),
-                ("The Mechanism (Teknik Few-Shot Formatting)", "Split screen: jendela prompt terstruktur rapi dengan contoh input-output Markdown", "SFX: Clean Keyboard Clack + Ding", "The Mechanism & Solusi Logis"),
+                ("The Curiosity Lock & Agitation (Halusinasi & Waktu Terbuang)", "Cut ke B-Roll monitor menyorot teks merah error dan ekspresi frustrasi talent", "SFX: Warning Drone + Vinyl Stop", "Validasi Frustrasi & Stakes"),
+                ("The Mechanism (Few-Shot Formatting Framework)", "Split screen: jendela prompt terstruktur rapi dengan contoh input-output Markdown", "SFX: Clean Keyboard Clack + Ding", "The Mechanism & Solusi Logis"),
                 ("Proof & Demonstration (Metrik Akurasi 95%)", "Layar monitor menampilkan grafik benchmarking dari 60% melonjak ke 95%", "SFX: High-Tech UI Sweep", "Bukti Data Empiris Terukur"),
                 ("Step 1: Negative Constraints Anti-Klise", "Layar monitor menyorot baris instruksi larangan kata klise diblok highlight kuning", "SFX: Fast Typing Rhythm", "Eliminasi Halusinasi"),
                 ("Step 2: Role-Prompting Anchor Otoritas", "Animasi UI badge 'Chief Editor 10+ Yrs Exp' disematkan ke avatar AI", "SFX: Digital Lock Click", "Otoritas & Kedalaman Output"),
@@ -676,8 +676,8 @@ class AIClient:
             voice_anchor = "Empatik, ramah, artikulasi jelas, tempo mengalir luwes 128 WPM"
             all_dialogues = [
                 "Stop pakai Niacinamide konsentrasi tinggi kalau kulitmu malah bruntusan dan makin memerah!",
-                "Banyak brand jual sepuluh persen, padahal jurnal dermatologi membuktikan kadar optimal cuma dua sampai empat persen.",
-                "Di atas lima persen, molekulnya memicu pelepasan histamin yang merusak skin barrier dan perparah peradangan.",
+                "Banyak orang kemakan tren mikir makin tinggi persentasenya makin cepet glowing, padahal kadar sepuluh persen justru memicu histamin yang merusak skin barrier lu sampai bruntusan parah.",
+                "Jurnal dermatologi membuktikan kadar optimal itu cuma dua sampai empat persen—ini kunci turunin sebum empat puluh persen tanpa iritasi.",
                 "Kadar empat persen terbukti klinis menurunkan sebum empat puluh persen dalam dua minggu tanpa iritasi sama sekali.",
                 "Lapiskan dengan Hyaluronic Acid berkadar rendah untuk meningkatkan hidrasi transepidermal hingga enam puluh lima persen.",
                 "Pastikan formula produk berada di rentang pH netral lima koma lima sampai enam koma lima agar tidak merusak asam alami kulit.",
@@ -688,8 +688,8 @@ class AIClient:
             ]
             all_scene_labels = [
                 ("The Hook (Scroll-Stopper Skincare)", "Macro zoom-in ke tekstur kulit wajah dan botol pipet serum", "SFX: Reverse Riser + Soft Drop", "Loss Aversion & Validasi Panik"),
-                ("The Agitation (Jurnal Dermatologi Kadar 2-4%)", "Cut ke B-Roll perbandingan botol 10% vs literatur jurnal medis dermatologi", "SFX: Muted Whoosh", "Hard Truth & Edukasi Sains"),
-                ("The Mechanism (Histamin & Kerusakan Skin Barrier)", "Visual animasi mikro 3D molekul aktif meresap di lapisan epidermis kulit", "SFX: Deep Sub Resonance", "Kausalitas Biologis 'The Mechanism'"),
+                ("The Curiosity Lock & Agitation (Jebakan Persentase & Histamin)", "Cut ke B-Roll botol 10% dan makro kulit kemerahan meradang", "SFX: Warning Sub Resonance", "Bongkar Mitos & Validasi Kerusakan"),
+                ("The Mechanism (Golden Ratio Dermatologi 2-4%)", "Visual animasi mikro 3D molekul aktif meresap seimbang di lapisan epidermis kulit", "SFX: Deep Clean Swoosh", "Aha! Moment Kausalitas Biologis"),
                 ("Proof & Demonstration (Penurunan Sebum 40% Klinis)", "Split screen makro pori-pori hari ke-1 vs hari ke-14 tampak tenang dan halus", "SFX: Fresh Water Droplet Chime", "Bukti Klinis Terukur"),
                 ("Step 1: Synergistic Hyaluronic Layering", "B-Roll tetesan bening Hyaluronic Acid meresap lembut di permukaan pipi", "SFX: Soft Liquid ASMR", "Sinergi Bahan Aktif"),
                 ("Step 2: Cek pH Netral 5.5 - 6.5", "POV kertas uji pH menunjukkan warna hijau kekuningan netral 6.0 aman kulit", "SFX: Clean Paper Tap", "Validasi Laboratorium"),
@@ -710,8 +710,8 @@ class AIClient:
             voice_anchor = "Tegas, maskulin, berwibawa, tempo tenang tapi berenergi 130 WPM"
             all_dialogues = [
                 "Bunyi mendecit di ruang mesin pas starter pagi jangan disemprot minyak rem kalau gak mau putus!",
-                "Minyak bikin karet fan belt melar dan getas, sehingga putaran alternator dan pompa radiator drop drastis.",
-                "Penyebab aslinya adalah tegangan belt kendor atau keausan alur pulley akibat gesekan mikro di atas tiga puluh ribu kilometer.",
+                "Banyak pemilik mobil nekat semprot pelumas atau minyak rem biar bunyi mendecitnya hilang instan, padahal cairan kimia itu bikin karet melar dan siap putus mendadak di jalan tol.",
+                "Biang kerok aslinya bukan kurang licin, tapi tegangan belt kendor—lu cuma butuh ukur defleksi sepuluh milimeter dan setel baut adjuster-nya.",
                 "Cukup ukur defleksi tali kipas: kalau ditekan jempol amblas lebih dari sepuluh milimeter, wajib kencangkan baut adjuster.",
                 "Gunakan kunci ring dua belas untuk menyetel baut adjuster dengan torsi presisi dua puluh lima Newton meter.",
                 "Periksa keselarasan alur pulley kruk as dan alternator menggunakan penggaris baja agar belt tidak aus sebelah.",
@@ -722,8 +722,8 @@ class AIClient:
             ]
             all_scene_labels = [
                 ("The Hook (Scroll-Stopper Otomotif)", "Kamera low-angle menyorot kap mesin terbuka, lampu kerja menyorot fan belt", "SFX: High-Pitched Belt Squeak + Fast Cut", "Bahaya & Peringatan Darurat"),
-                ("The Agitation (Dampak Rusak Alternator & Pompa)", "Cut ke B-Roll makro karet belt retak halus akibat terkena cairan kimia keras", "SFX: Metallic Impact Swoosh", "Bongkar Kesalahan Fatal"),
-                ("The Mechanism (Fisika Alur Pulley & 30.000 Km)", "B-Roll sudut 45 derajat menyorot putaran pulley berkecepatan tinggi", "SFX: Engine Mechanical Hum", "Mekanisme Fisika & Kausalitas"),
+                ("The Curiosity Lock & Agitation (Jebakan Semprot Pelumas)", "Cut ke B-Roll makro karet fan belt melar getas akibat cairan kimia", "SFX: Metallic Warning Swoosh", "Bongkar Kesalahan Fatal & Bahaya Tol"),
+                ("The Mechanism (Defleksi 10mm & Baut Adjuster)", "POV tangan menekan belt dengan penggaris milimeter presisi", "SFX: Solid Mechanical Click", "The Mechanism & Standar Pabrik"),
                 ("Proof & Demonstration (Metrik Defleksi 10mm Jempol)", "POV tangan menekan tali kipas dengan penggaris milimeter presisi", "SFX: Solid Mechanical Click", "Ukur Empiris Standar Pabrik"),
                 ("Step 1: Setel Baut Adjuster Torsi 25 Nm", "POV mekanik memutar baut setelan alternator dengan kunci ring secara presisi", "SFX: Ratchet Click Sound", "Prosedur Bengkel Profesional"),
                 ("Step 2: Cek Keselarasan Pulley Alignment", "Penggaris baja ditempelkan di bibir pulley untuk mengecek kelurusan bidang", "SFX: Metal Glide Clink", "Cegah Aus Asimetris"),
@@ -748,8 +748,8 @@ class AIClient:
             hook_custom_clean = hook_val if (hook_val and len(hook_val.split()) <= 20) else "Stop bakar budget iklan kalau checkout conversion rate di landing page kamu masih di bawah satu persen!"
             all_dialogues = [
                 hook_custom_clean,
-                "Trafik mahal bakal sia-sia karena penonton terhambat gesekan psikologis: form terlalu panjang dan tawaran tanpa garansi pembalik risiko.",
-                "Terapkan psikologi Risk-Reversal Offer: berikan garansi uang kembali tiga puluh hari dan ringkas formulir jadi dua kolom saja.",
+                "Lu udah bakar budget jutaan buat iklan tapi nol penjualan karena penonton langsung kabur begitu lihat form checkout yang ruwet dan bikin ragu.",
+                "Kuncinya bukan gonta-ganti materi iklan, tapi hilangkan gesekan pakai psikologi Risk-Reversal Offer dan ringkas formulir jadi dua kolom saja.",
                 "Split-test membuktikan checkout rate melonjak dari satu koma dua persen menjadi tiga koma delapan persen dalam empat hari.",
                 "Pasang tiga testimoni spesifik lengkap dengan foto profil asli tepat di bawah tombol utama checkout.",
                 "Pecah formulir pembelian menjadi dua tahap micro-commitment: nama dan WhatsApp di langkah pertama, pembayaran di langkah kedua.",
@@ -760,7 +760,7 @@ class AIClient:
             ]
             all_scene_labels = [
                 ("The Hook (Scroll-Stopper Bisnis)", "Punch-in cepat 1.2x ke layar dashboard analitik grafik merah menukik", "SFX: Warning Siren Beat + Bass Drop", "Loss Aversion & Financial Alert"),
-                ("The Agitation (Anatomi Gesekan Psikologis Form)", "B-Roll layar formulir checkout ruwet dengan kursor ragu-ragu lalu keluar (bounce)", "SFX: Disappointed Low Tone", "Bongkar Akar Masalah Kausalitas"),
+                ("The Curiosity Lock & Agitation (Bakar Budget & Checkout Bounce)", "B-Roll layar formulir checkout ruwet dengan kursor ragu-ragu lalu keluar (bounce)", "SFX: Disappointed Low Tone + Warning Beat", "Validasi Frustrasi & Boncos Finansial"),
                 ("The Mechanism (Risk-Reversal & Form 2 Kolom)", "Medium shot talent memegang tablet memperlihatkan rancangan landing page minimalis", "SFX: Clean Swipe UI Pop", "The Mechanism Penawaran Menang"),
                 ("Proof & Demonstration (Split-Test 1.2% ke 3.8%)", "Layar monitor menyorot grafik split-test A/B warna hijau melesat tinggi", "SFX: Ascending Success Chime", "Bukti Metrik Empiris Nyata"),
                 ("Step 1: Testimoni Otentik Bawah CTA", "Layar monitor memperlihatkan 3 kartu review pelanggan dengan bintang 5 dan foto", "SFX: Clean Pop Chime", "Social Proof Validation"),
@@ -768,7 +768,7 @@ class AIClient:
                 ("Step 3: Real Scarcity Indicator", "Kursor menyorot badge 'Tersisa 4 Akses Hari Ini' dengan warna merah elegan", "SFX: Subtle Digital Tick", "Anti-Penundaan Keputusan"),
                 ("Actionable Value Bomb (Pangkas Field Kode Pos Otomatis)", "POV layar HP menunjukkan checkout 10 detik dengan auto-fill kode pos", "SFX: Snappy Tock Click", "Aturan Taktis Langsung Eksekusi"),
                 ("Step 4: Post-Purchase One-Click Upsell", "Layar konfirmasi menampilkan kotak centang add-on khusus hemat 30%", "SFX: Cash Register Ding", "Maksimalisasi Revenue"),
-                ("Organic Conversion (Checklist Gratis di Profil)", "Talent menatap kamera penuh keyakinan, memberi senyum hangat dan menunjuk ke bio", "SFX: Rich Notification Bell", "Lead Magnet Organic Conversion")
+                ("Organic Conversion (Checklist Landing Page Free)", "Talent tersenyum mantap menatap lensa, menunjuk ke tautan di bio profil", "SFX: Gentle Success Bell", "Organic Soft-CTA")
             ]
 
         # Filter scenes sesuai target_scene_count
