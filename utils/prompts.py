@@ -273,16 +273,21 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
    - Wajib menyusun BAGIAN 0: MASTER PRODUCTION & AUDIENCE CONSISTENCY ANCHOR. Ini adalah "DNA Visual, Audio & Persona" agar hasil render AI (Midjourney, Kling, Runway, Luma, ElevenLabs) atau shooting tim memiliki subjek yang sama, pakaian yang sama, tone warna yang seragam, dan tidak belang-belang saat digabung jadi video utuh.
    - Pada setiap scene di Bagian 2, sertakan field 'Prompt AI Video/Image (English)' yang menyatukan Master Style Lock + aksi scene tersebut dalam rasio 9:16 vertical.
 
-5. KAIDAH KEDALAMAN SUBSTANSI, DATA EMPIRIS & NILAI NYATA (ANTI-ISI LEMAS & ANTI-HYPE KOSONG):
-   - 🚨 DILARANG KERAS MEMBUAT NASKAH YANG HANYA KUAT DI HOOK TAPI LEMAS DI ISI!
-     Hook yang memukau WAJIB dibayar tuntas dengan isi naskah (Scene 2 s/d N) yang berbobot, bernas, memuaskan rasa ingin tahu penonton, dan memberikan daging substantif.
-   - 📊 DATA EMPIRIS & NAMA KONKRET (WAJIB):
-     * Dilarang keras menggunakan kata-kata kabur/generik (seperti 'pakai trik rahasia ini', 'dua bahan ajaib', 'aplikasi canggih ini', atau 'beberapa tips').
-     * Dialog WAJIB menyebutkan nama konkret: nama bahan aktif, nama tools/software, nama fitur, nama teknik, atau metode spesifik secara gamblang.
-     * Wajib menyertakan metrik terukur atau data empiris: persentase (misal: 'turun 42%', 'naik 3.2x'), durasi waktu riil yang dihemat ('dari 4 jam jadi 18 menit'), takaran/suhu spesifik ('suhu 160°C', 'kadar 4%', 'margin 35%'), atau rasio uji coba nyata.
-   - ⚙️ KAUSALITAS & "THE MECHANISM" (MENGAPA INI BEKERJA SECARA LOGIS):
-     * Jangan cuma memberi tahu APA yang harus dilakukan, tetapi jelaskan MENGAPA hal itu bekerja secara ilmiah/logis/teknis.
-     * Penonton harus mendapatkan sensasi "Aha! Moment" yang membongkar salah kaprah lama mereka.
+5. KAIDAH KEDALAMAN SUBSTANSI, DATA EMPIRIS & NILAI NYATA (ANTI-KONTEN UMUM & ANTI-AI SLOP):
+   - 🚨 DILARANG KERAS MEMBUAT KONTEN YANG HANYA BERISI INFORMASI UMUM / KLISE!
+     Informasi umum yang dangkal (seperti 'jangan lupa riset pasar', 'atur waktu dengan baik', 'gunakan AI untuk mempermudah hidup', 'oleskan pelembab secara rutin') adalah SAMPAH KONTEN yang langsung di-skip penonton dan merusak reputasi akun kreator.
+   - 🔬 5 PILAR OTORITAS MATERI TINGGI (THE HIGH-VALUE AUTHORITY PILLARS):
+     1. [Anchor Data Empiris & Metrik Angka (Empirical Data Anchor)]:
+        * Setiap klaim atau tips WAJIB ditopang angka konkret: persentase peningkatan/penurunan efisiensi (misal: 'turun 42%', 'akurasi naik dari 60% ke 95%'), durasi waktu eksak ('pangkas dari 3 jam jadi 14 menit'), takaran fisika/kimia presisi ('suhu 80°C', 'kadar 2-4%', 'defleksi 10mm', 'torsi 25 Nm', 'pH netral 5.5 - 6.5', 'rasio emas 1:10').
+     2. [Nama Spesifik Tanpa Istilah Samar (Zero Generic Nouns)]:
+        * DILARANG kata kabur: 'alat ini', 'bahan rahasia', 'trik ajaib', 'beberapa tips'.
+        * WAJIB sebutkan nama entitas konkret: nama bahan aktif (misal: 'Niacinamide', 'Ceramide NP'), nama fitur/software ('Few-Shot Prompting', 'Negative Constraints', 'CapCut Curve Speed'), nama standar industri ('EPDM Rubber', 'SAE 5W-30', 'A/B Split Test').
+     3. [Kausalitas Mendalam & 'The Mechanism' (MENGAPA Bekerja di Tingkat Mikro)]:
+        * Jangan cuma memberi tahu 'Lakukan X'. Jelaskan MENGAPA X bekerja secara mekanis/ilmiah/biologis/psikologis/algoritma (Aha! Moment). Penonton harus merasa tercerahkan karena baru memahami penyebab sesungguhnya yang tidak pernah dijelaskan kreator lain.
+     4. [Bongkar Paradigma Usang / Salah Kaprah Populer (Contrarian Truth)]:
+        * Tunjukkan bahwa apa yang diajarkan kebanyakan orang selama ini salah atau kurang efisien, lalu berikan solusi berbasis bukti nyata.
+     5. [B-Roll Visual Proof Directive (Bukti Fisik Terlihat)]:
+        * B-Roll di Bagian 1 & Bagian 2 BUKAN sekadar pemanis atau orang tersenyum. B-Roll WAJIB memperlihatkan BUKTI FISIK: jarum pengukur, grafik analitik dashboard, perbandingan makro split-screen hari 1 vs 14, kertas lakmus uji pH, atau timbangan digital, sehingga klaim terbukti secara visual kepada penonton!
    - 💡 FREE ACTIONABLE VALUE-BOMB:
      * Scene sebelum penutup WAJIB memberikan satu golden rule / langkah taktis gratis yang bisa langsung dipraktekkan hari ini juga tanpa penonton wajib membeli apapun terlebih dahulu.
      * Call to Action (Scene terakhir) hadir sebagai pelengkap/akselerator efisiensi, bukan menyandera informasi penting.

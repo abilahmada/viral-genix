@@ -493,6 +493,33 @@ def render_fast_track_pipeline(ai_client):
                 )
 
             # -------------------------------------------------------------
+            # LEVEL OTORITAS & DATA PENDUKUNG (ANTI-KONTEN UMUM / AI SLOP)
+            # -------------------------------------------------------------
+            with st.expander("🔬 Tingkat Otoritas Konten & Bukti Data Pendukung (Anti-Info Umum / Anti-AI Slop)", expanded=True):
+                col_auth1, col_auth2 = st.columns([1.3, 1])
+                with col_auth1:
+                    authority_level = st.selectbox(
+                        "Level Otoritas & Kedalaman Materi:",
+                        [
+                            "🔬 Praktisi / Berbasis Data & Riset (Wajib metrik %, nama teknis konkret & studi komparasi)",
+                            "🛠️ Tutorial Taktis Langkah Demi Langkah (Parameter angka eksak, takaran & instruksi presisi)",
+                            "📈 Studi Kasus & Bedah Eksperimen (Bedah angka Before-After riil)",
+                            "💡 Edukasi Ringkas Populer (Istilah sederhana dengan analogi cerdas)"
+                        ],
+                        index=0,
+                        key="pipe_authority_level",
+                        help="Menentukan tingkat bobot data dan kedalaman teknis naskah agar terhindar dari konten umum/klise."
+                    )
+                with col_auth2:
+                    custom_evidence = st.text_input(
+                        "Data / Fakta / Studi Kasus Khusus (Opsional):",
+                        value=st.session_state.get("pipe_custom_evidence", ""),
+                        placeholder="Contoh: Split test 1.000 user konversi naik 42%, Jurnal dermatologi 2023...",
+                        key="pipe_custom_evidence",
+                        help="Tuliskan angka/studi/fakta khusus jika ada. Jika kosong, AI otomatis meracik data otoritas terbaik sesuai industri."
+                    )
+
+            # -------------------------------------------------------------
             # PILIHAN MODE SUTRADARA: AUTO-PILOT VS KUSTOM MANUAL
             # -------------------------------------------------------------
             director_mode = st.radio(
@@ -749,7 +776,11 @@ TUGAS DIREKSI SUTRADARA AI (Rancang secara mandiri dan spesifik):
 3. COLOR GRADING: Palet warna dan pencahayaan sinematik yang memperkuat mood topik (Warm Golden, Clean High-Key Bright, Moody Teal & Orange, Vibrant Pop, dsb).
 4. VOICE STYLE: Karakter vokal, tempo bicara natural, dan artikulasi yang paling meyakinkan audiens.
 5. PERSONA & DIKSI AUDIENS: Sapaan (Lu-Gua / Aku-Kamu / Bestie / Saya-Anda) dan kosakata percakapan yang paling relate dengan penonton topik ini.
-6. KEDALAMAN MATERI & BUKTI EMPIRIS (ANTI-ISI LEMAS): Naskah dialog WAJIB berbobot, padat daging, dan tidak klise. DILARANG menggunakan kata samar seperti 'trik rahasia ini' atau 'bahan ajaib'. Sebutkan nama alat/bahan/teknik konkret, sertakan angka/metrik terukur (persentase, rasio, durasi hemat), dan jelaskan kausalitas logis 'The Mechanism' mengapa solusi ini bekerja!
+6. KEDALAMAN MATERI, OTORITAS & BUKTI EMPIRIS (ANTI-KONTEN UMUM & ANTI-AI SLOP):
+   - Level Otoritas: {authority_level}
+   - {f"Data/Fakta Spesifik Pengguna: {custom_evidence.strip()}" if custom_evidence.strip() else "Data Otoritas: AI wajib menyematkan metrik terukur konkret (persentase %, durasi waktu riil yang dipangkas, angka suhu/kadar/torsi/takaran presisi), nama alat/bahan/teknik spesifik tanpa kata kabur, dan membongkar salah kaprah umum."}
+   - Kausalitas 'The Mechanism': Jelaskan secara gamblang MENGAPA solusi ini bekerja secara logis/ilmiah agar penonton mendapatkan sensasi 'Aha! Moment' dari seorang Subject Matter Expert sejati.
+   - B-Roll Bukti Fisik: B-roll wajib menyorot bukti nyata fisik (alat ukur, layar dashboard analitik, makro perbandingan, dsb).
 7. JUMLAH SCENE & DURASI: {scene_req_text}"""
                         else:
                             director_instructions = f"""⚙️ MODE SUTRADARA: KUSTOM MANUAL (PILIHAN KHUSUS PENGGUNA)
@@ -762,7 +793,8 @@ Wajib mematuhi instruksi kustom pengguna berikut:
 - Target Audiens Spesifik: {selected_audience}
 - Gaya Bahasa & Sapaan: {selected_slang}
 - Trigger Emosi Dominan: {selected_emotion}
-- Standar Bobot Isi: WAJIB padat data empiris, nama alat/bahan konkret, metrik terukur, dan kausalitas logis 'The Mechanism' (anti-isi lemas).
+- Standar Bobot Isi & Otoritas: {authority_level}. {f"Data Khusus Pengguna: {custom_evidence.strip()}." if custom_evidence.strip() else "WAJIB padat data empiris, nama alat/bahan konkret, metrik terukur, dan kausalitas logis 'The Mechanism'."}
+- B-Roll Bukti Fisik: Wajib menyorot bukti nyata fisik (alat ukur, grafik data, split-screen makro, dsb).
 - Jumlah Scene & Durasi: {scene_req_text}"""
 
                         prompt = STORYBOARD_TABLE_PROMPT.format(
@@ -993,17 +1025,52 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                                 st.code(sc["copy_text"], language="text")
 
                 with tab_retention_view:
-                    from utils.export_helpers import calculate_retention_curve
+                    from utils.export_helpers import calculate_retention_curve, evaluate_content_authority
                     ret_data = calculate_retention_curve(parsed_scenes)
+                    auth_data = evaluate_content_authority(parsed_scenes, full_text=sb_result)
 
                     col_rt1, col_rt2, col_rt3 = st.columns(3)
                     with col_rt1:
                         st.metric("Skor Potensi Viral", f"{ret_data['virality_score']}/100", ret_data['retention_tier'])
                     with col_rt2:
-                        st.metric("Rata-rata Durasi Scene", f"{ret_data['avg_scene_duration']} dtk", "✅ Pacing Ideal" if ret_data['is_all_compliant'] else "⚠️ Scene > 15s")
+                        st.metric("Skor Otoritas & Data", f"{auth_data['authority_score']}/100", auth_data['status'])
                     with col_rt3:
                         tot_chart_d = ret_data.get("total_duration", 60)
                         st.metric(f"Estimasi Retensi Akhir (~{tot_chart_d}s)", f"{ret_data['final_retention']}%", "Anti-Drop Pacing")
+
+                    # Banner Audit Kedalaman & Bukti Data (Anti-AI Slop)
+                    with st.container(border=True):
+                        st.markdown(f"""
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span style="font-weight:700; color:{auth_data['badge_color']}; font-size:0.95rem;">
+                                🔬 Audit Kedalaman Materi: {auth_data['authority_tier']}
+                            </span>
+                            <span style="background:{auth_data['badge_color']}; color:white; padding:2px 10px; border-radius:10px; font-size:0.75rem; font-weight:700;">
+                                Anti-AI Slop Verified
+                            </span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        col_dt1, col_dt2 = st.columns(2)
+                        with col_dt1:
+                            st.markdown("**📊 Metrik Angka & Data Konkret Terdeteksi:**")
+                            if auth_data["metrics_found"]:
+                                m_badges = " ".join([f"`{m}`" for m in auth_data["metrics_found"]])
+                                st.markdown(f"Ditemukan {len(auth_data['metrics_found'])} metrik terukur: {m_badges}")
+                            else:
+                                st.caption("Belum terdeteksi angka metrik eksplisit.")
+                        
+                        with col_dt2:
+                            st.markdown("**⚙️ Kausalitas 'The Mechanism' & Bukti B-Roll:**")
+                            c_line = f"Kausalitas: {' '.join([f'`{c}`' for c in auth_data['causality_signals']])}" if auth_data["causality_signals"] else ""
+                            v_line = f"Bukti Fisik: {' '.join([f'`{v}`' for v in auth_data['visual_proof_signals']])}" if auth_data["visual_proof_signals"] else ""
+                            if c_line or v_line:
+                                if c_line:
+                                    st.markdown(c_line)
+                                if v_line:
+                                    st.markdown(v_line)
+                            else:
+                                st.caption("Kausalitas & B-Roll deskriptif.")
 
                     st.markdown(f"##### 📉 Simulasi Kurva Retensi Audiens (Detik 0–{ret_data.get('total_duration', 60)})")
                     st.caption("Prediksi persentase penonton yang bertahan berdasarkan pergantian scene dan durasi:")

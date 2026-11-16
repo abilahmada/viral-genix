@@ -1298,6 +1298,94 @@ def calculate_retention_curve(scenes: list) -> dict:
     }
 
 
+def evaluate_content_authority(scenes: list, full_text: str = "") -> dict:
+    """
+    Mengevaluasi tingkat kedalaman materi, otoritas praktisi, dan bukti data pendukung (Anti-AI Slop).
+    Menganalisis:
+    1. Metrik angka terukur (%, durasi hemat, derajat suhu, takaran eksak, ratio)
+    2. Kausalitas ilmiah/teknis ('The Mechanism' & pembongkaran salah kaprah)
+    3. Nama entitas spesifik (zero ambiguous generic words)
+    4. B-Roll visual proof directing (grafik analitik, alat ukur fisik, makro uji coba)
+    """
+    import re
+
+    all_audio = " ".join(s.get("audio", "") for s in scenes)
+    all_visual = " ".join(f"{s.get('visual', '')} {s.get('b_roll', '')}" for s in scenes)
+    combined = f"{all_audio} {all_visual} {full_text}".lower()
+
+    # 1. Deteksi Metrik Angka Terukur (Percentages, Units, Precision Measurements)
+    metric_patterns = [
+        r'\b\d+[\.,]?\d*\s*%',                   # 40%, 1.2%
+        r'\b\d+\s*(?:detik|menit|jam|hari|minggu|bulan|tahun)\b', # 2 jam, 15 menit
+        r'\b\d+[\.,]?\d*\s*(?:derajat|celsius|°c|celcius)\b',    # 80 derajat
+        r'\b\d+[\.,]?\d*\s*(?:gram|kg|liter|ml|mililiter|meter|cm|mm)\b', # 100 gram
+        r'\b\d+[\.,]?\d*\s*(?:nm|newton|psi|bar|volt|watt|wpm|fps)\b',    # 25 Nm, 130 WPM
+        r'\b\d+[\.,]?\d*\s*x\s*(?:lipat)?\b',    # 10x, 3.2x lipat
+        r'\b\d+[\.,]?\d*\s*(?:koma|titik)\s*\d+\b' # satu koma dua
+    ]
+
+    detected_metrics = []
+    for pat in metric_patterns:
+        matches = re.findall(pat, combined, re.IGNORECASE)
+        for m in matches:
+            if m not in detected_metrics and len(detected_metrics) < 8:
+                detected_metrics.append(m.strip())
+
+    # 2. Deteksi Kausalitas "The Mechanism" & Pembongkaran Mitos
+    causality_kws = [
+        "karena", "memicu", "akibat", "mekanisme", "sehingga", "penyebab", 
+        "dermatologi", "biologis", "mekanis", "reaksi", "asam amino", "enzim",
+        "barrier", "defleksi", "adjuster", "konversi", "jurnal", "uji lab",
+        "split-test", "few-shot", "context window", "algoritma", "tekanan"
+    ]
+    causality_hits = [kw for kw in causality_kws if kw in combined]
+
+    # 3. Deteksi Visual Proof Directing (B-Roll yang Menampilkan Bukti Fisik)
+    proof_visual_kws = [
+        "grafik", "layar", "monitor", "dashboard", "makro", "probe", "timbangan", 
+        "penggaris", "split screen", "kertas uji", "termometer", "stetoskop",
+        "analitik", "before", "after", "tekstur", "close-up", "alat"
+    ]
+    visual_proof_hits = [kw for kw in proof_visual_kws if kw in all_visual.lower()]
+
+    # 4. Deteksi Kata Samar yang DILARANG (Anti-Generik Check)
+    fluff_kws = ["trik rahasia ini", "dua bahan ajaib", "aplikasi canggih ini", "beberapa tips", "cara ajaib"]
+    detected_fluff = [kw for kw in fluff_kws if kw in combined]
+
+    # Hitung Skor Otoritas (0 - 100)
+    score = 65
+    score += min(20, len(detected_metrics) * 5)
+    score += min(15, len(causality_hits) * 3)
+    score += min(10, len(visual_proof_hits) * 2.5)
+    if detected_fluff:
+        score -= 15
+    score = max(50, min(99, int(score)))
+
+    if score >= 90:
+        tier = "💎 Subject Matter Expert (Tingkat Otoritas & Data Sangat Tinggi)"
+        status = "Bebas Info Umum & AI Slop"
+        badge_color = "#10b981"
+    elif score >= 75:
+        tier = "🔬 Praktisi Berbasis Data (Berbobot & Terukur)"
+        status = "Kualitas Teruji"
+        badge_color = "#4f46e5"
+    else:
+        tier = "⚠️ Konten Standar / Cenderung Umum"
+        status = "Perlu Penguatan Data"
+        badge_color = "#f59e0b"
+
+    return {
+        "authority_score": score,
+        "authority_tier": tier,
+        "status": status,
+        "badge_color": badge_color,
+        "metrics_found": detected_metrics,
+        "causality_signals": causality_hits[:6],
+        "visual_proof_signals": visual_proof_hits[:6],
+        "fluff_detected": detected_fluff
+    }
+
+
 def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = "", existing_audience: str = "") -> dict:
     """
     Menghasilkan preset rekomendasi cerdas (Auto-Pilot) untuk Tahap 3 Storyboard
