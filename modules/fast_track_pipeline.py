@@ -40,31 +40,29 @@ from utils.export_helpers import (
 )
 
 def render_fast_track_pipeline(ai_client):
-    st.markdown("""
-    <div class="module-header">
-        <div class="module-badge">PIPELINE OTOMATIS: JALUR CEPAT</div>
-        <h1 class="module-title">⚡ Fast-Track Continuous Content Engine</h1>
-        <p class="module-desc">
-            Alur kerja tanpa putus dari <b>Riset Tren ➔ Hook ➔ Storyboard ➔ Jembatan Penjualan ➔ Kit Posting Siap Upload</b>. 
-            Setiap data yang Anda racik otomatis dialirkan ke tahap berikutnya dan disimpan ke brankas produksi.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        '<div class="module-header">'
+        '<div class="module-badge">PIPELINE OTOMATIS: JALUR CEPAT</div>'
+        '<h1 class="module-title">⚡ Fast-Track Continuous Content Engine</h1>'
+        '<p class="module-desc">'
+        'Alur kerja tanpa putus dari <b>Riset Tren ➔ Hook ➔ Storyboard ➔ Jembatan Penjualan ➔ Kit Posting Siap Upload</b>. '
+        'Setiap data yang Anda racik otomatis dialirkan ke tahap berikutnya dan disimpan ke brankas produksi.'
+        '</p></div>',
+        unsafe_allow_html=True
+    )
 
     # Indikator Persona Gaya Bicara Aktif
     active_p_key = st.session_state.get("creator_persona", "santai")
     persona_data = CREATOR_PERSONAS.get(active_p_key, CREATOR_PERSONAS["santai"])
-    st.markdown(f"""
-    <div style="display:flex; align-items:center; justify-content:space-between; background:#ffffff; border:1.5px solid #e2e8f0; border-radius:10px; padding:10px 16px; margin-bottom:18px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
-        <div>
-            <span style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">🎭 Persona Suara Aktif:</span>
-            <div style="font-size:0.95rem; font-weight:700; color:#4f46e5;">{persona_data['label']}</div>
-        </div>
-        <div style="font-size:0.82rem; color:#475569; max-width:55%; text-align:right;">
-            <i>"{persona_data['tone']}"</i>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        f'<div style="display:flex; align-items:center; justify-content:space-between; background:#ffffff; border:1.5px solid #e2e8f0; border-radius:10px; padding:10px 16px; margin-bottom:18px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">'
+        f'<div><span style="font-size:0.75rem; color:#64748b; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">🎭 Persona Suara Aktif:</span>'
+        f'<div style="font-size:0.95rem; font-weight:700; color:#4f46e5;">{persona_data["label"]}</div></div>'
+        f'<div style="font-size:0.82rem; color:#475569; max-width:55%; text-align:right;">'
+        f'<i>"{persona_data["tone"]}"</i>'
+        f'</div></div>',
+        unsafe_allow_html=True
+    )
 
     tab_single, tab_batch = st.tabs([
         "⚡ Panduan 1 Video (Langkah demi Langkah)",
@@ -123,11 +121,12 @@ def render_fast_track_pipeline(ai_client):
         if active_id:
             active_d = get_draft(active_id)
             d_title = active_d.get("title", active_id) if active_d else active_id
-            st.markdown(f"""
-            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; border-radius: 8px; padding: 8px 14px; margin-top: 6px; font-size: 0.88rem; color: #1e1b4b;">
-                ✏️ <b>Sedang Mengedit Draf:</b> <span style="font-weight: 700; color: #4f46e5;">{d_title}</span> <span style="color:#64748b; font-size: 0.78rem;">(ID: {active_id})</span>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                f'<div style="background: #eef2ff; border-left: 4px solid #4f46e5; border-radius: 8px; padding: 8px 14px; margin-top: 6px; font-size: 0.88rem; color: #1e1b4b;">'
+                f'✏️ <b>Sedang Mengedit Draf:</b> <span style="font-weight: 700; color: #4f46e5;">{d_title}</span> <span style="color:#64748b; font-size: 0.78rem;">(ID: {active_id})</span>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
 
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -138,14 +137,14 @@ def render_fast_track_pipeline(ai_client):
             if not active_id:
                 col_hint1, col_hint2 = st.columns([1.6, 1])
                 with col_hint1:
-                    st.markdown("""
-                    <div style="background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%); border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 10px 16px; margin-bottom: 12px;">
-                        <span style="color: #4f46e5; font-weight: 700; font-size: 0.82rem;">🎯 STRATEGI PERTUMBUHAN AKUN:</span>
-                        <div style="color: #1e1b4b; font-size: 0.85rem; margin-top: 2px;">
-                            Ingin hasil maksimal? Pastikan akun Anda sudah memiliki <b>Bio 3 Detik</b> dan <b>4 Pilar Konten</b> yang terstruktur.
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(
+                        '<div style="background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%); border: 1.5px solid #c7d2fe; border-radius: 12px; padding: 10px 16px; margin-bottom: 12px;">'
+                        '<span style="color: #4f46e5; font-weight: 700; font-size: 0.82rem;">🎯 STRATEGI PERTUMBUHAN AKUN:</span>'
+                        '<div style="color: #1e1b4b; font-size: 0.85rem; margin-top: 2px;">'
+                        'Ingin hasil maksimal? Pastikan akun Anda sudah memiliki <b>Bio 3 Detik</b> dan <b>4 Pilar Konten</b> yang terstruktur.'
+                        '</div></div>',
+                        unsafe_allow_html=True
+                    )
                 with col_hint2:
                     if st.button("🎯 Buat Blueprint Akun A-Z Dulu ➔", use_container_width=True, help="Bedah akun, buat bio 3 detik, dan susun 4 pilar konten di modul Growth A-Z"):
                         st.session_state["_target_nav"] = "🎯 Bedah & Blueprint Akun (Growth A-Z)"
@@ -155,11 +154,12 @@ def render_fast_track_pipeline(ai_client):
             st.markdown("### 📡 Tahap 1: Temukan Sudut Pandang Konten Unik")
             st.caption("Pilih niche dan topik yang ingin diangkat. AI akan mencari celah pasar yang belum dijawab tuntas oleh kompetitor.")
 
-            st.markdown("""
-            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">
-                💡 <b>Panduan Pemula:</b> Tidak perlu bingung mencari ide dari nol. Cukup pilih niche dan klik salah satu preset topik di bawah, atau ketik topik apa saja yang ingin Anda bahas. AI akan menganalisis sudut pandang yang paling dicari audiens tapi jarang dibahas oleh kreator lain!
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
+                '💡 <b>Panduan Pemula:</b> Tidak perlu bingung mencari ide dari nol. Cukup pilih niche dan klik salah satu preset topik di bawah, atau ketik topik apa saja yang ingin Anda bahas. AI akan menganalisis sudut pandang yang paling dicari audiens tapi jarang dibahas oleh kreator lain!'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
             col1, col2 = st.columns([1.2, 1], gap="medium")
             with col1:
@@ -261,16 +261,16 @@ def render_fast_track_pipeline(ai_client):
                 chosen_angle_obj = next((a for a in detected_angles if f"Angle #{a['id']}: {a['angle_name']}" in selected_angle_label), None)
 
                 if chosen_angle_obj:
-                    st.markdown(f"""
-                    <div style="background:#f0f9ff; border-left:4px solid #0284c7; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#0f172a;">
-                        <div style="font-weight:700; color:#0369a1; margin-bottom:4px;">💡 {chosen_angle_obj['title']}</div>
-                        <div style="margin-bottom:4px;"><b>📖 Premis:</b> {chosen_angle_obj['premise']}</div>
-                        <div style="display:flex; gap:16px; font-size:0.8rem; color:#475569;">
-                            <span><b>⚡ Emosi:</b> {chosen_angle_obj['trigger']}</span>
-                            <span><b>🔥 Potensi Viral:</b> {chosen_angle_obj['viral_pot']}</span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    angle_card_html = (
+                        f'<div style="background:#f0f9ff; border-left:4px solid #0284c7; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#0f172a;">'
+                        f'<div style="font-weight:700; color:#0369a1; margin-bottom:4px;">💡 {chosen_angle_obj["title"]}</div>'
+                        f'<div style="margin-bottom:4px;"><b>📖 Premis:</b> {chosen_angle_obj["premise"]}</div>'
+                        f'<div style="display:flex; gap:16px; font-size:0.8rem; color:#475569;">'
+                        f'<span><b>⚡ Emosi:</b> {chosen_angle_obj["trigger"]}</span>'
+                        f'<span><b>🔥 Potensi Viral:</b> {chosen_angle_obj["viral_pot"]}</span>'
+                        f'</div></div>'
+                    )
+                    st.markdown(angle_card_html, unsafe_allow_html=True)
                     active_concept_text = chosen_angle_obj["full_concept"]
                 else:
                     active_concept_text = st.session_state.get("pipe_chosen_concept", f"Bongkar rahasia: {kw_hint}")
@@ -318,11 +318,12 @@ def render_fast_track_pipeline(ai_client):
             st.markdown("### 🪝 Tahap 2: Racik 10 Hook Pembunuh Scroll")
             st.caption("80% keberhasilan video ditentukan dalam 3 detik pertama. Pilih hook terbaik dari 4 pilar psikologi audiens.")
 
-            st.markdown("""
-            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">
-                💡 <b>Panduan Pemula:</b> <i>Hook</i> adalah kalimat pembuka di 3 detik pertama. Penonton di TikTok & Reels memutuskan swipe atau lanjut menonton dalam sekejap. Pilihlah salah satu kalimat di bawah yang paling memancing rasa penasaran Anda!
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
+                '💡 <b>Panduan Pemula:</b> <i>Hook</i> adalah kalimat pembuka di 3 detik pertama. Penonton di TikTok & Reels memutuskan swipe atau lanjut menonton dalam sekejap. Pilihlah salah satu kalimat di bawah yang paling memancing rasa penasaran Anda!'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
             col1, col2 = st.columns([1.2, 1], gap="medium")
             with col1:
@@ -388,16 +389,17 @@ def render_fast_track_pipeline(ai_client):
                 chosen_hook_obj = next((h for h in parsed_hooks if h["display_label"] == selected_hook_label), None)
 
                 if chosen_hook_obj:
-                    st.markdown(f"""
-                    <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#1e1b4b;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <span style="font-weight:700; color:#1d4ed8;">🏷️ {chosen_hook_obj['category']}</span>
-                            <span style="background:#dbeafe; color:#1e40af; font-weight:700; padding:2px 8px; border-radius:4px; font-size:0.75rem;">📈 Skor Retensi: {chosen_hook_obj['score']}</span>
-                        </div>
-                        <div style="margin-bottom:4px;"><b>🎥 Aksi Kamera (Visual):</b> {chosen_hook_obj['visual']}</div>
-                        <div style="font-size:0.8rem; color:#475569;"><b>📝 Teks di Layar:</b> {chosen_hook_obj['screen_text']}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    hook_card_html = (
+                        f'<div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#1e1b4b;">'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">'
+                        f'<span style="font-weight:700; color:#1d4ed8;">🏷️ {chosen_hook_obj["category"]}</span>'
+                        f'<span style="background:#dbeafe; color:#1e40af; font-weight:700; padding:2px 8px; border-radius:4px; font-size:0.75rem;">📈 Skor Retensi: {chosen_hook_obj["score"]}</span>'
+                        f'</div>'
+                        f'<div style="margin-bottom:4px;"><b>🎥 Aksi Kamera (Visual):</b> {chosen_hook_obj["visual"]}</div>'
+                        f'<div style="font-size:0.8rem; color:#475569;"><b>📝 Teks di Layar:</b> {chosen_hook_obj["screen_text"]}</div>'
+                        f'</div>'
+                    )
+                    st.markdown(hook_card_html, unsafe_allow_html=True)
                     active_hook_text = chosen_hook_obj["verbal"]
                 else:
                     active_hook_text = st.session_state.get("pipe_chosen_hook", "Stop scroll kalau kamu gak mau rugi waktu dan duit sia-sia!")
@@ -437,11 +439,12 @@ def render_fast_track_pipeline(ai_client):
             st.markdown("### 🎬 Tahap 3: Generator Storyboard & Papan Cerita Detik demi Detik")
             st.caption("AI akan meracik naskah narasi, instruksi kamera, B-roll, prompt video AI, dan micro-scenes aman <= 15 detik.")
 
-            st.markdown("""
-            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">
-                💡 <b>Panduan Pemula (Anti-Terpotong AI Video):</b> Dialog di setiap scene dibatasi maksimal <b>20-25 kata (~10-12 detik)</b> agar ketika Anda generate video di Kling AI, Runway Gen-3, atau ElevenLabs, vokal dan adegan <b>tidak akan pernah terpotong di tengah jalan</b>. Anda juga bisa memilih durasi fleksibel agar materi mendalam (>60s) dapat diakomodir tuntas!
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
+                '💡 <b>Panduan Pemula (Anti-Terpotong AI Video):</b> Dialog di setiap scene dibatasi maksimal <b>20-25 kata (~10-12 detik)</b> agar ketika Anda generate video di Kling AI, Runway Gen-3, atau ElevenLabs, vokal dan adegan <b>tidak akan pernah terpotong di tengah jalan</b>. Anda juga bisa memilih durasi fleksibel agar materi mendalam (>60s) dapat diakomodir tuntas!'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
             current_pipe_hook = st.session_state.get("pipe_chosen_hook", "")
             if not current_pipe_hook:
@@ -548,23 +551,24 @@ def render_fast_track_pipeline(ai_client):
             )
 
             if is_pure_autopilot:
-                st.markdown(f"""
-                <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 1.5px solid #4338ca; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0; color: white;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: 700; font-size: 0.95rem; color: #a5b4fc;">⚡ Mode Auto-Pilot Cerdas Aktif</span>
-                        <span style="background: #10b981; color: #ffffff; font-weight: 700; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">100% Dinamis & Kontekstual</span>
-                    </div>
-                    <div style="font-size: 0.84rem; color: #c7d2fe; line-height: 1.5;">
-                        AI bertindak sebagai Sutradara Utama. AI merancang setting lokasi kontekstual (misal dapur resep, tech desk neon, kamar mandi skincare), palet warna, vokal, dan karakter <b>100% hidup & nyata</b>.
-                    </div>
-                    <div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
-                        <span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">📊 Data Empiris & Metrik Terukur</span>
-                        <span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">⚙️ Kausalitas 'The Mechanism'</span>
-                        <span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">💡 Free Actionable Value-Bomb</span>
-                        <span style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(110, 231, 183, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #a7f3d0;">⏱️ Sinkron Vokal & Visual &lt;= 15s</span>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                autopilot_banner_html = (
+                    '<div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 1.5px solid #4338ca; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0; color: white;">'
+                    '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
+                    '<span style="font-weight: 700; font-size: 0.95rem; color: #a5b4fc;">⚡ Mode Auto-Pilot Cerdas Aktif</span>'
+                    '<span style="background: #10b981; color: #ffffff; font-weight: 700; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">100% Dinamis & Kontekstual</span>'
+                    '</div>'
+                    '<div style="font-size: 0.84rem; color: #c7d2fe; line-height: 1.5;">'
+                    'AI bertindak sebagai Sutradara Utama. AI merancang setting lokasi kontekstual (misal dapur resep, tech desk neon, kamar mandi skincare), palet warna, vokal, dan karakter <b>100% hidup & nyata</b>.'
+                    '</div>'
+                    '<div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">'
+                    '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">📊 Data Empiris & Metrik Terukur</span>'
+                    '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">⚙️ Kausalitas \'The Mechanism\'</span>'
+                    '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">💡 Free Actionable Value-Bomb</span>'
+                    '<span style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(110, 231, 183, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #a7f3d0;">⏱️ Sinkron Vokal & Visual &lt;= 15s</span>'
+                    '</div>'
+                    '</div>'
+                )
+                st.markdown(autopilot_banner_html, unsafe_allow_html=True)
 
             # Inisialisasi awal nilai setup sutradara dari Auto-Pilot (Anti UnboundLocalError)
             selected_theme = autopilot["theme"]
@@ -850,14 +854,14 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                     # Tampilkan Master Consistency & DNA Persona Anchor Banner jika ada
                     if master_anchor and any(master_anchor.values()):
                         with st.container(border=True):
-                            st.markdown("""
-                            <div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); padding: 14px 18px; border-radius: 8px; color: white; margin-bottom: 12px;">
-                                <h4 style="margin: 0 0 6px 0; color: #a5b4fc; font-size: 1.05rem;">🛡️ DNA Strategi Konten & Master Production Consistency Anchor</h4>
-                                <div style="font-size: 0.85rem; color: #e0e7ff; line-height: 1.4;">
-                                    Seluruh scene, gaya bahasa percakapan, dan visual telah diselaraskan agar mengikat persona audiens target dan menjaga konsistensi render AI 100%.
-                                </div>
-                            </div>
-                            """, unsafe_allow_html=True)
+                            st.markdown(
+                                '<div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); padding: 14px 18px; border-radius: 8px; color: white; margin-bottom: 12px;">'
+                                '<h4 style="margin: 0 0 6px 0; color: #a5b4fc; font-size: 1.05rem;">🛡️ DNA Strategi Konten & Master Production Consistency Anchor</h4>'
+                                '<div style="font-size: 0.85rem; color: #e0e7ff; line-height: 1.4;">'
+                                'Seluruh scene, gaya bahasa percakapan, dan visual telah diselaraskan agar mengikat persona audiens target dan menjaga konsistensi render AI 100%.'
+                                '</div></div>',
+                                unsafe_allow_html=True
+                            )
 
                             # Tampilkan DNA Brief Persona jika ada
                             if master_anchor.get("content_theme") or master_anchor.get("target_audience"):
@@ -905,21 +909,18 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                     if has_sync_issue:
                         overflow_cnt = sum(1 for sc in parsed_scenes if sc.get("sync_status") == "overflow")
                         underflow_cnt = sum(1 for sc in parsed_scenes if sc.get("sync_status") == "underflow")
-                        st.markdown(f"""
-                        <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-weight: 700; color: #92400e; font-size: 0.95rem;">
-                                    ⏱️ Deteksi Sinkronisasi: {overflow_cnt} Scene Dialog Kepanjangan & {underflow_cnt} Scene Hening Visual
-                                </span>
-                                <span style="background: #f59e0b; color: white; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight:700;">
-                                    Audio-Visual Sync Assist
-                                </span>
-                            </div>
-                            <div style="font-size: 0.83rem; color: #78350f; margin-top: 5px; line-height: 1.5;">
-                                Terdeteksi perbedaan antara tempo bicara dialog (~1.9 kata/detik) dengan durasi klip visual (misal: klip 3 detik tapi dialog butuh 7 detik bicara, atau klip 12 detik tapi dialog hanya 4 detik). Anda dapat menyelaraskan durasi klip secara instan dengan 1-klik di bawah!
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.markdown(
+                            f'<div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #f59e0b; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0;">'
+                            f'<div style="display:flex; justify-content:space-between; align-items:center;">'
+                            f'<span style="font-weight: 700; color: #92400e; font-size: 0.95rem;">'
+                            f'⏱️ Deteksi Sinkronisasi: {overflow_cnt} Scene Dialog Kepanjangan & {underflow_cnt} Scene Hening Visual</span>'
+                            f'<span style="background: #f59e0b; color: white; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight:700;">'
+                            f'Audio-Visual Sync Assist</span></div>'
+                            f'<div style="font-size: 0.83rem; color: #78350f; margin-top: 5px; line-height: 1.5;">'
+                            f'Terdeteksi perbedaan antara tempo bicara dialog (~1.9 kata/detik) dengan durasi klip visual (misal: klip 3 detik tapi dialog butuh 7 detik bicara, atau klip 12 detik tapi dialog hanya 4 detik). Anda dapat menyelaraskan durasi klip secara instan dengan 1-klik di bawah!'
+                            f'</div></div>',
+                            unsafe_allow_html=True
+                        )
                         
                         col_sync_act1, col_sync_act2 = st.columns([1.5, 1])
                         with col_sync_act1:
@@ -960,40 +961,48 @@ Wajib mematuhi instruksi kustom pengguna berikut:
 
                             # Peringatan dini jika ada ketidaksinkronan durasi vs dialog
                             if sc.get("sync_status") == "overflow":
-                                st.markdown(f"""
-                                <div style="background:#fef2f2; border-left:3px solid #ef4444; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#991b1b; margin:6px 0 10px 0;">
-                                    🚨 <b>Peringatan Dialog Kepanjangan:</b> {sc.get('sync_note')} (Gunakan tombol '1-Klik Pecah Scene Panjang' di atas untuk memecahnya menjadi 2 shot tanpa mengurangi kata).
-                                </div>
-                                """, unsafe_allow_html=True)
+                                warn_html = (
+                                    f'<div style="background:#fef2f2; border-left:3px solid #ef4444; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#991b1b; margin:6px 0 10px 0;">'
+                                    f'🚨 <b>Peringatan Dialog Kepanjangan:</b> {sc.get("sync_note")} (Gunakan tombol \'1-Klik Pecah Scene Panjang\' di atas untuk memecahnya menjadi 2 shot tanpa mengurangi kata).'
+                                    f'</div>'
+                                )
+                                st.markdown(warn_html, unsafe_allow_html=True)
                             elif sc.get("sync_status") == "underflow":
-                                st.markdown(f"""
-                                <div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#92400e; margin:6px 0 10px 0;">
-                                    ⚠️ <b>Perhatian Hening Visual:</b> {sc.get('sync_note')}
-                                </div>
-                                """, unsafe_allow_html=True)
+                                warn_html = (
+                                    f'<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#92400e; margin:6px 0 10px 0;">'
+                                    f'⚠️ <b>Perhatian Hening Visual:</b> {sc.get("sync_note")}'
+                                    f'</div>'
+                                )
+                                st.markdown(warn_html, unsafe_allow_html=True)
                             elif sc.get("word_count", 0) > 16:
-                                st.markdown(f"""
-                                <div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#92400e; margin:6px 0 10px 0;">
-                                    ⚠️ <b>Tips Anti-Terpotong AI Video:</b> Dialog ini memiliki <b>{sc.get('word_count')} kata (~{sc.get('est_audio_dur')} detik)</b>. Untuk render di Kling AI / Runway Gen-3 (klip 5-10s), klik tombol <b>'🧩 1-Klik Pecah Scene Panjang'</b> di atas agar scene ini dipecah menjadi 2 shot sinematik (Shot A & Shot B) tanpa mengurangi satu kata pun!
-                                </div>
-                                """, unsafe_allow_html=True)
+                                warn_html = (
+                                    f'<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#92400e; margin:6px 0 10px 0;">'
+                                    f'⚠️ <b>Tips Anti-Terpotong AI Video:</b> Dialog ini memiliki <b>{sc.get("word_count")} kata (~{sc.get("est_audio_dur")} detik)</b>. Untuk render di Kling AI / Runway Gen-3 (klip 5-10s), klik tombol <b>\'🧩 1-Klik Pecah Scene Panjang\'</b> di atas agar scene ini dipecah menjadi 2 shot sinematik (Shot A & Shot B) tanpa mengurangi satu kata pun!'
+                                    f'</div>'
+                                )
+                                st.markdown(warn_html, unsafe_allow_html=True)
 
-                            # Badges detail produksi & persona
-                            act_badge = f'<span style="background:#fdf4ff; padding:2px 8px; border-radius:4px; color:#a21caf; border:1px solid #f0abfc;"><b>🎭 Delivery:</b> {sc["acting_delivery"][:28]}</span>' if sc.get("acting_delivery") else ''
-                            rel_badge = f'<span style="background:#eff6ff; padding:2px 8px; border-radius:4px; color:#1d4ed8; border:1px solid #bfdbfe;"><b>🎯 Audiens:</b> {sc["audience_relevance"][:30]}</span>' if sc.get("audience_relevance") else ''
-                            cine_badge_html = f'<span style="background:#f0fdf4; padding:2px 8px; border-radius:4px; color:#15803d; border:1px solid #bbf7d0;"><b>🎬 Sutradara Pro:</b> {sc["cine_badge"]}</span>' if sc.get("cine_badge") else ''
+                            # Badges detail produksi, sutradara & persona (Rendered as clean HTML pills)
+                            badge_items = []
+                            v_style = sc.get('visual_style') or master_anchor.get('visual_style_lock') or 'Live Action Sinematik'
+                            v_env = sc.get('environment') or master_anchor.get('environment_anchor') or 'Setting Lokasi Kontekstual'
+                            v_color = sc.get('color_grading') or master_anchor.get('color_grading_anchor') or 'Moody Cinematic'
+                            v_voice = sc.get('voice_style', 'Santai & Empatik')
 
-                            st.markdown(f"""
-                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; font-size:0.78rem;">
-                                <span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🎨 Gaya:</b> {sc.get('visual_style') or master_anchor.get('visual_style_lock') or 'Live Action Sinematik'}</span>
-                                <span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🏞️ Lokasi:</b> {sc.get('environment') or master_anchor.get('environment_anchor') or 'Setting Lokasi Kontekstual'}</span>
-                                <span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🎨 Color:</b> {sc.get('color_grading') or master_anchor.get('color_grading_anchor') or 'Moody Cinematic'}</span>
-                                <span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🗣️ Vokal:</b> {sc.get('voice_style', 'Santai & Empatik')}</span>
-                                {act_badge}
-                                {rel_badge}
-                                {cine_badge_html}
-                            </div>
-                            """, unsafe_allow_html=True)
+                            badge_items.append(f'<span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🎨 Gaya:</b> {v_style}</span>')
+                            badge_items.append(f'<span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🏞️ Lokasi:</b> {v_env}</span>')
+                            badge_items.append(f'<span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🎨 Color:</b> {v_color}</span>')
+                            badge_items.append(f'<span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; color:#334155;"><b>🗣️ Vokal:</b> {v_voice}</span>')
+
+                            if sc.get("acting_delivery"):
+                                badge_items.append(f'<span style="background:#fdf4ff; padding:2px 8px; border-radius:4px; color:#a21caf; border:1px solid #f0abfc;"><b>🎭 Delivery:</b> {sc["acting_delivery"][:28]}</span>')
+                            if sc.get("audience_relevance"):
+                                badge_items.append(f'<span style="background:#eff6ff; padding:2px 8px; border-radius:4px; color:#1d4ed8; border:1px solid #bfdbfe;"><b>🎯 Audiens:</b> {sc["audience_relevance"][:30]}</span>')
+                            if sc.get("cine_badge"):
+                                badge_items.append(f'<span style="background:#f0fdf4; padding:2px 8px; border-radius:4px; color:#15803d; border:1px solid #bbf7d0;"><b>🎬 Sutradara Pro:</b> {sc["cine_badge"]}</span>')
+
+                            badges_html = f'<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; font-size:0.78rem;">{" ".join(badge_items)}</div>'
+                            st.markdown(badges_html, unsafe_allow_html=True)
 
                             col_d1, col_d2 = st.columns([1.2, 1])
                             with col_d1:
@@ -1047,16 +1056,14 @@ Wajib mematuhi instruksi kustom pengguna berikut:
 
                     # Banner Audit Kedalaman & Bukti Data (Anti-AI Slop)
                     with st.container(border=True):
-                        st.markdown(f"""
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <span style="font-weight:700; color:{auth_data['badge_color']}; font-size:0.95rem;">
-                                🔬 Audit Kedalaman Materi: {auth_data['authority_tier']}
-                            </span>
-                            <span style="background:{auth_data['badge_color']}; color:white; padding:2px 10px; border-radius:10px; font-size:0.75rem; font-weight:700;">
-                                Anti-AI Slop Verified
-                            </span>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.markdown(
+                            f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">'
+                            f'<span style="font-weight:700; color:{auth_data["badge_color"]}; font-size:0.95rem;">'
+                            f'🔬 Audit Kedalaman Materi: {auth_data["authority_tier"]}</span>'
+                            f'<span style="background:{auth_data["badge_color"]}; color:white; padding:2px 10px; border-radius:10px; font-size:0.75rem; font-weight:700;">'
+                            f'Anti-AI Slop Verified</span></div>',
+                            unsafe_allow_html=True
+                        )
                         
                         col_dt1, col_dt2 = st.columns(2)
                         with col_dt1:
@@ -1094,11 +1101,12 @@ Wajib mematuhi instruksi kustom pengguna berikut:
 
                 with tab_tele_view:
                     st.markdown(f"**Estimasi Bicara:** ~{approx_words} kata dialog | Durasi: ~{est_sec} detik.")
-                    st.markdown("""
-                    <div style="background: #f8fafc; border: 1.5px solid #4f46e5; border-radius: 12px; padding: 15px; color: #0f172a; font-weight: 500;">
-                        💡 Bacalah dialog dari scene di atas dengan pandangan mata lurus ke kamera HP.
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.markdown(
+                        '<div style="background: #f8fafc; border: 1.5px solid #4f46e5; border-radius: 12px; padding: 15px; color: #0f172a; font-weight: 500;">'
+                        '💡 Bacalah dialog dari scene di atas dengan pandangan mata lurus ke kamera HP.'
+                        '</div>',
+                        unsafe_allow_html=True
+                    )
 
                 col_prev3, col_next3 = st.columns([1, 2])
                 with col_prev3:
@@ -1131,11 +1139,12 @@ Wajib mematuhi instruksi kustom pengguna berikut:
             st.markdown("### 💰 Tahap 4: Jembatan Konversi & Penjualan Halus (*Soft Selling*)")
             st.caption("Ubah penonton menjadi pembeli tanpa terasa sedang jualan. Pilih formula transisi penutup yang paling mengalir.")
 
-            st.markdown("""
-            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">
-                💡 <b>Panduan Pemula:</b> Jangan jualan kasar di awal video. Jembatan konversi (<i>Monetization Bridge</i>) adalah seni menyambungkan masalah di video dengan produk Anda secara alami di bagian penutup (contoh: <i>"Biar gak pusing bikin dari awal, template lengkapnya udah aku taruh di bio ya"</i>).
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
+                '💡 <b>Panduan Pemula:</b> Jangan jualan kasar di awal video. Jembatan konversi (<i>Monetization Bridge</i>) adalah seni menyambungkan masalah di video dengan produk Anda secara alami di bagian penutup (contoh: <i>"Biar gak pusing bikin dari awal, template lengkapnya udah aku taruh di bio ya"</i>).'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
             col1, col2 = st.columns([1.1, 1], gap="medium")
             with col1:
@@ -1212,11 +1221,12 @@ Wajib mematuhi instruksi kustom pengguna berikut:
             st.markdown("### ✨ Tahap 5: Kit Publikasi Siap Posting (SEO & Copywriting)")
             st.caption("AI meracik caption pilihan, pertanyaan pemancing komentar (comment bait), 10 hashtag SEO, dan jam upload terbaik.")
 
-            st.markdown("""
-            <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">
-                💡 <b>Panduan Pemula:</b> Paket video Anda sudah 100% lengkap! Klik tombol <b>Unduh Paket Produksi Lengkap (.ZIP)</b> di bawah untuk mendapatkan skrip, subtitle CapCut, dan caption dalam 1 folder. Saat mau upload ke TikTok/Instagram, tinggal salin caption di bawah pada jam yang direkomendasikan.
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(
+                '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
+                '💡 <b>Panduan Pemula:</b> Paket video Anda sudah 100% lengkap! Klik tombol <b>Unduh Paket Produksi Lengkap (.ZIP)</b> di bawah untuk mendapatkan skrip, subtitle CapCut, dan caption dalam 1 folder. Saat mau upload ke TikTok/Instagram, tinggal salin caption di bawah pada jam yang direkomendasikan.'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
             btn_run_step5 = st.button("🚀 Buat Kit Caption, Hashtag & Jam Upload Sekarang", type="primary", use_container_width=True)
 
@@ -1304,11 +1314,12 @@ Wajib mematuhi instruksi kustom pengguna berikut:
         st.markdown("### 🚀 Sprint Konten 7 Hari: Rancang 1 Minggu Sekaligus")
         st.caption("Khusus untuk kreator yang ingin menyelesaikan seluruh stok video dari Senin sampai Minggu dalam satu kali klik.")
 
-        st.markdown("""
-        <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">
-            💡 <b>Cara Kerja Mode Sprint:</b> Cukup masukkan 1 niche dan topik utama. AI akan menyusun strategi 7 pilar konten mingguan (Mitos, Tutorial, Kisah Nyata, Blunder Fatal, Tools Rahasia, Debat Interaktif, dan Reset Mingguan). Setelah selesai, Anda bisa mengimpor ketujuh video tersebut ke Studio Produksi dengan 1 klik!
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
+            '💡 <b>Cara Kerja Mode Sprint:</b> Cukup masukkan 1 niche dan topik utama. AI akan menyusun strategi 7 pilar konten mingguan (Mitos, Tutorial, Kisah Nyata, Blunder Fatal, Tools Rahasia, Debat Interaktif, dan Reset Mingguan). Setelah selesai, Anda bisa mengimpor ketujuh video tersebut ke Studio Produksi dengan 1 klik!'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
         col_b1, col_b2 = st.columns([1.2, 1], gap="medium")
         with col_b1:
