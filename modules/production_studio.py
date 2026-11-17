@@ -784,6 +784,8 @@ def _render_kanban_card(item: dict, prefix: str):
             st.session_state["pipe_chosen_hook"] = item.get("hook_verbal", "")
             st.session_state["pipe_story_topic"] = item.get("content_angle") or item.get("title", "")
             st.session_state["pipe_product_input"] = item.get("product_name", "")
+            if item.get("cta_goal"):
+                st.session_state["pipe_cta_target"] = item.get("cta_goal")
 
             if item.get("storyboard_table_md"):
                 st.session_state["pipe_step3_result"] = item.get("storyboard_table_md", "")

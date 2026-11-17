@@ -471,60 +471,16 @@ def render_fast_track_pipeline(ai_client):
             if not current_pipe_hook:
                 st.warning("⚠️ Anda belum memilih Hook di Tahap 2. Silakan kembali ke Tahap 2 untuk memilih hook, atau tulis hook langsung di bawah.")
 
-            col1, col2 = st.columns([1.2, 1], gap="medium")
-            with col1:
-                st.info(f"**Hook Terpilih:** *\"{current_pipe_hook or '(Belum dipilih - kembali ke Tahap 2)'}\"*")
-                story_topic_final = st.text_area(
-                    "Topik Konten:",
-                    value=st.session_state.get("pipe_story_topic") or st.session_state.get("pipe_hook_topic_input", ""),
-                    placeholder="Contoh: Bahas 3 langkah praktis mulai dari riset produk, cara buat video tanpa muka, sampai cara dapat komisi pertama...",
-                    height=80,
-                    key="pipe_story_topic"
-                )
-            with col2:
-                dur_options = [
-                    "⚡ Otomatis Fleksibel (AI Analisis Kedalaman Topik: 30s - 120s)",
-                    "⚡ 30 - 45 Detik (Ringkas & Fast-Paced — 3-4 Scene)",
-                    "⚡ 60 Detik (Standar Shorts, Reels & TikTok — 5-6 Scene)",
-                    "⚡ 75 - 90 Detik (Penjelasan Berbobot / Multi-Poin — 6-8 Scene)",
-                    "⚡ 90 - 120 Detik (Edukasi Mendalam / Deep-Dive — 8-10 Scene)"
-                ]
-                target_dur = st.selectbox(
-                    "⏱️ Pilihan Durasi Video:",
-                    options=dur_options,
-                    index=0,
-                    key="pipe_dur_select",
-                    help="Pilih 'Otomatis Fleksibel' agar AI menyesuaikan durasi (30-120s) secara cerdas sesuai kebutuhan konten tanpa batasan kaku."
-                )
-
-                def _set_pipe_cta(val):
-                    st.session_state["pipe_cta_target"] = val
-
-                st.caption("🔥 Preset Cepat Aksi Akhir (CTA) - Klik untuk Memilih:")
-                col_c1, col_c2, col_c3 = st.columns(3)
-                with col_c1:
-                    st.button("🔗 Link di Bio", key="btn_cta_bio", on_click=_set_pipe_cta, args=("Ajak penonton cek link bio untuk download template / panduan lengkap...",), use_container_width=True)
-                with col_c2:
-                    st.button("🛍️ Keranjang Kuning", key="btn_cta_shop", on_click=_set_pipe_cta, args=("Ajak penonton klik keranjang kuning selagi promo masih ada...",), use_container_width=True)
-                with col_c3:
-                    st.button("💬 Tanya di Komentar", key="btn_cta_comm", on_click=_set_pipe_cta, args=("Minta penonton ketik 'MAU' di kolom komentar untuk dikirimkan linknya...",), use_container_width=True)
-
-                cta_target = st.text_input(
-                    "Aksi Akhir / CTA Video:",
-                    value=st.session_state.get("pipe_cta_target", ""),
-                    placeholder="Contoh: Ajak penonton cek link bio untuk download panduan gratis...",
-                    key="pipe_cta_target"
-                )
-
-            # Hitung rekomendasi Auto-Pilot berdasarkan Niche & Topik
+            # Ambil data draft & hitung rekomendasi Auto-Pilot awal
             active_draft_obj = get_draft(st.session_state.get("current_pipeline_draft_id")) if st.session_state.get("current_pipeline_draft_id") else None
             niche_source = st.session_state.get("pipe_niche", "") or (active_draft_obj.get("niche", "") if active_draft_obj else "")
             aud_source = st.session_state.get("pipe_audience", "") or (active_draft_obj.get("target_audience", "") if active_draft_obj else "")
+            initial_story_topic = st.session_state.get("pipe_story_topic") or st.session_state.get("pipe_hook_topic_input", "")
 
             autopilot = get_smart_autopilot_presets(
                 niche=niche_source,
                 hook=current_pipe_hook,
-                topic=story_topic_final,
+                topic=initial_story_topic,
                 existing_audience=aud_source
             )
 
@@ -547,8 +503,20 @@ def render_fast_track_pipeline(ai_client):
                     fmt_idx = f_i
                     break
 
-            col_fmt1, col_fmt2 = st.columns([1.3, 1], gap="medium")
-            with col_fmt1:
+            # -------------------------------------------------------------
+            # ZONA 1: THE CREATIVE CORE (2-COLUMN BALANCED COCKPIT)
+            # -------------------------------------------------------------
+            col1, col2 = st.columns([1.15, 1], gap="medium")
+            with col1:
+                st.info(f"**Hook Terpilih:** *\"{current_pipe_hook or '(Belum dipilih - kembali ke Tahap 2)'}\"*")
+                story_topic_final = st.text_area(
+                    "Topik Konten:",
+                    value=initial_story_topic,
+                    placeholder="Contoh: Bahas 3 langkah praktis mulai dari riset produk, cara buat video tanpa muka, sampai cara dapat komisi pertama...",
+                    height=100,
+                    key="pipe_story_topic"
+                )
+            with col2:
                 selected_format = st.selectbox(
                     "🎭 Format & Model Eksekusi Konten:",
                     options=FORMAT_OPTIONS,
@@ -556,9 +524,8 @@ def render_fast_track_pipeline(ai_client):
                     key="pipe_content_format_select",
                     help="Pilih format penyampaian: Talking head, Skit komedi 2 orang, micro-drama emosional, video tanpa wajah (faceless ASMR), debat dialektika, atau analogi fabel."
                 )
-            with col_fmt2:
                 format_notes = {
-                    "Talking Head": "🎙️ <b>Kreator Mengunci Lensa:</b> Tatapan intens ke kamera HP, mikro-ekspresi tajam, jump-cut cepat, dan B-roll pendukung.",
+                    "Talking Head": "🎙️ <b>Talking Head Sinematik:</b> Tatapan intens ke kamera HP, mikro-ekspresi tajam, jump-cut cepat, dan B-roll pendukung.",
                     "Skit Komedi": "🎭 <b>POV 2 Karakter Kontras:</b> Naskah dialog dibagi otomatis per peran (misal: <code>[Si Boros]</code> vs <code>[Si Cermat]</code>) dengan sudut kamera shot-reverse-shot.",
                     "Micro-Drama": "🎬 <b>Alur 3 Babak Emosional:</b> Struktur krisis mendalam, perjuangan, dan plot twist dramatis dengan pencahayaan moody sinematik.",
                     "Voiceover Faceless": "🎞️ <b>100% Tanpa Wajah:</b> Menyorot aksi tangan estetik (hands-in-action), proses mekanis, dan visual B-roll ASMR tactile.",
@@ -570,13 +537,107 @@ def render_fast_track_pipeline(ai_client):
                     if fn_k.lower() in selected_format.lower():
                         note_text = fn_v
                         break
-                st.markdown(f"<div style='background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; font-size:0.8rem; color:#334155; margin-top:24px; line-height:1.4;'>{note_text}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div style='background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px 10px; font-size:0.78rem; color:#334155; margin-bottom:8px; line-height:1.4;'>{note_text}</div>", unsafe_allow_html=True)
+
+                dur_options = [
+                    "⚡ Otomatis Fleksibel (AI Analisis Kedalaman Topik: 30s - 120s)",
+                    "⚡ 30 - 45 Detik (Ringkas & Fast-Paced — 3-4 Scene)",
+                    "⚡ 60 Detik (Standar Shorts, Reels & TikTok — 5-6 Scene)",
+                    "⚡ 75 - 90 Detik (Penjelasan Berbobot / Multi-Poin — 6-8 Scene)",
+                    "⚡ 90 - 120 Detik (Edukasi Mendalam / Deep-Dive — 8-10 Scene)"
+                ]
+                target_dur = st.selectbox(
+                    "⏱️ Pilihan Durasi Video:",
+                    options=dur_options,
+                    index=0,
+                    key="pipe_dur_select",
+                    help="Pilih 'Otomatis Fleksibel' agar AI menyesuaikan durasi (30-120s) secara cerdas sesuai kebutuhan konten tanpa batasan kaku."
+                )
 
             # -------------------------------------------------------------
-            # LEVEL OTORITAS & DATA PENDUKUNG (ANTI-KONTEN UMUM / AI SLOP)
+            # ZONA 2: SMART FORMAT-AWARE CTA PRESETS (AKSI AKHIR RELEVAN)
             # -------------------------------------------------------------
-            with st.expander("🔬 Tingkat Otoritas Konten & Bukti Data Pendukung (Anti-Info Umum / Anti-AI Slop)", expanded=True):
-                col_auth1, col_auth2 = st.columns([1.3, 1])
+            def _get_format_cta_presets(fmt: str):
+                f_lower = fmt.lower()
+                if "skit" in f_lower or "komedi" in f_lower:
+                    return [
+                        ("👥 Tag Teman yang Mirip", "Tag teman lu yang kelakuannya persis kayak gini di kolom komentar!"),
+                        ("⚖️ Komen: Lu Tim Mana?", "Tulis di komentar: lu tim mana, karakter yang pertama atau yang kedua?"),
+                        ("🔗 Solusi Lengkap di Bio", "Cek link di bio untuk solusi dan panduan lengkapnya sekarang!")
+                    ]
+                elif "debat" in f_lower or "dialektika" in f_lower:
+                    return [
+                        ("🥊 Adu Argumen di Komen", "Kira-kira argumen mana yang paling masuk akal buat lu? Tulis di kolom komentar!"),
+                        ("📊 Ketik 'BUKTI' di Komen", "Ketik 'BUKTI' di kolom komentar untuk dapatkan lembar data & riset komparasi lengkapnya!"),
+                        ("🔗 Baca Riset di Bio", "Cek link bio untuk akses sumber data ilmiah dan studi kasus lengkapnya!")
+                    ]
+                elif "micro-drama" in f_lower or "drama" in f_lower:
+                    return [
+                        ("💾 Simpan & Share Video", "Simpan video ini biar nggak hilang, dan share ke orang terdekat yang lagi butuh!"),
+                        ("💬 Pernah Ngalamin? (Komen)", "Pernah ngalamin momen kayak gini juga dalam hidup lu? Ceritain di kolom komentar ya!"),
+                        ("🔗 Solusi Lengkap di Bio", "Pelajari cara mengatasi masalah ini langkah demi langkah lewat panduan di link bio!")
+                    ]
+                elif "faceless" in f_lower or "voiceover" in f_lower or "asmr" in f_lower:
+                    return [
+                        ("💾 Save Buat Contekan", "Save video ini sekarang buat contekan dan panduan praktis lu nanti!"),
+                        ("💬 Ketik 'PANDUAN' di Komen", "Ketik 'PANDUAN' di kolom komentar buat dapetin checklist tools & langkah lengkapnya!"),
+                        ("🛒 Cek Keranjang Kuning", "Cek keranjang kuning sekarang selagi stok promo dan diskon masih tersedia!")
+                    ]
+                elif "fabel" in f_lower or "analogi" in f_lower:
+                    return [
+                        ("🤯 Share ke Teman", "Share video ini ke teman atau rekan kerja yang wajib paham konsep ini!"),
+                        ("💬 Menurut Lu Gimana?", "Menurut lu perumpamaan tadi udah pas belum? Tulis pandangan lu di komentar!"),
+                        ("🔗 Bedah Lengkap di Bio", "Cek link bio untuk bedah kasus mendalam dan studi lengkapnya!")
+                    ]
+                else:  # Talking Head / default
+                    return [
+                        ("🔗 Cek Link di Bio", "Ajak penonton cek link bio untuk download template / panduan lengkap gratis..."),
+                        ("🛍️ Cek Keranjang Kuning", "Ajak penonton klik keranjang kuning sekarang selagi promo masih tersedia..."),
+                        ("💬 Tanya di Komentar", "Minta penonton ketik 'MAU' di kolom komentar untuk dikirimkan panduannya...")
+                    ]
+
+            curr_cta_presets = _get_format_cta_presets(selected_format)
+
+            def _set_pipe_cta(val):
+                st.session_state["pipe_cta_target"] = val
+
+            st.markdown("<div style='font-size:0.83rem; font-weight:600; color:#475569; margin: 14px 0 4px 0;'>🎯 Rekomendasi Aksi Akhir (CTA) Sesuai Format — Klik Cepat untuk Menerapkan:</div>", unsafe_allow_html=True)
+            col_c1, col_c2, col_c3 = st.columns(3)
+            with col_c1:
+                st.button(curr_cta_presets[0][0], key="btn_cta_p1", on_click=_set_pipe_cta, args=(curr_cta_presets[0][1],), use_container_width=True)
+            with col_c2:
+                st.button(curr_cta_presets[1][0], key="btn_cta_p2", on_click=_set_pipe_cta, args=(curr_cta_presets[1][1],), use_container_width=True)
+            with col_c3:
+                st.button(curr_cta_presets[2][0], key="btn_cta_p3", on_click=_set_pipe_cta, args=(curr_cta_presets[2][1],), use_container_width=True)
+
+            cta_target = st.text_input(
+                "Aksi Akhir / CTA Video (Opsional — Auto-Pilot otomatis memilih jika kosong):",
+                value=st.session_state.get("pipe_cta_target", ""),
+                placeholder=f"Contoh: {curr_cta_presets[0][1]}",
+                key="pipe_cta_target",
+                help="Bebas dikosongkan. Jika tidak diisi, AI Auto-Pilot akan otomatis meracik CTA paling pas sesuai format konten."
+            )
+
+            # -------------------------------------------------------------
+            # ZONA 3: PROGRESSIVE DISCLOSURE (OTORITAS & KUSTOM SUTRADARA)
+            # -------------------------------------------------------------
+            # Inisialisasi awal nilai setup sutradara dari Auto-Pilot (Anti UnboundLocalError)
+            selected_theme = autopilot["theme"]
+            selected_audience = autopilot["audience"]
+            selected_slang = autopilot["slang"]
+            selected_emotion = autopilot["emotion"]
+            selected_visual_style = autopilot["visual_style"]
+            selected_env = autopilot["environment"]
+            selected_color = autopilot["color_grading"]
+            selected_voice = autopilot["voice_style"]
+
+            authority_level = "🔬 Praktisi / Berbasis Data & Riset (Wajib metrik %, nama teknis konkret & studi komparasi)"
+            custom_evidence = ""
+            is_pure_autopilot = True
+
+            with st.expander("⚙️ Pengaturan Lanjutan, Otoritas & Kustom Sutradara (Opsional)", expanded=False):
+                st.markdown("<div style='font-size:0.88rem; font-weight:700; color:#334155; margin-bottom:6px;'>🔬 Tingkat Otoritas Konten & Bukti Data (Anti-AI Slop)</div>", unsafe_allow_html=True)
+                col_auth1, col_auth2 = st.columns([1.3, 1], gap="medium")
                 with col_auth1:
                     authority_level = st.selectbox(
                         "Level Otoritas & Kedalaman Materi:",
@@ -599,214 +660,200 @@ def render_fast_track_pipeline(ai_client):
                         help="Tuliskan angka/studi/fakta khusus jika ada. Jika kosong, AI otomatis meracik data otoritas terbaik sesuai industri."
                     )
 
-            # -------------------------------------------------------------
-            # PILIHAN MODE SUTRADARA: AUTO-PILOT VS KUSTOM MANUAL
-            # -------------------------------------------------------------
-            director_mode = st.radio(
-                "🎬 Mode Pengarahan Sutradara:",
-                [
-                    "⚡ Auto-Pilot Penuh (AI Otomatis Racik Lokasi, Visual, Vokal & Mood Sesuai Topik)",
-                    "⚙️ Kustom Manual (Tentukan Sendiri Gaya Visual, Lokasi & Vokal di Bawah)"
-                ],
-                index=0,
-                horizontal=True,
-                key="pipe_director_mode_radio"
-            )
+                st.markdown("<hr style='margin:14px 0; border:none; border-top:1px solid #e2e8f0;'>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size:0.88rem; font-weight:700; color:#334155; margin-bottom:6px;'>🎬 Mode Pengarahan Sutradara</div>", unsafe_allow_html=True)
 
-            is_pure_autopilot = ("Auto-Pilot" in director_mode)
-
-            if is_pure_autopilot:
-                autopilot_banner_html = (
-                    '<div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 1.5px solid #4338ca; border-radius: 10px; padding: 12px 16px; margin: 10px 0 16px 0; color: white;">'
-                    '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
-                    '<span style="font-weight: 700; font-size: 0.95rem; color: #a5b4fc;">⚡ Mode Auto-Pilot Cerdas Aktif</span>'
-                    '<span style="background: #10b981; color: #ffffff; font-weight: 700; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">100% Dinamis & Kontekstual</span>'
-                    '</div>'
-                    '<div style="font-size: 0.84rem; color: #c7d2fe; line-height: 1.5;">'
-                    'AI bertindak sebagai Sutradara Utama. AI merancang setting lokasi kontekstual (misal dapur resep, tech desk neon, kamar mandi skincare), palet warna, vokal, dan karakter <b>100% hidup & nyata</b>.'
-                    '</div>'
-                    '<div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">'
-                    '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">📊 Data Empiris & Metrik Terukur</span>'
-                    '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">⚙️ Kausalitas \'The Mechanism\'</span>'
-                    '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">💡 Free Actionable Value-Bomb</span>'
-                    '<span style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(110, 231, 183, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #a7f3d0;">⏱️ Sinkron Vokal & Visual &lt;= 15s</span>'
-                    '</div>'
-                    '</div>'
+                director_mode = st.radio(
+                    "Pilih Mode Pengarahan Sutradara:",
+                    [
+                        "⚡ Auto-Pilot Penuh (AI Otomatis Racik Lokasi, Visual, Vokal & Mood Sesuai Topik)",
+                        "⚙️ Kustom Manual (Tentukan Sendiri Gaya Visual, Lokasi & Vokal di Bawah)"
+                    ],
+                    index=0,
+                    horizontal=True,
+                    key="pipe_director_mode_radio"
                 )
-                st.markdown(autopilot_banner_html, unsafe_allow_html=True)
 
-            # Inisialisasi awal nilai setup sutradara dari Auto-Pilot (Anti UnboundLocalError)
-            selected_theme = autopilot["theme"]
-            selected_audience = autopilot["audience"]
-            selected_slang = autopilot["slang"]
-            selected_emotion = autopilot["emotion"]
-            selected_visual_style = autopilot["visual_style"]
-            selected_env = autopilot["environment"]
-            selected_color = autopilot["color_grading"]
-            selected_voice = autopilot["voice_style"]
+                is_pure_autopilot = ("Auto-Pilot" in director_mode)
 
-            # -------------------------------------------------------------
-            # SETUP PENGATURAN KUSTOM SUTRADARA (AKTIF JIKA KUSTOM MANUAL DIPILIH)
-            # -------------------------------------------------------------
-            with st.expander("⚙️ Pengaturan Kustom Sutradara (Buka untuk Kustomisasi Manual)", expanded=(not is_pure_autopilot)):
-                st.caption("Ubah opsi di bawah ini HANYA jika Anda memilih mode 'Kustom Manual' atau ingin mengubah gaya visual (misal: 3D Animasi, Anime, Retro Film), lokasi studio tertentu, atau target audiens spesifik.")
-                
-                theme_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "💡 Edukasi Solutif & Hack Cepat (Value-Bomb)",
-                    "🥊 Bongkar Mitos & Realita Pahit (Hard Truth / Kontras)",
-                    "📖 Storytelling Pengalaman Nyata (Relatable & Emosional)",
-                    "🛠️ Tutorial Taktis Langkah Demi Langkah (Actionable Playbook)",
-                    "🛍️ Review Jujur & Soft-Selling (Solusi Masalah)",
-                    "🎭 Skit Komedi / Parodi Relatable (Humor Situasi Sehari-hari)",
-                    "✏️ Kustom (Ketik Pilar Tema Sendiri)"
-                ]
-
-                slang_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "🔥 Lu - Gua / Bro - Sis (Santai, Gaul, Akrab Gen Z/Millennial)",
-                    "🤝 Aku - Kamu / Teman-teman (Hangat, Empatik, Ramah Sahabat)",
-                    "👔 Saya - Anda / Rekan-rekan (Profesional, Otoritatif, Edukasi Formal)",
-                    "✨ Bestie / Guys (Trendy, Kasual, Vibe Cerita Tongkrongan)",
-                    "✏️ Kustom (Ketik Gaya Sapaan Sendiri)"
-                ]
-
-                emotion_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "👀 Rasa Penasaran Ekstrem (Curiosity Gap - Wajib Nonton Sampai Akhir)",
-                    "😱 FOMO & Ketakutan Rugi (Takut Ketinggalan / Rugi Kalau Gak Tahu)",
-                    "🤯 Mind-Blown / Kaget (Membongkar Rahasia yang Tidak Disangka)",
-                    "😌 Lega & Tenang (Mendapatkan Solusi Instan Atas Masalah Berat)",
-                    "💪 Semangat & Termotivasi (Dorongan Aksi Cepat Tanpa Nanti)",
-                    "✏️ Kustom (Ketik Emosi Sendiri)"
-                ]
-
-                vis_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "🎥 Realistis Sinematik / Live Action (Talent Manusia / UGC 4K)",
-                    "🤖 3D Animation (Gaya Pixar / Disney / Unreal Engine 5 Render)",
-                    "🎌 Anime / Manga Estetik (Gaya Studio Ghibli / Makoto Shinkai)",
-                    "🎨 2D Motion Graphics & Flat Vector (Gaya Vox / Kurzgesagt)",
-                    "📸 Vintage Retro 35mm Analog Film (Nostalgia 90s / Kodak Film Grain)",
-                    "🔮 Cyberpunk Neon & Sci-Fi Futuristik (Blade Runner / High Tech)",
-                    "✏️ Kustom (Ketik Gaya Visual Sendiri)"
-                ]
-
-                env_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "Dapur Rumah Minimalis Bersih & Estetik (Natural Morning Light & Marmer Putih)",
-                    "Vanity Mirror Kamar Mandi Marmer Putih Bersih (Clean Bright Ring Light)",
-                    "Meja Rias Vanity Estetik dengan Cermin LED & Rak Kosmetik Rapi",
-                    "Walk-in Closet Estetik / Kamar Tidur Modern dengan Full-Length Mirror",
-                    "Garasi Modern Bersih dengan Tool Rack Rapi & Pencahayaan Neon Cool White",
-                    "Gym Modern / Ruang Latihan Fitness dengan Mirror Wall & Dumbbell Rack",
-                    "Desk Setup Gadget & Ambient Neon Light (Tech Minimalist Dark)",
-                    "Smart Workspace Modern / Meja Kerja Rapi dengan Laptop & Tanaman Indoor",
-                    "Coffee Shop Estetik / Espresso Bar Modern (Warm Bokeh Background)",
-                    "Kantor Korporat Modern / Meja Kerja Rapi Profesional",
-                    "Ruang Bermain Anak Ceria & Ruang Keluarga Hangat Bersih",
-                    "Ruang Santai Kasual / Living Room Estetik (Natural Daylight)",
-                    "Taman Rumah Minimalis / Balkon Urban Farming Hijau",
-                    "Outdoor Dinamis / Suasana Urban Kota Modern Sinematik",
-                    "Dark Gaming Room dengan Ambient RGB Neon & Gaming Chair Setup",
-                    "Studio Kerja Minimalis Modern (Warm Wood & Soft Amber Lighting)",
-                    "Dark Studio Sinematik (Latar Hitam & Rim Light Kuat)",
-                    "✏️ Kustom (Ketik Setting Lokasi Sendiri)"
-                ]
-
-                color_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "Moody Teal & Warm Orange Sinematik (Hollywood Blockbuster Look)",
-                    "Clean High-Key SaaS & Tech (Bright Natural, Cool Blue Accent)",
-                    "Dark Documentary (High Contrast, Deep Shadow, Desaturated Tone)",
-                    "Pastel Dreamy Aesthetic (Soft Glow, Warm Highlights, Airy Feel)",
-                    "Vibrant Pop Energetic (Saturasi Tinggi, TikTok Trend Vibe)",
-                    "✏️ Kustom (Ketik Palet Warna Sendiri)"
-                ]
-
-                voice_options = [
-                    "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                    "Santai & Empatik (Bestie Vibe, Akrab, Mengalir Luwes)",
-                    "Tegas & Berwibawa (Otoritas Tinggi, Meyakinkan, No-BS Expert)",
-                    "Misterius & Berbisik Cepat (Curiosity Gap, Konspiratif Rahasia)",
-                    "Punchy, Hype & Berenergi Tinggi (Pemicu Adrenalin, Semangat Membara)",
-                    "Storyteller Hangat & Reflektif (Penuh Emosi & Sentuhan Personal)",
-                    "✏️ Kustom (Ketik Gaya Vokal Sendiri)"
-                ]
-
-                col_dna1, col_dna2 = st.columns(2)
-                with col_dna1:
-                    theme_choice = st.selectbox("💡 Pilar Tema Konten:", theme_options, index=0, key="pipe_theme_select")
-                    if theme_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_theme = autopilot["theme"]
-                    elif "Kustom" in theme_choice:
-                        custom_theme = st.text_input("Ketik Pilar Tema Kustom:", value="", placeholder="Contoh: Analisis tren masa depan...", key="pipe_custom_theme")
-                        selected_theme = custom_theme.strip() if custom_theme.strip() else autopilot["theme"]
-                    else:
-                        selected_theme = theme_choice
-
-                    target_audience_input = st.text_input(
-                        "👥 Target Audiens Spesifik & Usia:",
-                        value="",
-                        placeholder=f"Kosongkan untuk ikuti Auto-Pilot: ({autopilot['audience'][:45]}...)",
-                        key="pipe_aud_target_input"
+                if is_pure_autopilot:
+                    autopilot_banner_html = (
+                        '<div style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 1.5px solid #4338ca; border-radius: 10px; padding: 12px 16px; margin: 10px 0 6px 0; color: white;">'
+                        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
+                        '<span style="font-weight: 700; font-size: 0.95rem; color: #a5b4fc;">⚡ Mode Auto-Pilot Cerdas Aktif</span>'
+                        '<span style="background: #10b981; color: #ffffff; font-weight: 700; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">100% Dinamis & Kontekstual</span>'
+                        '</div>'
+                        '<div style="font-size: 0.84rem; color: #c7d2fe; line-height: 1.5;">'
+                        'AI bertindak sebagai Sutradara Utama. AI merancang setting lokasi kontekstual (misal dapur resep, tech desk neon, kamar mandi skincare), palet warna, vokal, dan karakter <b>100% hidup & nyata</b>.'
+                        '</div>'
+                        '<div style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">'
+                        '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">📊 Data Empiris & Metrik Terukur</span>'
+                        '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">⚙️ Kausalitas \'The Mechanism\'</span>'
+                        '<span style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #e0e7ff;">💡 Free Actionable Value-Bomb</span>'
+                        '<span style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(110, 231, 183, 0.3); border-radius: 6px; padding: 2px 8px; font-size: 0.73rem; color: #a7f3d0;">⏱️ Sinkron Vokal & Visual &lt;= 15s</span>'
+                        '</div>'
+                        '</div>'
                     )
-                    selected_audience = target_audience_input.strip() if target_audience_input.strip() else autopilot["audience"]
+                    st.markdown(autopilot_banner_html, unsafe_allow_html=True)
+                else:
+                    st.caption("Ubah opsi di bawah ini jika Anda ingin kustomisasi manual gaya visual (misal: 3D Animasi, Anime, Retro Film), lokasi studio tertentu, atau target audiens spesifik.")
 
-                    slang_choice = st.selectbox("🗣️ Gaya Sapaan & Diksi Bahasa Audiens:", slang_options, index=0, key="pipe_slang_select")
-                    if slang_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_slang = autopilot["slang"]
-                    elif "Kustom" in slang_choice:
-                        custom_slang = st.text_input("Ketik Gaya Sapaan Kustom:", value="", placeholder="Contoh: Sapaan 'Bapak/Ibu'...", key="pipe_custom_slang")
-                        selected_slang = custom_slang.strip() if custom_slang.strip() else autopilot["slang"]
-                    else:
-                        selected_slang = slang_choice
+                    theme_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "💡 Edukasi Solutif & Hack Cepat (Value-Bomb)",
+                        "🥊 Bongkar Mitos & Realita Pahit (Hard Truth / Kontras)",
+                        "📖 Storytelling Pengalaman Nyata (Relatable & Emosional)",
+                        "🛠️ Tutorial Taktis Langkah Demi Langkah (Actionable Playbook)",
+                        "🛍️ Review Jujur & Soft-Selling (Solusi Masalah)",
+                        "🎭 Skit Komedi / Parodi Relatable (Humor Situasi Sehari-hari)",
+                        "✏️ Kustom (Ketik Pilar Tema Sendiri)"
+                    ]
 
-                    emotion_choice = st.selectbox("⚡ Trigger Emosi Dominan:", emotion_options, index=0, key="pipe_emotion_select")
-                    if emotion_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_emotion = autopilot["emotion"]
-                    elif "Kustom" in emotion_choice:
-                        custom_emotion = st.text_input("Ketik Trigger Emosi:", value="", placeholder="Contoh: Rasa tertantang...", key="pipe_custom_emotion")
-                        selected_emotion = custom_emotion.strip() if custom_emotion.strip() else autopilot["emotion"]
-                    else:
-                        selected_emotion = emotion_choice
+                    slang_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "🔥 Lu - Gua / Bro - Sis (Santai, Gaul, Akrab Gen Z/Millennial)",
+                        "🤝 Aku - Kamu / Teman-teman (Hangat, Empatik, Ramah Sahabat)",
+                        "👔 Saya - Anda / Rekan-rekan (Profesional, Otoritatif, Edukasi Formal)",
+                        "✨ Bestie / Guys (Trendy, Kasual, Vibe Cerita Tongkrongan)",
+                        "✏️ Kustom (Ketik Gaya Sapaan Sendiri)"
+                    ]
 
-                with col_dna2:
-                    visual_style_choice = st.selectbox("🎭 Tipe Konten Visual:", vis_options, index=0, key="pipe_visual_style_select")
-                    if visual_style_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_visual_style = autopilot["visual_style"]
-                    elif "Kustom" in visual_style_choice:
-                        custom_visual_style = st.text_input("Ketik Gaya Visual Kustom:", value="", placeholder="Contoh: Stop-motion animation...", key="pipe_custom_visual_style")
-                        selected_visual_style = custom_visual_style.strip() if custom_visual_style.strip() else autopilot["visual_style"]
-                    else:
-                        selected_visual_style = visual_style_choice
+                    emotion_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "👀 Rasa Penasaran Ekstrem (Curiosity Gap - Wajib Nonton Sampai Akhir)",
+                        "😱 FOMO & Ketakutan Rugi (Takut Ketinggalan / Rugi Kalau Gak Tahu)",
+                        "🤯 Mind-Blown / Kaget (Membongkar Rahasia yang Tidak Disangka)",
+                        "😌 Lega & Tenang (Mendapatkan Solusi Instan Atas Masalah Berat)",
+                        "💪 Semangat & Termotivasi (Dorongan Aksi Cepat Tanpa Nanti)",
+                        "✏️ Kustom (Ketik Emosi Sendiri)"
+                    ]
 
-                    environment_choice = st.selectbox("🏞️ Setting Lokasi / Environment:", env_options, index=0, key="pipe_env_select")
-                    if environment_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_env = autopilot["environment"]
-                    elif "Kustom" in environment_choice:
-                        custom_env = st.text_input("Ketik Setting Lokasi Kustom:", value="", placeholder="Contoh: Kafe outdoor...", key="pipe_custom_env")
-                        selected_env = custom_env.strip() if custom_env.strip() else autopilot["environment"]
-                    else:
-                        selected_env = environment_choice
+                    vis_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "🎥 Realistis Sinematik / Live Action (Talent Manusia / UGC 4K)",
+                        "🤖 3D Animation (Gaya Pixar / Disney / Unreal Engine 5 Render)",
+                        "🎌 Anime / Manga Estetik (Gaya Studio Ghibli / Makoto Shinkai)",
+                        "🎨 2D Motion Graphics & Flat Vector (Gaya Vox / Kurzgesagt)",
+                        "📸 Vintage Retro 35mm Analog Film (Nostalgia 90s / Kodak Film Grain)",
+                        "🔮 Cyberpunk Neon & Sci-Fi Futuristik (Blade Runner / High Tech)",
+                        "✏️ Kustom (Ketik Gaya Visual Sendiri)"
+                    ]
 
-                    color_choice = st.selectbox("🎨 Color Grading & Palet Warna:", color_options, index=0, key="pipe_color_select")
-                    if color_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_color = autopilot["color_grading"]
-                    elif "Kustom" in color_choice:
-                        custom_color = st.text_input("Ketik Palet Warna Kustom:", value="", placeholder="Contoh: Monokrom kontras tinggi...", key="pipe_custom_color")
-                        selected_color = custom_color.strip() if custom_color.strip() else autopilot["color_grading"]
-                    else:
-                        selected_color = color_choice
+                    env_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "Dapur Rumah Minimalis Bersih & Estetik (Natural Morning Light & Marmer Putih)",
+                        "Vanity Mirror Kamar Mandi Marmer Putih Bersih (Clean Bright Ring Light)",
+                        "Meja Rias Vanity Estetik dengan Cermin LED & Rak Kosmetik Rapi",
+                        "Walk-in Closet Estetik / Kamar Tidur Modern dengan Full-Length Mirror",
+                        "Garasi Modern Bersih dengan Tool Rack Rapi & Pencahayaan Neon Cool White",
+                        "Gym Modern / Ruang Latihan Fitness dengan Mirror Wall & Dumbbell Rack",
+                        "Desk Setup Gadget & Ambient Neon Light (Tech Minimalist Dark)",
+                        "Smart Workspace Modern / Meja Kerja Rapi dengan Laptop & Tanaman Indoor",
+                        "Coffee Shop Estetik / Espresso Bar Modern (Warm Bokeh Background)",
+                        "Kantor Korporat Modern / Meja Kerja Rapi Profesional",
+                        "Ruang Bermain Anak Ceria & Ruang Keluarga Hangat Bersih",
+                        "Ruang Santai Kasual / Living Room Estetik (Natural Daylight)",
+                        "Taman Rumah Minimalis / Balkon Urban Farming Hijau",
+                        "Outdoor Dinamis / Suasana Urban Kota Modern Sinematik",
+                        "Dark Gaming Room dengan Ambient RGB Neon & Gaming Chair Setup",
+                        "Studio Kerja Minimalis Modern (Warm Wood & Soft Amber Lighting)",
+                        "Dark Studio Sinematik (Latar Hitam & Rim Light Kuat)",
+                        "✏️ Kustom (Ketik Setting Lokasi Sendiri)"
+                    ]
 
-                    voice_choice = st.selectbox("🗣️ Voice Style & Karakter Vokal:", voice_options, index=0, key="pipe_voice_select")
-                    if voice_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
-                        selected_voice = autopilot["voice_style"]
-                    elif "Kustom" in voice_choice:
-                        custom_voice = st.text_input("Ketik Gaya Vokal Kustom:", value="", placeholder="Contoh: Suara bariton...", key="pipe_custom_voice")
-                        selected_voice = custom_voice.strip() if custom_voice.strip() else autopilot["voice_style"]
-                    else:
-                        selected_voice = voice_choice
+                    color_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "Moody Teal & Warm Orange Sinematik (Hollywood Blockbuster Look)",
+                        "Clean High-Key SaaS & Tech (Bright Natural, Cool Blue Accent)",
+                        "Dark Documentary (High Contrast, Deep Shadow, Desaturated Tone)",
+                        "Pastel Dreamy Aesthetic (Soft Glow, Warm Highlights, Airy Feel)",
+                        "Vibrant Pop Energetic (Saturasi Tinggi, TikTok Trend Vibe)",
+                        "✏️ Kustom (Ketik Palet Warna Sendiri)"
+                    ]
+
+                    voice_options = [
+                        "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
+                        "Santai & Empatik (Bestie Vibe, Akrab, Mengalir Luwes)",
+                        "Tegas & Berwibawa (Otoritas Tinggi, Meyakinkan, No-BS Expert)",
+                        "Misterius & Berbisik Cepat (Curiosity Gap, Konspiratif Rahasia)",
+                        "Punchy, Hype & Berenergi Tinggi (Pemicu Adrenalin, Semangat Membara)",
+                        "Storyteller Hangat & Reflektif (Penuh Emosi & Sentuhan Personal)",
+                        "✏️ Kustom (Ketik Gaya Vokal Sendiri)"
+                    ]
+
+                    col_dna1, col_dna2 = st.columns(2)
+                    with col_dna1:
+                        theme_choice = st.selectbox("💡 Pilar Tema Konten:", theme_options, index=0, key="pipe_theme_select")
+                        if theme_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_theme = autopilot["theme"]
+                        elif "Kustom" in theme_choice:
+                            custom_theme = st.text_input("Ketik Pilar Tema Kustom:", value="", placeholder="Contoh: Analisis tren masa depan...", key="pipe_custom_theme")
+                            selected_theme = custom_theme.strip() if custom_theme.strip() else autopilot["theme"]
+                        else:
+                            selected_theme = theme_choice
+
+                        target_audience_input = st.text_input(
+                            "👥 Target Audiens Spesifik & Usia:",
+                            value="",
+                            placeholder=f"Kosongkan untuk ikuti Auto-Pilot: ({autopilot['audience'][:45]}...)",
+                            key="pipe_aud_target_input"
+                        )
+                        selected_audience = target_audience_input.strip() if target_audience_input.strip() else autopilot["audience"]
+
+                        slang_choice = st.selectbox("🗣️ Gaya Sapaan & Diksi Bahasa Audiens:", slang_options, index=0, key="pipe_slang_select")
+                        if slang_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_slang = autopilot["slang"]
+                        elif "Kustom" in slang_choice:
+                            custom_slang = st.text_input("Ketik Gaya Sapaan Kustom:", value="", placeholder="Contoh: Sapaan 'Bapak/Ibu'...", key="pipe_custom_slang")
+                            selected_slang = custom_slang.strip() if custom_slang.strip() else autopilot["slang"]
+                        else:
+                            selected_slang = slang_choice
+
+                        emotion_choice = st.selectbox("⚡ Trigger Emosi Dominan:", emotion_options, index=0, key="pipe_emotion_select")
+                        if emotion_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_emotion = autopilot["emotion"]
+                        elif "Kustom" in emotion_choice:
+                            custom_emotion = st.text_input("Ketik Trigger Emosi:", value="", placeholder="Contoh: Rasa tertantang...", key="pipe_custom_emotion")
+                            selected_emotion = custom_emotion.strip() if custom_emotion.strip() else autopilot["emotion"]
+                        else:
+                            selected_emotion = emotion_choice
+
+                    with col_dna2:
+                        visual_style_choice = st.selectbox("🎭 Tipe Konten Visual:", vis_options, index=0, key="pipe_visual_style_select")
+                        if visual_style_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_visual_style = autopilot["visual_style"]
+                        elif "Kustom" in visual_style_choice:
+                            custom_visual_style = st.text_input("Ketik Gaya Visual Kustom:", value="", placeholder="Contoh: Stop-motion animation...", key="pipe_custom_visual_style")
+                            selected_visual_style = custom_visual_style.strip() if custom_visual_style.strip() else autopilot["visual_style"]
+                        else:
+                            selected_visual_style = visual_style_choice
+
+                        environment_choice = st.selectbox("🏞️ Setting Lokasi / Environment:", env_options, index=0, key="pipe_env_select")
+                        if environment_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_env = autopilot["environment"]
+                        elif "Kustom" in environment_choice:
+                            custom_env = st.text_input("Ketik Setting Lokasi Kustom:", value="", placeholder="Contoh: Kafe outdoor...", key="pipe_custom_env")
+                            selected_env = custom_env.strip() if custom_env.strip() else autopilot["environment"]
+                        else:
+                            selected_env = environment_choice
+
+                        color_choice = st.selectbox("🎨 Color Grading & Palet Warna:", color_options, index=0, key="pipe_color_select")
+                        if color_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_color = autopilot["color_grading"]
+                        elif "Kustom" in color_choice:
+                            custom_color = st.text_input("Ketik Palet Warna Kustom:", value="", placeholder="Contoh: Monokrom kontras tinggi...", key="pipe_custom_color")
+                            selected_color = custom_color.strip() if custom_color.strip() else autopilot["color_grading"]
+                        else:
+                            selected_color = color_choice
+
+                        voice_choice = st.selectbox("🗣️ Voice Style & Karakter Vokal:", voice_options, index=0, key="pipe_voice_select")
+                        if voice_choice == "-- ⚡ Ikuti Rekomendasi Auto-Pilot --":
+                            selected_voice = autopilot["voice_style"]
+                        elif "Kustom" in voice_choice:
+                            custom_voice = st.text_input("Ketik Gaya Vokal Kustom:", value="", placeholder="Contoh: Suara bariton...", key="pipe_custom_voice")
+                            selected_voice = custom_voice.strip() if custom_voice.strip() else autopilot["voice_style"]
+                        else:
+                            selected_voice = voice_choice
 
             btn_run_step3 = st.button("🎬 1-Klik Hasilkan Papan Cerita & Storyboard (Auto-Pilot & Disiplin <= 15s)", type="primary", use_container_width=True)
 
@@ -815,9 +862,11 @@ def render_fast_track_pipeline(ai_client):
                     st.warning("⚠️ Hook pembuka masih kosong. Silakan kembali ke Tahap 2 untuk memilih hook terlebih dahulu.")
                 elif not story_topic_final.strip():
                     st.warning("⚠️ Mohon isi Topik Konten terlebih dahulu.")
-                elif not cta_target.strip():
-                    st.warning("⚠️ Mohon isi Aksi Akhir / CTA video Anda.")
                 else:
+                    # Zero-Blocking CTA: gunakan teks user jika ada, atau fallback otomatis ke preset terbaik format
+                    final_cta = cta_target.strip() if cta_target.strip() else curr_cta_presets[0][1]
+                    st.session_state["pipe_cta_target"] = final_cta
+
                     with st.spinner("🎥 Menyusun pergerakan kamera, kunci konsistensi gaya, dialog audio berjiwa persona, dan micro-scenes (maks 15 detik & maks 25 kata)..."):
                         if "30 - 45" in target_dur:
                             scene_req_text = "TARGET JUMLAH SCENE: TEPAT 3 - 4 SCENE (Total durasi 30-45 detik, ringkas & to-the-point)."
@@ -872,7 +921,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                         prompt = STORYBOARD_TABLE_PROMPT.format(
                             hook=current_pipe_hook,
                             topic=f"{story_topic_final} (Pilihan Durasi: {target_dur})",
-                            goal=cta_target,
+                            goal=final_cta,
                             content_format=selected_format,
                             director_instructions=director_instructions,
                             visual_style=selected_visual_style,
@@ -1217,6 +1266,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                                 "voice_style": master_anchor.get("voice_profile_anchor") or selected_voice,
                                 "dialogue_word_count": approx_words,
                                 "est_duration_sec": est_sec,
+                                "cta_goal": st.session_state.get("pipe_cta_target", ""),
                                 "status": "🎙️ Siap Syuting"
                             })
                         st.session_state["pipeline_step"] = 4

@@ -329,6 +329,16 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
    - ⚡ TUJUAN UTAMA SCENE 2: Membuat tensi rasa penasaran memuncak (Tension Spike), sehingga penonton merasa WAJIB bertahan menonton sampai detik ke-15 saat solusi mekanisme pertama kali diungkap di Scene 3!
 
 8. HUKUM FORMAT & MODEL EKSEKUSI KONTEN (6 FORMAT KREATIF & MULTI-CHARACTER STAGING):
+   🚨 HUKUM MUTLAK ANTI-KONTEN SAMPAH (FORMAT IS THE VEHICLE, SUBSTANCE IS THE FUEL):
+   - Format kreatif (Skit komedi, micro-drama, faceless, debat, dsb) HANYALAH BUNGKUS / KENDARAAN PENYAMPAIAN (Delivery Vehicle).
+   - DILARANG KERAS mereduksi isi konten menjadi sekadar lelucon garing tanpa solusi, drama cengeng tanpa bukti, atau video B-roll estetik kosong tanpa daging!
+   - APAPUN FORMAT YANG DIPILIH, SELURUH DIALOG & ADEGAN TETAP 100% WAJIB MEMATUHI 5 PILAR OTORITAS (Aturan 5):
+     1. Wajib menyertakan Angka Metrik Terukur (persentase %, durasi waktu riil yang dipangkas, derajat suhu/kadar/torsi/takaran presisi).
+     2. Wajib membongkar Kausalitas Mekanisme ('The Mechanism' / Mengapa solusi bekerja secara ilmiah/teknis).
+     3. Wajib menyebutkan Nama Entitas/Tools/Bahan Spesifik (Zero Generic Fluff).
+     4. Wajib B-Roll yang Menampilkan Bukti Fisik Nyata (alat ukur, layar dashboard analitik, makro uji coba).
+     5. Free Actionable Value-Bomb sebelum closing.
+
    Sesuaikan gaya naskah dialog, staging kamera, dan pembagian peran dengan format yang dipilih ([FORMAT & MODEL EKSEKUSI KONTEN]: {content_format}):
    1. 🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP):
       - Kreator berbicara mengunci tatapan mata langsung ke lensa kamera dengan mikro-ekspresi tajam dan gestur meyakinkan.
