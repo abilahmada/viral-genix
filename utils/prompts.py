@@ -199,7 +199,8 @@ class SafeFormatString(str):
             "content_theme": "Edukasi Solutif & Praktis",
             "target_audience": "Audiens target digital native",
             "audience_tone_slang": "Santai & Akrab",
-            "emotional_trigger": "Rasa Penasaran Tinggi & Validasi Solusi"
+            "emotional_trigger": "Rasa Penasaran Tinggi & Validasi Solusi",
+            "content_format": "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
         }
         for k, v in defaults.items():
             if k not in kwargs:
@@ -217,6 +218,9 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
 
 [TARGET CTA / TUJUAN]:
 {goal}
+
+[FORMAT & MODEL EKSEKUSI KONTEN]:
+{content_format}
 
 [PENGARAHAN SUTRADARA & DNA PRODUKSI]:
 {director_instructions}
@@ -324,22 +328,51 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
      3. [Akibat Fatal & Angka Kerugian - The Cost of Inaction]: Perjelas kerugian nyata jika masalah ini dibiarkan (misal: 'waktu kebuang 2 jam tiap hari', 'bikin boncos 42%', 'skin barrier malah rusak meradang menahun').
    - ⚡ TUJUAN UTAMA SCENE 2: Membuat tensi rasa penasaran memuncak (Tension Spike), sehingga penonton merasa WAJIB bertahan menonton sampai detik ke-15 saat solusi mekanisme pertama kali diungkap di Scene 3!
 
+8. HUKUM FORMAT & MODEL EKSEKUSI KONTEN (6 FORMAT KREATIF & MULTI-CHARACTER STAGING):
+   Sesuaikan gaya naskah dialog, staging kamera, dan pembagian peran dengan format yang dipilih ([FORMAT & MODEL EKSEKUSI KONTEN]: {content_format}):
+   1. 🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP):
+      - Kreator berbicara mengunci tatapan mata langsung ke lensa kamera dengan mikro-ekspresi tajam dan gestur meyakinkan.
+      - Tag pembicara pada setiap scene: `[Kreator]: "..."`
+      - Visual: Medium close-up, push-in, shallow depth of field, dan cutaway B-roll dinamis.
+   2. 🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang):
+      - Menghadirkan 2 karakter dengan sifat bertolak belakang (misal: `[Si Boros]` vs `[Si Cermat]`, `[User Pemula]` vs `[AI Pro]`, `[Karyawan]` vs `[Bos]`).
+      - WAJIB berikan tag nama karakter di setiap baris dialog: `[Nama Karakter]: "..."`.
+      - Visual: Sudut kamera berganti antar scene (Shot-reverse-shot, over-the-shoulder, deadpan reaction) untuk menciptakan ilusi 2 orang berinteraksi dengan timing humor yang renyah.
+   3. 🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata):
+      - Alur 3 babak dramatis: Krisis/titik terendah -> pergulatan & pencarian solusi -> plot twist/titik balik emosional yang menyentuh.
+      - Tag pembicara: `[Tokoh Cerita]: "..."` atau dialog percakapan antar tokoh.
+      - Visual: Pencahayaan moody sinematik, low-key, visual micro-expressions (tatapan kalut, tetes keringat, helaan nafas), pacing editing dramatis.
+   4. 🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR):
+      - 100% FACELESS: DILARANG MEMPERLIHATKAN WAJAH TALENT SAMA SEKALI!
+      - Seluruh naskah audio adalah narasi suara latar dengan tag: `[Voiceover]: "..."`.
+      - Visual: Top-down flat-lay, extreme macro probe lens, hands-in-action (hanya tangan beraksi estetik), tekstur bahan, ASMR tactile action, screen capture dinamis, tipografi kinetik kontras tinggi.
+      - Master Character Anchor: "Faceless Creator (Hands-in-action only, aesthetic sleeves/accessories, no face visible in frame)".
+   5. 🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif):
+      - Format adu argumen antara `[Si Skeptis]`: mewakili keraguan dan pertanyaan kritis audiens ("Ah masa cuma begini bisa berhasil? Bohong kali!") bergantian dengan `[Si Praktisi]`: membungkam keraguan dengan tenang memakai data konkret, uji lab, dan logika kausalitas ("Nih liat analitiknya, konversi naik 42%...").
+      - Tag dialog bergantian: `[Si Skeptis]: "..."` dan `[Si Praktisi]: "..."`.
+      - Visual: Split-screen visual atau cut-to-cut framing kontras (cool vs warm, gelisah vs tenang berwibawa).
+   6. 📖 Analogi Fabel / Bedah Kasus & Sejarah Unik:
+      - Membuka konsep rumit dengan cerita analogi unik, eksperimen masa lalu, atau studi kasus bersejarah yang membuka pikiran.
+      - Tag dialog: `[Storyteller]: "..."`.
+      - Visual: Footage metafora analogi, grafik perumpamaan, diagram kinetik atau rekonstruksi arsip sejarah AI.
+
 Susun output dalam 4 BAGIAN TERSTRUKTUR:
 
 ### BAGIAN 0: MASTER PRODUCTION & AUDIENCE CONSISTENCY ANCHOR (KUNCI KONSISTENSI UTUH)
+- **🎭 Format Eksekusi Konten**: {content_format}
 - **🎯 Pilar Tema Konten**: (Tentukan pilar tema yang spesifik dan tajam sesuai topik konten ini)
 - **👥 Target Audiens Persona**: (Tentukan profil audiens spesifik, rentang usia, dan pain point utama mereka)
 - **🗣️ Gaya Sapaan & Diksi**: (Tentukan gaya sapaan: Lu-Gua / Aku-Kamu / Bestie / Saya-Anda yang paling relate)
 - **⚡ Trigger Emosi Dominan**: (Tentukan pemicu psikologis utama retensi penonton)
 - **🧬 Master Visual Style Lock (English Prompt Prefix)**: (Formula prompt AI bahasa Inggris baku 9:16 vertical yang menetapkan gaya visual, kamera/lens, lighting, dan render engine)
-- **👤 Master Character / Subject Anchor**: (Spesifikasi subjek yang identik di setiap scene: usia relevan dengan target audiens, etnis, gaya rambut, pakaian spesifik atas-bawah yang tidak berubah antar scene agar karakter konsisten 100%)
+- **👤 Master Character / Subject Anchor**: (Spesifikasi subjek yang identik di setiap scene: jika Faceless tulis 'Faceless - Hands-in-action only, no face'; jika karakter tentukan usia, pakaian spesifik atas-bawah yang seragam antar scene)
 - **🏞️ Master Environment Anchor**: (Spesifikasi setting fisik lokasi yang sangat relevan, hidup dan kontekstual untuk topik ini, bukan studio generik)
 - **🎨 Master Color Grading & Lighting Anchor**: (Spesifikasi palet warna, key light, rim light, shadow contrast, dan film emulation LUT yang mendukung mood topik)
 - **🎙️ Master Voice Profile Anchor**: (Panduan karakter vokal, target tempo ~125-140 WPM, intonasi, artikulasi, dan acuan setting ElevenLabs / voice talent)
 
 ### BAGIAN 1: TABEL STORYBOARD DETIK DEMI DETIK
-Format tabel Markdown presisi (WAJIB SINKRON: Durasi 5-8 detik tiap baris dan dialog MAKSIMAL 12-16 KATA agar 100% pas dan TIDAK TERPOTONG di generator video AI Kling/Runway. Tampilkan seluruh baris dari Scene 1 hingga Scene N):
-| Detik | Visual / B-Roll Camera Direction | Skrip Audio (Word for Word - Maks 12-16 Kata Anti-Terpotong) | Aset B-Roll & SFX | Pemicu Psikologis / Pacing |
+Format tabel Markdown presisi (WAJIB SINKRON: Durasi 5-8 detik tiap baris dan dialog MAKSIMAL 12-16 KATA agar 100% pas dan TIDAK TERPOTONG di generator video AI Kling/Runway. Sertakan label pembicara seperti [Kreator], [Nama Karakter], [Voiceover], atau [Si Skeptis]/[Si Praktisi]. Tampilkan seluruh baris dari Scene 1 hingga Scene N):
+| Detik | Visual / B-Roll Camera Direction | Skrip Audio (Word for Word - Sertakan Tag Karakter/Voiceover, Maks 12-16 Kata) | Aset B-Roll & SFX | Pemicu Psikologis / Pacing |
 |---|---|---|---|---|
 
 ### BAGIAN 2: LEMBAR KERJA PRODUKSI PER SCENE (MICRO-SHOTS 4-7 DETIK & DIALOG MAKSIMAL 8-14 KATA UTUH)
@@ -354,7 +387,7 @@ Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang 
 - **🎭 Delivery & Level Energi Talent**: (Level energi suara 1-10, ekspresi wajah, tatapan mata langsung ke lensa kamera)
 - **🎯 Relevansi Audiens & Diksi**: (Alasan pemilihan kata dan emosi ini untuk menarik audiens)
 - **🎥 Visual & Kamera**: (Angle kamera, framing, pergerakan dinamis, ekspresi talent)
-- **🎙️ Dialog Audio (Word for Word)**: (Kalimat hook pembuka yang jumlah katanya sinkron persis dengan durasi: MAKSIMAL 6-12 KATA)
+- **🎙️ Dialog Audio (Word for Word)**: (Sertakan tag karakter/voiceover di awal, misal: [Kreator]: "..." atau [Voiceover]: "..." atau [Si Boros]: "...". Kalimat hook pembuka yang jumlah katanya sinkron persis dengan durasi: MAKSIMAL 6-12 KATA)
 - **🎞️ B-Roll & Aset Visual**: (Footage pendukung / visual kontekstual)
 - **🔊 SFX & Transisi**: (Sound effect spesifik dan jenis transisi editor)
 - **🎯 Catatan Editor & Pacing**: (Instruksi pemotongan jeda hening / ritme beat)

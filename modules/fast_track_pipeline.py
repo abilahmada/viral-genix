@@ -516,6 +516,62 @@ def render_fast_track_pipeline(ai_client):
                     key="pipe_cta_target"
                 )
 
+            # Hitung rekomendasi Auto-Pilot berdasarkan Niche & Topik
+            active_draft_obj = get_draft(st.session_state.get("current_pipeline_draft_id")) if st.session_state.get("current_pipeline_draft_id") else None
+            niche_source = st.session_state.get("pipe_niche", "") or (active_draft_obj.get("niche", "") if active_draft_obj else "")
+            aud_source = st.session_state.get("pipe_audience", "") or (active_draft_obj.get("target_audience", "") if active_draft_obj else "")
+
+            autopilot = get_smart_autopilot_presets(
+                niche=niche_source,
+                hook=current_pipe_hook,
+                topic=story_topic_final,
+                existing_audience=aud_source
+            )
+
+            # -------------------------------------------------------------
+            # FORMAT & MODEL EKSEKUSI KONTEN KREATIF (6 PILIHAN FORMAT)
+            # -------------------------------------------------------------
+            FORMAT_OPTIONS = [
+                "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)",
+                "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)",
+                "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)",
+                "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)",
+                "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)",
+                "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+            ]
+
+            raw_saved_fmt = active_draft_obj.get("content_format") if active_draft_obj and active_draft_obj.get("content_format") else autopilot.get("content_format", FORMAT_OPTIONS[0])
+            fmt_idx = 0
+            for f_i, f_opt in enumerate(FORMAT_OPTIONS):
+                if f_opt.split()[1].lower() in raw_saved_fmt.lower() or raw_saved_fmt.lower() in f_opt.lower():
+                    fmt_idx = f_i
+                    break
+
+            col_fmt1, col_fmt2 = st.columns([1.3, 1], gap="medium")
+            with col_fmt1:
+                selected_format = st.selectbox(
+                    "🎭 Format & Model Eksekusi Konten:",
+                    options=FORMAT_OPTIONS,
+                    index=fmt_idx,
+                    key="pipe_content_format_select",
+                    help="Pilih format penyampaian: Talking head, Skit komedi 2 orang, micro-drama emosional, video tanpa wajah (faceless ASMR), debat dialektika, atau analogi fabel."
+                )
+            with col_fmt2:
+                format_notes = {
+                    "Talking Head": "🎙️ <b>Kreator Mengunci Lensa:</b> Tatapan intens ke kamera HP, mikro-ekspresi tajam, jump-cut cepat, dan B-roll pendukung.",
+                    "Skit Komedi": "🎭 <b>POV 2 Karakter Kontras:</b> Naskah dialog dibagi otomatis per peran (misal: <code>[Si Boros]</code> vs <code>[Si Cermat]</code>) dengan sudut kamera shot-reverse-shot.",
+                    "Micro-Drama": "🎬 <b>Alur 3 Babak Emosional:</b> Struktur krisis mendalam, perjuangan, dan plot twist dramatis dengan pencahayaan moody sinematik.",
+                    "Voiceover Faceless": "🎞️ <b>100% Tanpa Wajah:</b> Menyorot aksi tangan estetik (hands-in-action), proses mekanis, dan visual B-roll ASMR tactile.",
+                    "Debat Dialektika": "🥊 <b>Adu Argumen Seru:</b> Konfrontasi <code>[Si Skeptis]</code> vs <code>[Si Praktisi]</code> yang membungkam keraguan memakai data dan logika.",
+                    "Analogi Fabel": "📖 <b>Pembedah Konsep Rumit:</b> Menjelaskan topik sulit memakai perumpamaan analogi fabel, eksperimen unik, atau studi kasus bersejarah."
+                }
+                note_text = "🎙️ Format penyampaian kreatif"
+                for fn_k, fn_v in format_notes.items():
+                    if fn_k.lower() in selected_format.lower():
+                        note_text = fn_v
+                        break
+                st.markdown(f"<div style='background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; font-size:0.8rem; color:#334155; margin-top:24px; line-height:1.4;'>{note_text}</div>", unsafe_allow_html=True)
+
             # -------------------------------------------------------------
             # LEVEL OTORITAS & DATA PENDUKUNG (ANTI-KONTEN UMUM / AI SLOP)
             # -------------------------------------------------------------
@@ -558,18 +614,6 @@ def render_fast_track_pipeline(ai_client):
             )
 
             is_pure_autopilot = ("Auto-Pilot" in director_mode)
-
-            # Hitung rekomendasi Auto-Pilot berdasarkan Niche & Topik
-            active_draft_obj = get_draft(st.session_state.get("current_pipeline_draft_id")) if st.session_state.get("current_pipeline_draft_id") else None
-            niche_source = st.session_state.get("pipe_niche", "") or (active_draft_obj.get("niche", "") if active_draft_obj else "")
-            aud_source = st.session_state.get("pipe_audience", "") or (active_draft_obj.get("target_audience", "") if active_draft_obj else "")
-
-            autopilot = get_smart_autopilot_presets(
-                niche=niche_source,
-                hook=current_pipe_hook,
-                topic=story_topic_final,
-                existing_audience=aud_source
-            )
 
             if is_pure_autopilot:
                 autopilot_banner_html = (
@@ -790,26 +834,29 @@ def render_fast_track_pipeline(ai_client):
                             director_instructions = f"""⚡ MODE SUTRADARA: AUTO-PILOT CERDAS PENUH (AI SUTRADARA DINAMIS & KONTEKSTUAL)
 PERHATIAN SUTRADARA AI:
 DILARANG menggunakan template lokasi studio yang monoton/generik jika ada setting lokasi yang jauh lebih nyata, hidup, dan relevan dengan topik ini!
+- MODEL & FORMAT EKSEKUSI KONTEN: {selected_format}
 - TOPIK KONTEN: {story_topic_final}
 - HOOK PEMBUKA: {current_pipe_hook}
 - TARGET PLATFORM: {st.session_state.get('pipe_platform', 'TikTok / Reels')}
 - NICHE INDUSTRI: {niche_source or 'Umum'}
 
 TUGAS DIREKSI SUTRADARA AI (Rancang secara mandiri dan spesifik):
-1. ENVIRONMENT / LOKASI: Ciptakan setting lokasi fisik yang PALING ASLI & KONTEKSTUAL untuk topik ini (Contoh: jika masak/resep -> Dapur rumah estetik; jika kecantikan/skincare -> Kamar mandi marmer putih bersih / vanity mirror; jika tech/coding -> Dark tech desk ambient neon; jika otomotif -> Garasi modern atau jalanan kota; jika bisnis/finansial -> Coworking space modern / meja kerja rapi; jika parenting -> Ruang keluarga hangat; jika olahraga/diet -> Gym atau ruang santai).
-2. TIPE VISUAL: Tentukan gaya visual terbaik (Realistis Sinematik 4K / UGC bernuansa otentik yang paling mengikat emosi audiens).
-3. COLOR GRADING: Palet warna dan pencahayaan sinematik yang memperkuat mood topik (Warm Golden, Clean High-Key Bright, Moody Teal & Orange, Vibrant Pop, dsb).
-4. VOICE STYLE: Karakter vokal, tempo bicara natural, dan artikulasi yang paling meyakinkan audiens.
-5. PERSONA & DIKSI AUDIENS: Sapaan (Lu-Gua / Aku-Kamu / Bestie / Saya-Anda) dan kosakata percakapan yang paling relate dengan penonton topik ini.
-6. KEDALAMAN MATERI, OTORITAS & BUKTI EMPIRIS (ANTI-KONTEN UMUM & ANTI-AI SLOP):
+1. FORMAT EKSEKUSI KONTEN: Patuhi secara ketat format '{selected_format}'. Jika Skit 2 Karakter, wajib gunakan tag dialog per peran (contoh: [Si Boros] vs [Si Cermat]) dan arahan kamera shot-reverse-shot. Jika Faceless ASMR, 100% tanpa wajah dengan tag [Voiceover] dan aksi tangan macro. Jika Debat, tampilkan duel [Si Skeptis] vs [Si Praktisi]. Jika Micro-Drama, hadirkan alur plot twist emosional.
+2. ENVIRONMENT / LOKASI: Ciptakan setting lokasi fisik yang PALING ASLI & KONTEKSTUAL untuk topik ini (Contoh: jika masak/resep -> Dapur rumah estetik; jika kecantikan/skincare -> Kamar mandi marmer putih bersih / vanity mirror; jika tech/coding -> Dark tech desk ambient neon; jika otomotif -> Garasi modern atau jalanan kota; jika bisnis/finansial -> Coworking space modern / meja kerja rapi; jika parenting -> Ruang keluarga hangat; jika olahraga/diet -> Gym atau ruang santai).
+3. TIPE VISUAL: Tentukan gaya visual terbaik (Realistis Sinematik 4K / UGC bernuansa otentik yang paling mengikat emosi audiens).
+4. COLOR GRADING: Palet warna dan pencahayaan sinematik yang memperkuat mood topik (Warm Golden, Clean High-Key Bright, Moody Teal & Orange, Vibrant Pop, dsb).
+5. VOICE STYLE: Karakter vokal, tempo bicara natural, dan artikulasi yang paling meyakinkan audiens.
+6. PERSONA & DIKSI AUDIENS: Sapaan (Lu-Gua / Aku-Kamu / Bestie / Saya-Anda) dan kosakata percakapan yang paling relate dengan penonton topik ini.
+7. KEDALAMAN MATERI, OTORITAS & BUKTI EMPIRIS (ANTI-KONTEN UMUM & ANTI-AI SLOP):
    - Level Otoritas: {authority_level}
    - {f"Data/Fakta Spesifik Pengguna: {custom_evidence.strip()}" if custom_evidence.strip() else "Data Otoritas: AI wajib menyematkan metrik terukur konkret (persentase %, durasi waktu riil yang dipangkas, angka suhu/kadar/torsi/takaran presisi), nama alat/bahan/teknik spesifik tanpa kata kabur, dan membongkar salah kaprah umum."}
    - Kausalitas 'The Mechanism': Jelaskan secara gamblang MENGAPA solusi ini bekerja secara logis/ilmiah agar penonton mendapatkan sensasi 'Aha! Moment' dari seorang Subject Matter Expert sejati.
    - B-Roll Bukti Fisik: B-roll wajib menyorot bukti nyata fisik (alat ukur, layar dashboard analitik, makro perbandingan, dsb).
-7. JUMLAH SCENE & DURASI: {scene_req_text}"""
+8. JUMLAH SCENE & DURASI: {scene_req_text}"""
                         else:
                             director_instructions = f"""⚙️ MODE SUTRADARA: KUSTOM MANUAL (PILIHAN KHUSUS PENGGUNA)
 Wajib mematuhi instruksi kustom pengguna berikut:
+- Model & Format Eksekusi Konten: {selected_format} (Patuhi pembagian dialog dan staging format ini)
 - Tipe Visual: {selected_visual_style}
 - Environment / Setting Lokasi: {selected_env}
 - Color Grading & Lighting: {selected_color}
@@ -826,6 +873,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                             hook=current_pipe_hook,
                             topic=f"{story_topic_final} (Pilihan Durasi: {target_dur})",
                             goal=cta_target,
+                            content_format=selected_format,
                             director_instructions=director_instructions,
                             visual_style=selected_visual_style,
                             environment=selected_env,
@@ -841,6 +889,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                             system_prompt=get_master_system_prompt(st.session_state.get("creator_persona", "santai"))
                         )
                         st.session_state["pipe_step3_result"] = res3
+                        st.session_state["pipe_format_val"] = selected_format
                         st.session_state["pipe_theme_val"] = selected_theme
                         st.session_state["pipe_aud_val"] = selected_audience
                         st.session_state["pipe_slang_val"] = selected_slang
@@ -885,14 +934,16 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                             )
 
                             # Tampilkan DNA Brief Persona jika ada
-                            if master_anchor.get("content_theme") or master_anchor.get("target_audience"):
+                            if master_anchor.get("content_theme") or master_anchor.get("target_audience") or master_anchor.get("content_format"):
                                 col_dna_v1, col_dna_v2 = st.columns(2)
                                 with col_dna_v1:
+                                    fmt_val = master_anchor.get("content_format") or st.session_state.get("pipe_format_val", "🎙️ Talking Head")
+                                    st.markdown(f"**🎭 Format Eksekusi:**\n> {fmt_val}")
                                     if master_anchor.get("content_theme"):
                                         st.markdown(f"**💡 Pilar Tema:**\n> {master_anchor['content_theme']}")
+                                with col_dna_v2:
                                     if master_anchor.get("target_audience"):
                                         st.markdown(f"**👥 Target Audiens:**\n> {master_anchor['target_audience']}")
-                                with col_dna_v2:
                                     if master_anchor.get("audience_tone_slang"):
                                         st.markdown(f"**🗣️ Diksi & Sapaan:**\n> {master_anchor['audience_tone_slang']}")
                                     if master_anchor.get("emotional_trigger"):
@@ -1005,6 +1056,21 @@ Wajib mematuhi instruksi kustom pengguna berikut:
 
                             # Badges detail produksi, sutradara & persona (Rendered as clean HTML pills)
                             badge_items = []
+
+                            # Badge Pembicara / Karakter jika ada
+                            spk_tag = sc.get("speaker_tag", "")
+                            if spk_tag:
+                                spk_l = spk_tag.lower()
+                                if any(w in spk_l for w in ["skeptis", "boros", "korban", "pembeli"]):
+                                    spk_bg, spk_color, spk_border = "#fef3c7", "#92400e", "#fde68a"
+                                elif any(w in spk_l for w in ["voiceover", "narator", "audio"]):
+                                    spk_bg, spk_color, spk_border = "#e0e7ff", "#3730a3", "#c7d2fe"
+                                elif any(w in spk_l for w in ["praktisi", "ahli", "solusi", "cermat", "penjual"]):
+                                    spk_bg, spk_color, spk_border = "#ecfdf5", "#065f46", "#a7f3d0"
+                                else:
+                                    spk_bg, spk_color, spk_border = "#fdf4ff", "#86198f", "#f0abfc"
+                                badge_items.append(f'<span style="background:{spk_bg}; padding:2px 8px; border-radius:4px; color:{spk_color}; border:1px solid {spk_border}; font-weight:700;">🗣️ {spk_tag}</span>')
+
                             v_style = sc.get('visual_style') or master_anchor.get('visual_style_lock') or 'Live Action Sinematik'
                             v_env = sc.get('environment') or master_anchor.get('environment_anchor') or 'Setting Lokasi Kontekstual'
                             v_color = sc.get('color_grading') or master_anchor.get('color_grading_anchor') or 'Moody Cinematic'
@@ -1027,6 +1093,8 @@ Wajib mematuhi instruksi kustom pengguna berikut:
 
                             col_d1, col_d2 = st.columns([1.2, 1])
                             with col_d1:
+                                if sc.get("speaker_tag"):
+                                    st.markdown(f"**🗣️ Karakter / Suara:** <span style='background:{spk_bg}; padding:2px 8px; border-radius:4px; color:{spk_color}; font-weight:700; font-size:0.85rem;'>{sc['speaker_tag']}</span>", unsafe_allow_html=True)
                                 st.markdown("**🎙️ Dialog Audio (Kata per Kata):**")
                                 st.markdown(f"> *\"{sc['audio']}\"*")
                                 if sc.get("acting_delivery"):
@@ -1139,6 +1207,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                         if st.session_state.get("current_pipeline_draft_id"):
                             update_draft(st.session_state["current_pipeline_draft_id"], {
                                 "storyboard_table_md": st.session_state["pipe_step3_result"],
+                                "content_format": master_anchor.get("content_format") or st.session_state.get("pipe_format_val", selected_format),
                                 "content_theme": master_anchor.get("content_theme") or st.session_state.get("pipe_theme_val", selected_theme),
                                 "target_audience": master_anchor.get("target_audience") or st.session_state.get("pipe_aud_val", selected_audience),
                                 "audience_slang": master_anchor.get("audience_tone_slang") or st.session_state.get("pipe_slang_val", selected_slang),

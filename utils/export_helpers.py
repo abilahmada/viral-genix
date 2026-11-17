@@ -189,6 +189,7 @@ def parse_master_consistency_anchor(storyboard_text: str) -> dict:
         return {}
 
     anchor = {
+        "content_format": "",
         "content_theme": "",
         "target_audience": "",
         "audience_tone_slang": "",
@@ -207,6 +208,11 @@ def parse_master_consistency_anchor(storyboard_text: str) -> dict:
                 return m.group(1).strip().strip('*').strip('_').strip('"')
         return ""
 
+    anchor["content_format"] = _get_val([
+        r'[\*\-]\s*(?:\🎭\s*)?Format\s*(?:Eksekusi\s*)?Konten[^\:]*:\s*([^\n]+)',
+        r'Format\s*(?:Eksekusi\s*)?Konten[^\:]*:\s*([^\n]+)',
+        r'Model\s*Eksekusi[^\:]*:\s*([^\n]+)'
+    ])
     anchor["content_theme"] = _get_val([
         r'[\*\-]\s*(?:\🎯\s*)?Pilar\s*Tema\s*Konten[^\:]*:\s*([^\n]+)',
         r'Tema\s*Konten[^\:]*:\s*([^\n]+)'
@@ -735,7 +741,22 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
             ])
 
             clean_audio_txt = audio_val or "(Baca naskah dialog)"
-            words_in_scene = len(clean_audio_txt.split())
+
+            # Ekstraksi Speaker Tag & Spoken Text (Multi-Character / Faceless / Skit Support)
+            speaker_tag = ""
+            spoken_text = clean_audio_txt
+            spk_bracket_m = re.match(r'^\s*\[([^\]]+)\]\s*:\s*(.*)', clean_audio_txt, re.DOTALL)
+            if spk_bracket_m:
+                speaker_tag = spk_bracket_m.group(1).strip()
+                spoken_text = spk_bracket_m.group(2).strip().strip('"').strip("'").strip()
+            else:
+                spk_colon_m = re.match(r'^(Kreator|Voiceover|Si Skeptis|Si Praktisi|Talent|Karakter \w+|Tokoh \w+)\s*:\s*(.*)', clean_audio_txt, re.DOTALL | re.IGNORECASE)
+                if spk_colon_m:
+                    speaker_tag = spk_colon_m.group(1).strip()
+                    spoken_text = spk_colon_m.group(2).strip().strip('"').strip("'").strip()
+
+            spoken_clean = spoken_text if spoken_text else clean_audio_txt
+            words_in_scene = len(spoken_clean.split())
             est_audio_dur = max(2, round(words_in_scene / 1.9))
             ideal_scene_dur = max(3, min(15, round(words_in_scene / 1.85) + (1 if words_in_scene > 5 else 0)))
             diff = est_audio_dur - duration_sec
@@ -867,6 +888,8 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                 "audience_relevance": relevance_val or "Relatable dengan masalah sehari-hari audiens",
                 "visual": vis_val or "Kreator di depan kamera, tatapan fokus ke lensa",
                 "audio": clean_audio_txt,
+                "speaker_tag": speaker_tag,
+                "spoken_text": spoken_clean,
                 "b_roll": broll_val or "Footage pendukung / B-Roll kontekstual",
                 "sfx_transition": sfx_val or "SFX: Whoosh / Glitch | Transisi: Jump Cut",
                 "notes": note_val or "Pertahankan pacing cepat dan retensi tinggi",
@@ -918,7 +941,20 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                 dur_sec = extract_duration_seconds(sec_val, "")
 
                 clean_audio_txt = aud_val or ""
-                words_in_scene = len(clean_audio_txt.split())
+                speaker_tag_tbl = ""
+                spoken_text_tbl = clean_audio_txt
+                spk_m_t = re.match(r'^\s*\[([^\]]+)\]\s*:\s*(.*)', clean_audio_txt, re.DOTALL)
+                if spk_m_t:
+                    speaker_tag_tbl = spk_m_t.group(1).strip()
+                    spoken_text_tbl = spk_m_t.group(2).strip().strip('"').strip("'").strip()
+                else:
+                    spk_m_t2 = re.match(r'^(Kreator|Voiceover|Si Skeptis|Si Praktisi|Talent|Karakter \w+|Tokoh \w+)\s*:\s*(.*)', clean_audio_txt, re.DOTALL | re.IGNORECASE)
+                    if spk_m_t2:
+                        speaker_tag_tbl = spk_m_t2.group(1).strip()
+                        spoken_text_tbl = spk_m_t2.group(2).strip().strip('"').strip("'").strip()
+
+                spoken_tbl_clean = spoken_text_tbl if spoken_text_tbl else clean_audio_txt
+                words_in_scene = len(spoken_tbl_clean.split())
                 est_audio_dur = max(2, round(words_in_scene / 1.9))
                 ideal_scene_dur = max(3, min(15, round(words_in_scene / 1.85) + (1 if words_in_scene > 5 else 0)))
                 diff = est_audio_dur - dur_sec
@@ -1005,6 +1041,8 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                     "voice_style": master_voice or "Santai & Percaya Diri",
                     "visual": vis_val,
                     "audio": aud_val,
+                    "speaker_tag": speaker_tag_tbl,
+                    "spoken_text": spoken_tbl_clean,
                     "b_roll": "B-Roll kontekstual / Footage pendukung",
                     "sfx_transition": default_sfx[t_idx],
                     "notes": note_val,
@@ -1025,6 +1063,8 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
         est_d = s.get('est_audio_dur', round(w_cnt / 1.9))
         safe_str = s.get('clip_status_text', '✅ Aman AI Video <= 15s')
         sync_str = s.get('sync_badge', safe_str)
+        spk_tag = s.get('speaker_tag', '')
+        spk_line = f"[{spk_tag}] " if spk_tag and not s.get('audio', '').startswith('[') else ""
         s["copy_text"] = (
             f"🎬 SCENE {s['scene_num']}: {s['title']} [{s['timing']}]\n"
             f"• ⏱️ Durasi Klip: {s['timing']} ({w_cnt} kata | vokal ~{est_d}s)\n"
@@ -1036,7 +1076,7 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
             f"{rel_line}"
             f"{cine_line}"
             f"• 🎥 Visual & Kamera: {s['visual']}\n"
-            f"• 🎙️ Dialog Audio (Word for Word): \"{s['audio']}\"\n"
+            f"• 🎙️ Dialog Audio (Word for Word): {spk_line}\"{s.get('spoken_text', s['audio'])}\"\n"
             f"• 🎞️ B-Roll / Aset: {s['b_roll']}\n"
             f"• 🔊 SFX & Transisi: {s['sfx_transition']}\n"
             f"• 🎯 Catatan Editor: {s['notes']}\n"
@@ -1750,6 +1790,7 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
     combined = f"{niche_lower} {topic_lower} {hook_lower}"
 
     # Default preset (Creative Workspace Nyata & Segar, Bukan Studio Kosong)
+    content_format = "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
     theme = "💡 Edukasi Solutif & Hack Cepat (Value-Bomb)"
     slang = "🔥 Lu - Gua / Bro - Sis (Santai, Gaul, Akrab Gen Z/Millennial)"
     emotion = "👀 Rasa Penasaran Ekstrem (Curiosity Gap - Wajib Nonton Sampai Akhir)"
@@ -1999,7 +2040,20 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         color = "Moody Warm Intellectual (Soft Amber Light, Film Grain Texture)"
         voice = "Tegas, tenang, berwibawa tapi akrab, tempo teratur 126 WPM"
 
+    # Deteksi Format Khusus dari Niche / Kata Kunci
+    if any(k in combined for k in ["faceless", "tanpa wajah", "tanpa muka", "b-roll asmr", "asmr"]):
+        content_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
+    elif any(k in combined for k in ["skit", "parodi", "komedi", "lucu", "2 orang", "dua orang", "roleplay"]):
+        content_format = "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)"
+    elif any(k in combined for k in ["debat", "dialektika", "skeptis", "bantah mitos"]):
+        content_format = "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)"
+    elif any(k in combined for k in ["micro-drama", "drama", "kisah nyata", "plot twist", "haru"]):
+        content_format = "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)"
+    elif any(k in combined for k in ["fabel", "analogi", "sejarah", "bedah kasus", "asal usul"]):
+        content_format = "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+
     return {
+        "content_format": content_format,
         "theme": theme,
         "audience": aud,
         "slang": slang,
@@ -2014,14 +2068,69 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
 def get_contextual_pro_cinematography(niche_or_topic: str = "", scene_num: int = 1, scene_type: str = "") -> dict:
     """
     Menghasilkan direktif sinematografi sutradara profesional dan style editing komersial
-    secara 100% kontekstual dan otomatis sesuai niche dan urutan scene.
+    secara 100% kontekstual dan otomatis sesuai niche, urutan scene, dan format eksekusi konten.
     Mendukung generator video AI kelas atas: Kling AI, Runway Gen-3 Alpha, Luma Dream Machine, Sora, dan Midjourney v6.
     """
     text_lower = (niche_or_topic or "").lower()
     s_idx = max(1, scene_num)
 
+    # 0. DETEKSI FORMAT KREATIF KHUSUS (SKIT, FACELESS, DEBAT, DRAMA)
+    if any(k in text_lower for k in ["faceless", "tanpa wajah", "tanpa muka", "b-roll asmr"]):
+        if s_idx == 1:
+            cam = "Top-down 90-degree flat-lay dynamic push-in on hands setting up props, zero talent face in frame"
+        elif s_idx in [2, 4]:
+            cam = "Extreme macro probe lens gliding 5mm above tactile textures and hands-in-action, aesthetic rings and cuffs"
+        elif s_idx == 3:
+            cam = "Low 45-degree angle gliding tracking shot across workspace focusing on product demonstration, face cropped out"
+        else:
+            cam = "Aesthetic eye-level table-top tracking shot with hands revealing final result, clean minimalist depth"
+        lens = "Shot on 50mm Macro Prime f/2.0, razor-sharp tactile texture depth, circular creamy optical bokeh"
+        lighting = "High-key aesthetic softbox lighting, warm amber rim light separating hands and props from dark textured desk"
+        color_lut = "Moody Clean Minimalist, rich tactile contrast, soft pastel highlights and filmic depth"
+        physics = "Crisp physical tactile motion, ultra-detailed textures, zero human face visible, fluid 24fps film motion cadence"
+        editing = "Rhythmic tactile ASMR cuts synced with prop placement sounds and mechanical clicks, fast retention cadence"
+        badge = "🎞️ Faceless Macro 50mm | 90° Top-Down & Hands-in-Action ASMR"
+
+    elif any(k in text_lower for k in ["skit", "parodi", "2 karakter", "dua karakter", "peran ganda"]):
+        if s_idx % 2 == 1:
+            cam = "Medium over-the-shoulder shot on Character A, 45-degree comedic angle, expressive exaggerated micro-reaction"
+        else:
+            cam = "Reverse-angle medium close-up punch-in on Character B, deadpan comedic timing with eyebrow raise"
+        lens = "Shot on 35mm Prime Lens f/1.8, comedic eyeline match, fast focus racking between characters"
+        lighting = "Bright three-point comedy commercial lighting, clean 5600K key light, subtle colored rim separating characters"
+        color_lut = "Vibrant Sitcom Commercial Grade, saturated pop colors, punchy contrast, crisp modern YouTube/TikTok look"
+        physics = "Dynamic comic body language, expressive facial micro-movements, authentic timing, 24fps cinema cadence"
+        editing = "Snappy whip-cuts and punchy jump-cuts on dialogue punchlines, comedic beat pauses, sound-effect accented"
+        badge = "🎭 Skit 2 Karakter | Shot-Reverse-Shot & Over-the-Shoulder 35mm"
+
+    elif any(k in text_lower for k in ["debat", "dialektika", "skeptis", "si praktisi"]):
+        if "skeptis" in text_lower or s_idx % 2 == 1:
+            cam = "Slight Dutch-tilt Dutch angle push-in on skeptic speaker, furrowed brow with cross-examination questioning posture"
+        else:
+            cam = "Steady authoritative eye-level dolly-in on expert speaker, confident smile holding up empirical proof"
+        lens = "Shot on 40mm Cine Prime f/2.0, dual-character framing balance, crisp optical clarity"
+        lighting = "Contrasting dialectic lighting: cool 6000K rim on skeptic vs warm 3500K golden key on solution expert"
+        color_lut = "Contrasting Debate Grade: desaturated cool interrogation tones vs rich golden authority tones"
+        physics = "Subtle hand gestures reinforcing arguments, animated eye contact, 24fps film cadence"
+        editing = "Fast-paced Ping-pong cutting between arguments, heartbeat riser SFX into triumphant payoff cut"
+        badge = "🥊 Debat Dialektika | Contrasting Dual Tone & Cross-Exam Push-In"
+
+    elif any(k in text_lower for k in ["micro-drama", "kisah nyata", "storytelling emosional", "plot twist"]):
+        if s_idx in [1, 2]:
+            cam = "Slow brooding 1.1x parallax dolly on character in crisis, heavy moody atmosphere, eye contact breaking"
+        elif s_idx == 3:
+            cam = "Tight emotional extreme close-up on glistening eyes, subtle dramatic camera micro-shake at turning point"
+        else:
+            cam = "Upward-tilted hopeful hero tracking shot, warm golden glow washing over face, peaceful resolution smile"
+        lens = "Shot on 35mm Anamorphic Prime f/1.4, horizontal lens flare, moody vignette with soft Pro-Mist diffusion"
+        lighting = "Chiaroscuro low-key cinematic lighting: single dramatic window key light with deep artistic shadows"
+        color_lut = "A24 Indie Drama aesthetic, moody Kodak 5207 emulation, deep melancholic shadows shifting to golden hope"
+        physics = "Realistic skin texture, visible tear/sweat glisten, deep natural breathing motion, 24fps film cadence"
+        editing = "L-cut and J-cut narrative flow, cinematic breathers on emotional peaks, heart-swelling score pacing"
+        badge = "🎬 Micro-Drama 35mm Anamorphic | Chiaroscuro Low-Key & A24 Indie Tone"
+
     # 1. KULINER, RESEP, MAKANAN & DAPUR
-    if any(k in text_lower for k in ["masak", "resep", "kuliner", "makanan", "panci", "bumbu", "dapur", "kuah", "bawang", "food", "snack", "kue"]):
+    elif any(k in text_lower for k in ["masak", "resep", "kuliner", "makanan", "panci", "bumbu", "dapur", "kuah", "bawang", "food", "snack", "kue"]):
         if s_idx == 1:
             cam = "Dynamic 1.2x whip-pan punch-in to sizzling cooking pan, eye-level perspective"
         elif s_idx in [2, 4]:
@@ -2193,7 +2302,11 @@ def build_pro_ai_video_prompt(
         return f"{clean_base} --ar 9:16 --v 6.1 --style raw"
 
     # Jika prompt masih pendek atau generik, sintesis dengan formula 6-layer sutradara pro
-    action_core = clean_base if (clean_base and len(clean_base) > 25 and not clean_base.lower().startswith("cinematic vertical 9:16 shot")) else (visual_dir or "subject looking directly into camera with intense authentic expression")
+    is_faceless = any(w in f"{niche_or_topic} {visual_dir} {clean_base}".lower() for w in ["faceless", "tanpa wajah", "tanpa muka", "b-roll asmr"])
+    default_action = "hands-in-action demonstrating with aesthetic props, no face visible in frame, high tactile texture" if is_faceless else "subject looking directly into camera with intense authentic expression"
+    action_core = clean_base if (clean_base and len(clean_base) > 25 and not clean_base.lower().startswith("cinematic vertical 9:16 shot")) else (visual_dir or default_action)
+    if is_faceless and "no face" not in action_core.lower():
+        action_core = f"{action_core}, faceless composition, hands only, no human face in frame"
     env_str = f"set in {env}" if env else "authentic detailed setting"
     color_str = f"{color}" if color else cine["color_lut"]
 

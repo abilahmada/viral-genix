@@ -222,11 +222,40 @@ def render_production_studio(ai_client):
                 if not closing_text:
                     closing_text = extract_closing_bridge(selected_draft)
 
-                # Paragraf-paragraf naskah
+                # Paragraf-paragraf naskah dengan Deteksi Tag Karakter & Voiceover
+                import re
                 paras = [p.strip() for p in clean_dialogue.split("\n\n") if p.strip()]
                 html_paras = []
                 for p in paras:
-                    if hook_text and hook_text.lower() in p.lower():
+                    # Deteksi apakah ada tag karakter di awal: [Nama Karakter]: "..." atau Nama Karakter: "..."
+                    spk_m = re.match(r'^\s*\[([^\]]+)\]\s*:\s*(.*)', p, re.DOTALL)
+                    if not spk_m:
+                        spk_m = re.match(r'^(Kreator|Voiceover|Si Skeptis|Si Praktisi|Talent|Karakter \w+|Tokoh \w+)\s*:\s*(.*)', p, re.DOTALL | re.IGNORECASE)
+
+                    if spk_m:
+                        spk_name = spk_m.group(1).strip()
+                        spk_speech = spk_m.group(2).strip().strip('"').strip()
+                        spk_l = spk_name.lower()
+                        if any(w in spk_l for w in ["skeptis", "boros", "korban", "pembeli"]):
+                            char_class = "char-amber"
+                            badge_color = "#f59e0b"
+                        elif any(w in spk_l for w in ["voiceover", "narator", "audio"]):
+                            char_class = "char-indigo"
+                            badge_color = "#818cf8"
+                        elif any(w in spk_l for w in ["praktisi", "ahli", "solusi", "cermat", "penjual"]):
+                            char_class = "char-emerald"
+                            badge_color = "#10b981"
+                        else:
+                            char_class = "char-cyan"
+                            badge_color = "#06b6d4"
+
+                        html_paras.append(
+                            f'<div class="body-para {char_class}">'
+                            f'<div class="char-pill" style="border-color:{badge_color}; color:{badge_color};">🗣️ {spk_name}</div>'
+                            f'"{spk_speech}"'
+                            f'</div>'
+                        )
+                    elif hook_text and hook_text.lower() in p.lower():
                         html_paras.append(f'<div class="hook-box"><div class="hook-label">🔥 HOOK 3 DETIK PERTAMA</div><div class="hook-text">"{p}"</div></div>')
                     elif closing_text and closing_text.lower() in p.lower():
                         html_paras.append(f'<div class="cta-box"><div class="cta-label">🎯 JEMBATAN PENUTUP & CTA</div><div class="cta-text">"{p}"</div></div>')
@@ -384,6 +413,22 @@ def render_production_studio(ai_client):
                     margin-bottom: 20px;
                     color: #f1f5f9;
                   }}
+                  .char-pill {{
+                    display: inline-block;
+                    font-size: 11px;
+                    font-weight: 800;
+                    letter-spacing: 1px;
+                    text-transform: uppercase;
+                    border: 1.5px solid;
+                    border-radius: 6px;
+                    padding: 2px 8px;
+                    margin-bottom: 6px;
+                    background: rgba(15, 23, 42, 0.7);
+                  }}
+                  .char-amber {{ border-left: 4px solid #f59e0b; padding-left: 14px; }}
+                  .char-indigo {{ border-left: 4px solid #818cf8; padding-left: 14px; }}
+                  .char-emerald {{ border-left: 4px solid #10b981; padding-left: 14px; }}
+                  .char-cyan {{ border-left: 4px solid #06b6d4; padding-left: 14px; }}
                   .cta-box {{
                     background: #064e3b;
                     border-left: 5px solid #34d399;
@@ -685,11 +730,19 @@ def _render_kanban_card(item: dict, prefix: str):
     with st.container(border=True):
         st.markdown(f"**{item.get('title', 'Draf Konten')}**")
         aud_meta = f"<div style='font-size:0.74rem; color:#475569; margin:2px 0 6px 0; background:#f8fafc; padding:3px 6px; border-radius:4px;'>👥 <b>Target:</b> {item.get('target_audience')[:38]}</div>" if item.get('target_audience') else ""
+        
+        fmt_val = item.get("content_format", "")
+        fmt_badge = ""
+        if fmt_val:
+            short_fmt = fmt_val.split("(")[0].strip()
+            fmt_badge = f"<div style='margin-bottom:4px;'><span style='font-size:0.72rem; font-weight:700; background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; padding:1px 6px; border-radius:4px;'>{short_fmt}</span></div>"
+
         st.markdown(f"""
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
             <span style="font-size:0.75rem; font-weight:700; background:{bg_c}; color:{text_c}; padding:2px 8px; border-radius:4px;">{label_c}</span>
             <span style="font-size:0.75rem; color:#64748b;">🏷️ {item.get('niche', 'Umum')}</span>
         </div>
+        {fmt_badge}
         {aud_meta}
         """, unsafe_allow_html=True)
 
@@ -717,6 +770,9 @@ def _render_kanban_card(item: dict, prefix: str):
             st.session_state["pipe_platform"] = raw_plat if raw_plat in plat_opts else "TikTok"
 
             st.session_state["pipe_audience"] = item.get("target_audience", "Penonton umum")
+            if item.get("content_format"):
+                st.session_state["pipe_content_format_select"] = item.get("content_format")
+                st.session_state["pipe_format_val"] = item.get("content_format")
             if item.get("content_theme"):
                 st.session_state["pipe_theme_select"] = item.get("content_theme")
             if item.get("audience_slang"):
