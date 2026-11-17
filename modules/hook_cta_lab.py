@@ -65,6 +65,23 @@ def render_hook_cta_lab(ai_client):
                 placeholder="Contoh: Pemula yang belum pernah jualan online / Ibu rumah tangga..."
             )
 
+            FORMAT_OPTIONS = [
+                "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)",
+                "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)",
+                "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)",
+                "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)",
+                "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)",
+                "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+            ]
+
+            lab_format = st.selectbox(
+                "🎭 Model & Format Konten:",
+                FORMAT_OPTIONS,
+                index=0,
+                key="lab_hook_format_select",
+                help="AI akan merumuskan hook dengan formula visual dan audio yang disesuaikan model konten."
+            )
+
             tone_style = st.selectbox(
                 "Gaya Emosi / Pendekatan:",
                 [
@@ -86,11 +103,12 @@ def render_hook_cta_lab(ai_client):
                 st.warning("⚠️ Mohon isi Target Audiens Spesifik terlebih dahulu.")
                 return
 
-            with st.spinner("🧠 AI sedang menyusun 10 variasi hook dengan formula visual + verbal + teks layar..."):
+            with st.spinner(f"🧠 AI sedang menyusun 10 variasi hook dengan formula visual + audio sesuai model {lab_format.split()[1]}..."):
                 prompt = HOOK_GENERATOR_PROMPT.format(
                     topic=topic_input,
                     audience=audience_target,
-                    tone=tone_style
+                    tone=tone_style,
+                    content_format=lab_format
                 )
                 hooks_res = ai_client.generate(
                     prompt=prompt,
@@ -98,6 +116,7 @@ def render_hook_cta_lab(ai_client):
                 )
                 st.session_state["hooks_result"] = hooks_res
                 st.session_state["last_hook_topic"] = topic_input
+                st.session_state["last_hook_format"] = lab_format
 
         if "hooks_result" in st.session_state:
             st.markdown("### 🎯 10 Variasi Hook Visual & Audio")
@@ -135,6 +154,9 @@ def render_hook_cta_lab(ai_client):
                     st.session_state["pipe_chosen_hook"] = chosen_from_list
                     st.session_state["pipe_topic_for_hook"] = st.session_state.get("last_hook_topic", topic_input)
                     st.session_state["pipe_story_topic"] = st.session_state.get("last_hook_topic", topic_input)
+                    hook_fmt = st.session_state.get("last_hook_format", lab_format)
+                    st.session_state["pipe_content_format_select"] = hook_fmt
+                    st.session_state["pipe_format_val"] = hook_fmt
                     st.session_state["pipeline_step"] = 3
                     st.session_state["_target_nav"] = "⚡ Generator Konten (Pipeline & Sprint)"
                     st.session_state["active_nav"] = "⚡ Generator Konten (Pipeline & Sprint)"

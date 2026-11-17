@@ -340,8 +340,48 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
 
         viral_pot = _get_field_val(
             ['Estimasi Potensi Viral', 'Potensi Viral'],
-            ['Trigger', 'Premis', 'Judul']
+            ['Trigger', 'Premis', 'Judul', 'Model Konten']
         )
+
+        recommended_format = _get_field_val(
+            ['Model Konten Terbaik', 'Model Konten Rekomendasi', 'Format Konten', 'Model Konten', 'Format Rekomendasi', 'Format Terbaik'],
+            ['Trigger Emosi', 'Premis', 'Estimasi Potensi', 'Potensi Viral', 'Judul']
+        )
+        if recommended_format:
+            rf_low = recommended_format.lower()
+            if any(k in rf_low for k in ["skit", "parodi", "komedi", "2 karakter", "dua karakter"]):
+                recommended_format = "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)"
+            elif any(k in rf_low for k in ["debat", "dialektika", "skeptis", "praktisi"]):
+                recommended_format = "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)"
+            elif any(k in rf_low for k in ["faceless", "tanpa wajah", "tanpa muka", "asmr"]):
+                recommended_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
+            elif any(k in rf_low for k in ["drama", "kisah nyata", "plot twist"]):
+                recommended_format = "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)"
+            elif any(k in rf_low for k in ["fabel", "analogi", "sejarah", "bedah kasus"]):
+                recommended_format = "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+            elif any(k in rf_low for k in ["talking head", "lensa hp", "bicara langsung"]):
+                recommended_format = "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
+        else:
+            # Smart detection dari teks blok atau nama angle
+            b_lower = block.lower()
+            if any(k in b_lower for k in ["skit", "parodi", "komedi", "2 karakter", "dua karakter"]):
+                recommended_format = "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)"
+            elif any(k in b_lower for k in ["debat", "dialektika", "skeptis", "praktisi"]):
+                recommended_format = "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)"
+            elif any(k in b_lower for k in ["faceless", "tanpa wajah", "tanpa muka", "asmr"]):
+                recommended_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
+            elif any(k in b_lower for k in ["drama", "kisah nyata", "plot twist"]):
+                recommended_format = "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)"
+            elif any(k in b_lower for k in ["fabel", "analogi", "sejarah", "bedah kasus"]):
+                recommended_format = "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+            elif "kontradiktif" in angle_name.lower():
+                recommended_format = "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)"
+            elif "rahasia" in angle_name.lower():
+                recommended_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
+            elif "realita" in angle_name.lower():
+                recommended_format = "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)"
+            else:
+                recommended_format = "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
 
         # Jika title belum ada, ambil dari deskripsi pada first_line jika ada pemisah titik dua
         if not title and ":" in first_line:
@@ -368,6 +408,7 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
             "premise": premise,
             "trigger": trigger or "Penasaran tinggi & validasi solusi",
             "viral_pot": viral_pot or "Sangat Tinggi 🔥",
+            "recommended_format": recommended_format,
             "full_concept": full_concept,
             "display_label": f"#{idx+1} [{angle_name}]: {title}"
         })
@@ -375,14 +416,14 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
     # Jika parsing menghasilkan < 2 angles, gunakan smart fallback berbasis keyword
     if len(angles) < 2 and fallback_topic:
         smart_angles = [
-            ("Angle Kontradiktif / Myth-Buster", f"Bongkar mitos terbesar tentang {fallback_topic} yang bikin banyak orang gagal", "Membongkar cara lama yang salah dan menyajikan solusi cepat berbasis data."),
-            ("Angle Rahasia Orang Dalam / Insider Secret", f"Rahasia tersembunyi {fallback_topic} yang cuma diketahui top 1%", "Mengungkap teknik rahasia dan tools spesifik tanpa modal besar."),
-            ("Angle Realita Pahit / Hard Truth", f"Fakta pahit kenapa 90% orang gagal di {fallback_topic}", "Kejujuran brutal yang membuka mata penonton agar sadar akar masalah struktural."),
-            ("Angle Hack Cepat / Low Effort High Result", f"Cara tercepat kuasai {fallback_topic} dalam hitungan hari", "Langkah taktis 1-2-3 yang langsung bisa dipraktekkan hari ini dengan hasil terukur."),
-            ("Angle Peringatan Masa Depan / Warning", f"Apa yang bakal terjadi kalau lu gak mulai {fallback_topic} sekarang", "Urgensi dan ketakutan tertinggal pergeseran tren terbaru (FOMO).")
+            ("Angle Kontradiktif / Myth-Buster", f"Bongkar mitos terbesar tentang {fallback_topic} yang bikin banyak orang gagal", "Membongkar cara lama yang salah dan menyajikan solusi cepat berbasis data.", "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)"),
+            ("Angle Rahasia Orang Dalam / Insider Secret", f"Rahasia tersembunyi {fallback_topic} yang cuma diketahui top 1%", "Mengungkap teknik rahasia dan tools spesifik tanpa modal besar.", "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"),
+            ("Angle Realita Pahit / Hard Truth", f"Fakta pahit kenapa 90% orang gagal di {fallback_topic}", "Kejujuran brutal yang membuka mata penonton agar sadar akar masalah struktural.", "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)"),
+            ("Angle Hack Cepat / Low Effort High Result", f"Cara tercepat kuasai {fallback_topic} dalam hitungan hari", "Langkah taktis 1-2-3 yang langsung bisa dipraktekkan hari ini dengan hasil terukur.", "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"),
+            ("Angle Peringatan Masa Depan / Warning", f"Apa yang bakal terjadi kalau lu gak mulai {fallback_topic} sekarang", "Urgensi dan ketakutan tertinggal pergeseran tren terbaru (FOMO).", "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik")
         ]
         angles = []
-        for idx, (ang, tit, prem) in enumerate(smart_angles):
+        for idx, (ang, tit, prem, fmt) in enumerate(smart_angles):
             angles.append({
                 "id": idx + 1,
                 "angle_name": ang,
@@ -390,6 +431,7 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
                 "premise": prem,
                 "trigger": "FOMO & Solusi Instan",
                 "viral_pot": "Sangat Tinggi 🔥",
+                "recommended_format": fmt,
                 "full_concept": f"{tit}. {prem}",
                 "display_label": f"#{idx+1} [{ang}]: {tit}"
             })

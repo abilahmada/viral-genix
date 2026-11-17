@@ -305,10 +305,16 @@ def render_fast_track_pipeline(ai_client):
                         st.session_state["pipe_custom_concept_text"] = st.session_state.get("pipe_chosen_concept", f"Bongkar rahasia: {kw_hint}")
 
                 if chosen_angle_obj:
+                    rec_fmt = chosen_angle_obj.get("recommended_format", "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)")
+                    rec_fmt_short = rec_fmt.split()[1] if len(rec_fmt.split()) > 1 else rec_fmt
                     angle_card_html = (
                         f'<div style="background:#f0f9ff; border-left:4px solid #0284c7; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#0f172a;">'
-                        f'<div style="font-weight:700; color:#0369a1; margin-bottom:4px;">💡 {chosen_angle_obj["title"]}</div>'
+                        f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">'
+                        f'<span style="font-weight:700; color:#0369a1;">💡 {chosen_angle_obj["title"]}</span>'
+                        f'<span style="background:#e0e7ff; color:#4338ca; font-weight:700; padding:2px 8px; border-radius:4px; font-size:0.75rem;">🎭 Model: {rec_fmt_short}</span>'
+                        f'</div>'
                         f'<div style="margin-bottom:4px;"><b>📖 Premis & Data Empiris:</b> {chosen_angle_obj["premise"]}</div>'
+                        f'<div style="margin-bottom:4px; font-size:0.82rem; color:#3730a3;"><b>🎭 Model Konten Rekomendasi:</b> {rec_fmt}</div>'
                         f'<div style="display:flex; gap:16px; font-size:0.8rem; color:#475569;">'
                         f'<span><b>⚡ Emosi:</b> {chosen_angle_obj["trigger"]}</span>'
                         f'<span><b>🔥 Potensi Viral:</b> {chosen_angle_obj["viral_pot"]}</span>'
@@ -333,6 +339,8 @@ def render_fast_track_pipeline(ai_client):
                         else:
                             final_niche = get_clean_niche(niche, custom_niche_input)
                             d_title = chosen_angle_obj["title"] if chosen_angle_obj else chosen_concept[:60]
+                            rec_fmt = chosen_angle_obj.get("recommended_format", "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)") if chosen_angle_obj else "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
+
                             if not st.session_state.get("current_pipeline_draft_id"):
                                 new_draft = create_draft({
                                     "title": d_title,
@@ -342,6 +350,7 @@ def render_fast_track_pipeline(ai_client):
                                     "target_audience": target_aud,
                                     "communication_style": angle_type,
                                     "content_angle": chosen_concept,
+                                    "content_format": rec_fmt,
                                     "research_notes": st.session_state["pipe_step1_result"][:1200]
                                 })
                                 st.session_state["current_pipeline_draft_id"] = new_draft["id"]
@@ -349,6 +358,7 @@ def render_fast_track_pipeline(ai_client):
                                 update_draft(st.session_state["current_pipeline_draft_id"], {
                                     "title": d_title,
                                     "content_angle": chosen_concept,
+                                    "content_format": rec_fmt,
                                     "communication_style": angle_type,
                                     "target_audience": target_aud
                                 })
@@ -359,6 +369,8 @@ def render_fast_track_pipeline(ai_client):
                             st.session_state["pipe_story_topic"] = chosen_concept
                             st.session_state["pipe_comm_style"] = angle_type
                             st.session_state["pipe_angle_type"] = angle_type
+                            st.session_state["pipe_content_format_select"] = rec_fmt
+                            st.session_state["pipe_format_val"] = rec_fmt
 
                             # Sinkronisasi Cerdas ke Tahap 2 (Pre-select Hook Tone sesuai Lensa Komunikasi)
                             if "dramatik" in angle_type.lower():
@@ -378,22 +390,53 @@ def render_fast_track_pipeline(ai_client):
         # ---------------------------------------------------------------------
         elif current_step == 2:
             st.markdown("### 🪝 Tahap 2: Racik 10 Hook Pembunuh Scroll")
-            st.caption("80% keberhasilan video ditentukan dalam 3 detik pertama. Pilih hook terbaik dari 4 pilar psikologi audiens.")
+            st.caption("80% keberhasilan video ditentukan dalam 3 detik pertama. Pilih hook terbaik dari 4 pilar psikologi audiens sesuai model konten.")
 
             st.markdown(
                 '<div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; border-radius: 8px; margin-bottom: 18px; font-size: 0.9rem; color: #1e1b4b; line-height: 1.5;">'
-                '💡 <b>Panduan Pemula:</b> <i>Hook</i> adalah kalimat pembuka di 3 detik pertama. Penonton di TikTok & Reels memutuskan swipe atau lanjut menonton dalam sekejap. Pilihlah salah satu kalimat di bawah yang paling memancing rasa penasaran Anda!'
+                '💡 <b>Panduan Pemula:</b> <i>Hook</i> adalah kalimat pembuka di 3 detik pertama. Penonton di TikTok & Reels memutuskan swipe atau lanjut menonton dalam sekejap. Hook kini secara cerdas menyesuaikan <b>Model Konten</b> Anda (misal: dialog 2 karakter untuk Skit Komedi, voiceover estetik untuk Faceless, adu argumen untuk Debat, atau tatapan intens untuk Talking Head)!'
                 '</div>',
                 unsafe_allow_html=True
             )
 
-            col1, col2 = st.columns([1.2, 1], gap="medium")
+            FORMAT_OPTIONS = [
+                "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)",
+                "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)",
+                "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)",
+                "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)",
+                "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)",
+                "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+            ]
+
+            active_draft_fmt = None
+            if st.session_state.get("current_pipeline_draft_id"):
+                active_d = get_draft(st.session_state.get("current_pipeline_draft_id"))
+                if active_d:
+                    active_draft_fmt = active_d.get("content_format")
+
+            current_fmt_session = st.session_state.get("pipe_content_format_select") or active_draft_fmt
+            if not current_fmt_session and st.session_state.get("pipe_step1_result"):
+                parsed_a = parse_content_angles(st.session_state["pipe_step1_result"])
+                if parsed_a and parsed_a[0].get("recommended_format"):
+                    current_fmt_session = parsed_a[0]["recommended_format"]
+            if not current_fmt_session:
+                current_fmt_session = FORMAT_OPTIONS[0]
+            fmt_idx = 0
+            for f_i, f_opt in enumerate(FORMAT_OPTIONS):
+                if f_opt.split()[1].lower() in str(current_fmt_session).lower() or str(current_fmt_session).lower() in f_opt.lower():
+                    fmt_idx = f_i
+                    break
+
+            if st.session_state.get("pipe_content_format_select") not in FORMAT_OPTIONS:
+                st.session_state["pipe_content_format_select"] = FORMAT_OPTIONS[fmt_idx]
+
+            col1, col2 = st.columns([1.15, 1], gap="medium")
             with col1:
                 hook_topic = st.text_area(
                     "Topik Konsep (Otomatis dari Tahap 1):",
                     value=st.session_state.get("pipe_topic_for_hook", ""),
                     placeholder="Contoh: Cara rahasia memulai affiliate TikTok Shop modal HP tanpa nunjukin muka...",
-                    height=90,
+                    height=145,
                     key="pipe_hook_topic_input"
                 )
             with col2:
@@ -403,6 +446,15 @@ def render_fast_track_pipeline(ai_client):
                     placeholder="Contoh: Pekerja kantoran 20-35 tahun / Ibu rumah tangga pemula...",
                     key="pipe_hook_aud_input"
                 )
+
+                hook_format = st.selectbox(
+                    "🎭 Model & Format Konten:",
+                    FORMAT_OPTIONS,
+                    index=fmt_idx,
+                    key="pipe_content_format_select",
+                    help="Model konten menentukan formula aksi kamera visual dan gaya dialog hook 3 detik pertama."
+                )
+
                 HOOK_TONE_OPTIONS = [
                     "Misterius & Penasaran (Curiosity Gap)",
                     "Mendesak & Takut Rugi (FOMO)",
@@ -427,11 +479,12 @@ def render_fast_track_pipeline(ai_client):
                 elif not hook_aud.strip():
                     st.warning("⚠️ Mohon isi Target Audiens terlebih dahulu.")
                 else:
-                    with st.spinner("🧠 AI sedang merumuskan 10 variasi hook dengan formula visual, teks layar, dan audio..."):
+                    with st.spinner(f"🧠 AI sedang merumuskan 10 variasi hook dengan formula visual, teks layar, dan audio sesuai model {hook_format.split()[1]}..."):
                         prompt = HOOK_GENERATOR_PROMPT.format(
                             topic=hook_topic,
                             audience=hook_aud,
-                            tone=hook_tone
+                            tone=hook_tone,
+                            content_format=hook_format
                         )
                         res2 = ai_client.generate(
                             prompt=prompt,
@@ -474,7 +527,10 @@ def render_fast_track_pipeline(ai_client):
                         f'<div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#1e1b4b;">'
                         f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">'
                         f'<span style="font-weight:700; color:#1d4ed8;">🏷️ {chosen_hook_obj["category"]}</span>'
+                        f'<div style="display:flex; gap:6px; align-items:center;">'
+                        f'<span style="background:#e0e7ff; color:#3730a3; font-weight:600; padding:2px 8px; border-radius:4px; font-size:0.75rem;">🎭 {hook_format.split()[0]} {hook_format.split()[1]}</span>'
                         f'<span style="background:#dbeafe; color:#1e40af; font-weight:700; padding:2px 8px; border-radius:4px; font-size:0.75rem;">📈 Skor Retensi: {chosen_hook_obj["score"]}</span>'
+                        f'</div>'
                         f'</div>'
                         f'<div style="margin-bottom:4px;"><b>🎥 Aksi Kamera (Visual):</b> {chosen_hook_obj["visual"]}</div>'
                         f'<div style="font-size:0.8rem; color:#475569;"><b>📝 Teks di Layar:</b> {chosen_hook_obj["screen_text"]}</div>'
@@ -505,10 +561,13 @@ def render_fast_track_pipeline(ai_client):
                             if st.session_state.get("current_pipeline_draft_id"):
                                 update_draft(st.session_state["current_pipeline_draft_id"], {
                                     "hook_verbal": chosen_hook_text,
+                                    "content_format": hook_format,
                                     "status": "📝 Skrip Selesai"
                                 })
                             st.session_state["pipe_chosen_hook"] = chosen_hook_text
                             st.session_state["pipe_story_topic"] = hook_topic
+                            st.session_state["pipe_content_format_select"] = hook_format
+                            st.session_state["pipe_format_val"] = hook_format
                             st.session_state["pipeline_step"] = 3
                             st.rerun()
 
@@ -559,12 +618,15 @@ def render_fast_track_pipeline(ai_client):
                 "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
             ]
 
-            raw_saved_fmt = active_draft_obj.get("content_format") if active_draft_obj and active_draft_obj.get("content_format") else autopilot.get("content_format", FORMAT_OPTIONS[0])
+            raw_saved_fmt = st.session_state.get("pipe_content_format_select") or (active_draft_obj.get("content_format") if active_draft_obj else "") or autopilot.get("content_format", FORMAT_OPTIONS[0])
             fmt_idx = 0
             for f_i, f_opt in enumerate(FORMAT_OPTIONS):
-                if f_opt.split()[1].lower() in raw_saved_fmt.lower() or raw_saved_fmt.lower() in f_opt.lower():
+                if f_opt.split()[1].lower() in str(raw_saved_fmt).lower() or str(raw_saved_fmt).lower() in f_opt.lower():
                     fmt_idx = f_i
                     break
+
+            if st.session_state.get("pipe_content_format_select") not in FORMAT_OPTIONS:
+                st.session_state["pipe_content_format_select"] = FORMAT_OPTIONS[fmt_idx]
 
             # -------------------------------------------------------------
             # ZONA 1: THE CREATIVE CORE (2-COLUMN BALANCED COCKPIT)
@@ -673,9 +735,11 @@ def render_fast_track_pipeline(ai_client):
             with col_c3:
                 st.button(curr_cta_presets[2][0], key="btn_cta_p3", on_click=_set_pipe_cta, args=(curr_cta_presets[2][1],), use_container_width=True)
 
+            if "pipe_cta_target" not in st.session_state:
+                st.session_state["pipe_cta_target"] = ""
+
             cta_target = st.text_input(
                 "Aksi Akhir / CTA Video (Opsional — Auto-Pilot otomatis memilih jika kosong):",
-                value=st.session_state.get("pipe_cta_target", ""),
                 placeholder=f"Contoh: {curr_cta_presets[0][1]}",
                 key="pipe_cta_target",
                 help="Bebas dikosongkan. Jika tidak diisi, AI Auto-Pilot akan otomatis meracik CTA paling pas sesuai format konten."
@@ -928,7 +992,7 @@ def render_fast_track_pipeline(ai_client):
                 else:
                     # Zero-Blocking CTA: gunakan teks user jika ada, atau fallback otomatis ke preset terbaik format
                     final_cta = cta_target.strip() if cta_target.strip() else curr_cta_presets[0][1]
-                    st.session_state["pipe_cta_target"] = final_cta
+                    st.session_state["pipe_final_cta"] = final_cta
 
                     with st.spinner("🎥 Menyusun pergerakan kamera, kunci konsistensi gaya, dialog audio berjiwa persona, dan micro-scenes (maks 15 detik & maks 25 kata)..."):
                         if "30 - 45" in target_dur:
@@ -1329,7 +1393,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                                 "voice_style": master_anchor.get("voice_profile_anchor") or selected_voice,
                                 "dialogue_word_count": approx_words,
                                 "est_duration_sec": est_sec,
-                                "cta_goal": st.session_state.get("pipe_cta_target", ""),
+                                "cta_goal": st.session_state.get("pipe_final_cta", "") or st.session_state.get("pipe_cta_target", ""),
                                 "status": "🎙️ Siap Syuting"
                             })
                         st.session_state["pipeline_step"] = 4

@@ -139,12 +139,13 @@ Sajikan 5 angle tajam yang memadukan daya tarik viral dengan KEDALAMAN MATERI, D
 
 Setiap angle WAJIB mencakup:
 - **Judul Konsep**: (Tajam, menggugah rasa penasaran, berkarakter kuat sesuai lensa komunikasi, dan menjanjikan bobot isi nyata)
+- **Model Konten Terbaik**: (Wajib pilih 1 dari 6 model: 🎙️ Talking Head Sinematik / 🎭 Skit Komedi (2 Karakter) / 🎬 Micro-Drama Emosional / 🎞️ Voiceover Faceless ASMR / 🥊 Debat Dialektika / 📖 Analogi Fabel)
 - **Trigger Emosi Utama**: (FOMO, Penasaran Logis, Keinginan Efisiensi, Kaget/Mind-Blown, Empati, dll)
 - **Premis Cerita & Data Empiris (2-3 kalimat)**: (Jelaskan akar masalah, nama metode/bahan/tools konkret yang dibahas, dan bukti/angka terukurnya)
 - **Estimasi Potensi Viral**: (Tinggi / Sangat Tinggi)
 
-### 3. Rekomendasi Format Video
-- Tipe format terbaik (Talking head dinamis, Skit komedi 2 orang, Debat dialektika, Micro-drama, atau Voiceover faceless ASMR).
+### 3. Rekomendasi Format & Eksekusi Video
+- Rekomendasi Staging Model Konten: Jelaskan mengapa sudut pandang di atas paling efektif dieksekusi dengan model terpilih (misal: Skit 2 Karakter untuk sindiran parodi, Voiceover Faceless untuk tutorial praktis, Debat untuk kontradiksi mitos).
 - Sound / Audio vibe yang cocok (Tempo BPM, mood musik, ketukan beat).
 """)
 
@@ -174,7 +175,22 @@ Untuk setiap ide, sertakan:
 - **Call-to-Action yang direkomendasikan**
 """
 
-HOOK_GENERATOR_PROMPT = """Buatkan 10 variasi Hook (kalimat pembuka 3 detik pertama) video pendek yang sangat kuat dan berdaya ledak tinggi untuk topik/produk berikut:
+class SafeHookFormatString(str):
+    """
+    Template string aman untuk HOOK_GENERATOR_PROMPT.
+    Otomatis menyisipkan default value untuk content_format jika pemanggil hanya mengoper topic, audience, tone.
+    """
+    def format(self, *args, **kwargs):
+        defaults = {
+            "content_format": "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
+        }
+        for k, v in defaults.items():
+            if k not in kwargs:
+                kwargs[k] = v
+        return super().format(*args, **kwargs)
+
+
+HOOK_GENERATOR_PROMPT = SafeHookFormatString("""Buatkan 10 variasi Hook (kalimat pembuka 3 detik pertama) video pendek yang sangat kuat dan berdaya ledak tinggi untuk topik/produk berikut:
 
 [TOPIK / BRIEF]:
 {topic}
@@ -185,8 +201,33 @@ HOOK_GENERATOR_PROMPT = """Buatkan 10 variasi Hook (kalimat pembuka 3 detik pert
 [GAYA / TONE]:
 {tone}
 
-PRINSIP HOOK BERBOBOT TINGGI (ANTI-CLICKBAIT KOSONG):
+[MODEL & FORMAT EKSEKUSI KONTEN]:
+{content_format}
+
+PRINSIP HOOK BERBOBOT TINGGI (ANTI-CLICKBAIT KOSONG & ANTI-AI SLOP):
 Hook harus memicu rasa penasaran ekstrem atau FOMO instan, namun WAJIB berakar pada masalah nyata, data konkret, atau situasi spesifik yang relevan dengan topik (bukan sekadar teriak-teriak atau janji palsu yang tidak ada hubungannya dengan isi konten).
+
+HUKUM MUTLAK ADAPTASI HOOK SESUAI MODEL & FORMAT KONTEN:
+Setiap hook WAJIB menyesuaikan tata panggung dan cara penyampaian format [{content_format}]:
+1. 🎭 JIKA SKIT KOMEDI / PARODI SITUASIONAL (2 KARAKTER):
+   - Hook Verbal WAJIB memuat dialog/interaksi 2 karakter kontras (misal: [Karakter A]: "..." vs [Karakter B]: "...").
+   - Instruksi Visual WAJIB mengarahkan staging komedi: shot-reverse-shot cepat, over-the-shoulder, atau ekspresi bengong/kaget menggelitik.
+2. 🥊 JIKA DEBAT DIALEKTIKA (SI SKEPTIS VS SI PRAKTISI):
+   - Hook Verbal WAJIB berupa konfrontasi argumen sengit: [Si Skeptis] mengejek/meragukan, langsung dipotong tegas oleh [Si Praktisi] yang menjanjikan bukti data (contoh: [Si Skeptis]: "Bohong banget, mana ada ...!" vs [Si Praktisi]: "Sini gua buktiin pake data!").
+   - Instruksi Visual: Split-screen atau whip-cut dinamis antara dua kubu yang saling berhadapan.
+3. 🎞️ JIKA VOICEOVER FACELESS SINEMATIK (ASMR & HANDS-IN-ACTION):
+   - 🚨 DILARANG KERAS MENAMPILKAN WAJAH TALENT/KREATOR!
+   - Hook Verbal WAJIB berlabel [Voiceover]: "..." dengan artikulasi renyah/menenangkan.
+   - Instruksi Visual WAJIB berupa aksi tangan estetik (hands-in-action), 90° top-down flat-lay, atau extreme macro probe lens meluncur 5mm di atas objek dengan audio ASMR tactile.
+4. 🎬 JIKA MICRO-DRAMA & STORYTELLING EMOSIONAL:
+   - Hook Verbal adalah cuplikan dialog klimaks krisis/turning point emosional di tengah adegan (in-media-res) yang menggetarkan hati.
+   - Instruksi Visual: Pencahayaan moody sinematik (chiaroscuro low-key), 35mm anamorphic, tatapan mata berkaca-kaca/dramatis memecah keheningan.
+5. 📖 JIKA ANALOGI FABEL / BEDAH KASUS & SEJARAH UNIK:
+   - Hook Verbal membuka perumpamaan fabel atau kasus sejarah aneh yang memicu 'Curiosity Gap' ekstrem.
+   - Instruksi Visual: B-roll ilustratif atau analogi visual unik yang menghentikan scroll.
+6. 🎙️ JIKA TALKING HEAD SINEMATIK:
+   - Hook Verbal: Kalimat pembuka punchy langsung menusuk masalah audiens.
+   - Instruksi Visual: Tatapan intens mengunci lensa HP, micro punch-in 1.2x, ekspresi tajam meyakinkan.
 
 Hasilkan 10 hook yang dikelompokkan ke dalam 4 pilar psikologi audiens:
 
@@ -203,12 +244,12 @@ Hasilkan 10 hook yang dikelompokkan ke dalam 4 pilar psikologi audiens:
 - Fokus pada akar keresahan mendalam yang membuat audiens merasa sangat dipahami.
 
 FORMAT SETIAP HOOK HARUS LENGKAP:
-- **Hook Verbal (Audio)**: Kalimat yang diucapkan kreator (singkat, padat, nendang).
-- **Instruksi Visual (B-Roll / Aksi)**: Gerakan tubuh, ekspresi, atau framing kamera dinamis.
+- **Hook Verbal (Audio)**: Kalimat yang diucapkan sesuai format peran (misal ada tag peran jika Skit/Debat/Voiceover, singkat, padat, nendang).
+- **Instruksi Visual (B-Roll / Aksi)**: Gerakan tubuh/tangan/kamera spesifik sesuai format [{content_format}].
 - **Teks di Layar (Text on Screen)**: Tulisan besar kontras tinggi yang dibaca dalam 1 detik.
 - **Pijakan Fakta / Nilai Materi**: Fakta empiris atau premis bernilai yang akan dibahas pada naskah selanjutnya.
 - **Skor Retensi Prediksi (1-100)**: Beserta alasan psikologisnya.
-"""
+""")
 
 # =============================================================================
 # TEMPLATE STORYBOARD & ENGINE KONSISTENSI PRODUKSI VIDEO
