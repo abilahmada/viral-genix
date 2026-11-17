@@ -207,11 +207,44 @@ def render_fast_track_pipeline(ai_client):
                     placeholder="Contoh: Pekerja kantoran 20-35 tahun / Ibu rumah tangga pemula...",
                     key="pipe_audience"
                 )
+                COMMUNICATION_STYLES = [
+                    "🔬 Otoritatif & Berbasis Riset (The Scientific Practitioner — Data Metrik & Kausalitas)",
+                    "🥊 Kritis & Kontra-Arus (The Unfiltered Challenger — Hantam Salah Kaprah Lapangan)",
+                    "🎭 Satir, Parodi & Humor Relatable (The Satirical Realist — Komedi Situasional & Ironi)",
+                    "🎬 Dramatik & High-Stakes (The Storyteller — Alur Krisis Emosional & Plot Twist)",
+                    "🤝 Empatik & Kawan Senasib (The Relatable Ally — Hangat, Solutif Tanpa Menggurui)",
+                    "⚡ Taktis & Efisiensi Ekstrem (The Actionable Hacker — Playbook Cepat & Hemat Waktu)"
+                ]
+
+                saved_comm_style = st.session_state.get("pipe_comm_style") or st.session_state.get("pipe_angle_type", "")
+                comm_idx = 0
+                for c_i, c_opt in enumerate(COMMUNICATION_STYLES):
+                    if saved_comm_style and (c_opt.split()[1].lower() in saved_comm_style.lower() or saved_comm_style.lower() in c_opt.lower()):
+                        comm_idx = c_i
+                        break
+
                 angle_type = st.selectbox(
-                    "Gaya Komunikasi:",
-                    ["Bongkar Mitos & Fakta Kontradiktif", "Rahasia Orang Dalam (Insider Trick)", "Solusi Cepat Praktis", "Realita Keras (Hard Truth)"],
-                    key="pipe_angle_type"
+                    "Gaya Komunikasi & Lensa Strategis:",
+                    options=COMMUNICATION_STYLES,
+                    index=comm_idx,
+                    key="pipe_comm_style_select",
+                    help="Pilih kacamata strategis: AI akan membedah celah kelemahan kompetitor dan merumuskan 5 sudut pandang unik menggunakan lensa persona ini."
                 )
+
+                comm_notes = {
+                    "Otoritatif": "🔬 <b>Kredibilitas Sains & Data:</b> AI membongkar celah dangkal kompetitor dengan metrik angka %, data riset, dan kausalitas logis ('The Mechanism').",
+                    "Kritis": "🥊 <b>Bongkar Salah Kaprah:</b> AI merumuskan sudut pandang yang berani mendebat mitos populer industri dan membungkam keraguan secara lugas.",
+                    "Satir": "🎭 <b>Humor & Parodi Situasional:</b> AI merancang skenario yang menertawakan kesalahan umum audiens secara relatable (cocok untuk Skit Komedi).",
+                    "Dramatik": "🎬 <b>Ketegangan & Alur Emosional:</b> AI menyusun premis yang menyoroti risiko fatal bila masalah diabaikan, berujung plot twist pencerahan.",
+                    "Empatik": "🤝 <b>Kawan Seperjuangan:</b> AI merangkul keresahan terdalam dan rasa insecure audiens dengan hangat tanpa menggurui.",
+                    "Taktis": "⚡ <b>Actionable Cheat-Sheet:</b> AI memangkas teori bertele-tele, menyusun langkah konkret yang langsung menghemat waktu audiens."
+                }
+                active_comm_note = "🔬 Lensa strategis analisis celah pasar"
+                for cn_k, cn_v in comm_notes.items():
+                    if cn_k.lower() in angle_type.lower():
+                        active_comm_note = cn_v
+                        break
+                st.markdown(f"<div style='background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px 10px; font-size:0.78rem; color:#334155; margin-bottom:12px; line-height:1.4;'>{active_comm_note}</div>", unsafe_allow_html=True)
 
             btn_run_step1 = st.button("🔍 Pindai Tren & Rumuskan 5 Sudut Pandang Unik", type="primary", use_container_width=True)
 
@@ -226,9 +259,10 @@ def render_fast_track_pipeline(ai_client):
                 else:
                     with st.spinner("🤖 AI sedang memindai pola percakapan audiens dan menyusun 5 sudut pandang unik..."):
                         prompt = TREND_RADAR_PROMPT.format(
-                            niche=f"{final_niche} (Tone: {angle_type})",
+                            niche=final_niche,
                             keyword=keyword,
-                            platform=platform
+                            platform=platform,
+                            communication_style=angle_type
                         )
                         res1 = ai_client.generate(
                             prompt=prompt,
@@ -237,6 +271,8 @@ def render_fast_track_pipeline(ai_client):
                         st.session_state["pipe_step1_result"] = res1
                         st.session_state["pipe_keyword"] = keyword
                         st.session_state["pipe_niche"] = niche
+                        st.session_state["pipe_comm_style"] = angle_type
+                        st.session_state["pipe_angle_type"] = angle_type
 
             if "pipe_step1_result" in st.session_state:
                 with st.container(border=True):
@@ -304,6 +340,7 @@ def render_fast_track_pipeline(ai_client):
                                     "keyword": st.session_state.get("pipe_keyword", keyword),
                                     "platform": platform,
                                     "target_audience": target_aud,
+                                    "communication_style": angle_type,
                                     "content_angle": chosen_concept,
                                     "research_notes": st.session_state["pipe_step1_result"][:1200]
                                 })
@@ -312,6 +349,7 @@ def render_fast_track_pipeline(ai_client):
                                 update_draft(st.session_state["current_pipeline_draft_id"], {
                                     "title": d_title,
                                     "content_angle": chosen_concept,
+                                    "communication_style": angle_type,
                                     "target_audience": target_aud
                                 })
                             
@@ -319,6 +357,19 @@ def render_fast_track_pipeline(ai_client):
                             st.session_state["pipe_topic_for_hook"] = chosen_concept
                             st.session_state["pipe_hook_topic_input"] = chosen_concept
                             st.session_state["pipe_story_topic"] = chosen_concept
+                            st.session_state["pipe_comm_style"] = angle_type
+                            st.session_state["pipe_angle_type"] = angle_type
+
+                            # Sinkronisasi Cerdas ke Tahap 2 (Pre-select Hook Tone sesuai Lensa Komunikasi)
+                            if "dramatik" in angle_type.lower():
+                                st.session_state["pipe_hook_tone_input"] = "Misterius & Penasaran (Curiosity Gap)"
+                            elif "taktis" in angle_type.lower():
+                                st.session_state["pipe_hook_tone_input"] = "Mendesak & Takut Rugi (FOMO)"
+                            elif any(k in angle_type.lower() for k in ["satir", "empatik"]):
+                                st.session_state["pipe_hook_tone_input"] = "Santai & Empatik (Bestie Vibe)"
+                            elif any(k in angle_type.lower() for k in ["kritis", "otoritatif"]):
+                                st.session_state["pipe_hook_tone_input"] = "Provokatif & Tegas"
+
                             st.session_state["pipeline_step"] = 2
                             st.rerun()
 
@@ -352,9 +403,19 @@ def render_fast_track_pipeline(ai_client):
                     placeholder="Contoh: Pekerja kantoran 20-35 tahun / Ibu rumah tangga pemula...",
                     key="pipe_hook_aud_input"
                 )
+                HOOK_TONE_OPTIONS = [
+                    "Misterius & Penasaran (Curiosity Gap)",
+                    "Mendesak & Takut Rugi (FOMO)",
+                    "Santai & Empatik (Bestie Vibe)",
+                    "Provokatif & Tegas"
+                ]
+                current_tone_val = st.session_state.get("pipe_hook_tone_input", HOOK_TONE_OPTIONS[0])
+                tone_idx = HOOK_TONE_OPTIONS.index(current_tone_val) if current_tone_val in HOOK_TONE_OPTIONS else 0
+
                 hook_tone = st.selectbox(
                     "Gaya Bahasa Hook:",
-                    ["Misterius & Penasaran (Curiosity Gap)", "Mendesak & Takut Rugi (FOMO)", "Santai & Empatik (Bestie Vibe)", "Provokatif & Tegas"],
+                    HOOK_TONE_OPTIONS,
+                    index=tone_idx,
                     key="pipe_hook_tone_input"
                 )
 
@@ -475,13 +536,15 @@ def render_fast_track_pipeline(ai_client):
             active_draft_obj = get_draft(st.session_state.get("current_pipeline_draft_id")) if st.session_state.get("current_pipeline_draft_id") else None
             niche_source = st.session_state.get("pipe_niche", "") or (active_draft_obj.get("niche", "") if active_draft_obj else "")
             aud_source = st.session_state.get("pipe_audience", "") or (active_draft_obj.get("target_audience", "") if active_draft_obj else "")
+            comm_source = st.session_state.get("pipe_comm_style", "") or (active_draft_obj.get("communication_style", "") if active_draft_obj else "")
             initial_story_topic = st.session_state.get("pipe_story_topic") or st.session_state.get("pipe_hook_topic_input", "")
 
             autopilot = get_smart_autopilot_presets(
                 niche=niche_source,
                 hook=current_pipe_hook,
                 topic=initial_story_topic,
-                existing_audience=aud_source
+                existing_audience=aud_source,
+                communication_style=comm_source
             )
 
             # -------------------------------------------------------------

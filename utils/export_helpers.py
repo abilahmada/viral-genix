@@ -1779,15 +1779,16 @@ def evaluate_content_authority(scenes: list, full_text: str = "") -> dict:
     }
 
 
-def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = "", existing_audience: str = "") -> dict:
+def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = "", existing_audience: str = "", communication_style: str = "") -> dict:
     """
     Menghasilkan preset rekomendasi cerdas (Auto-Pilot) untuk Tahap 3 Storyboard
-    berdasarkan Niche, Hook, dan Topik Konten secara 100% kontekstual dan hidup (Anti-Studio Monoton).
+    berdasarkan Niche, Hook, Topik Konten, dan Lensa Komunikasi secara 100% kontekstual dan hidup (Anti-Studio Monoton).
     """
     niche_lower = (niche or "").lower()
     topic_lower = (topic or "").lower()
     hook_lower = (hook or "").lower()
-    combined = f"{niche_lower} {topic_lower} {hook_lower}"
+    comm_lower = (communication_style or "").lower()
+    combined = f"{niche_lower} {topic_lower} {hook_lower} {comm_lower}"
 
     # Default preset (Creative Workspace Nyata & Segar, Bukan Studio Kosong)
     content_format = "🎙️ Talking Head Sinematik (Kreator Bicara Langsung ke Lensa HP)"
@@ -2040,15 +2041,27 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         color = "Moody Warm Intellectual (Soft Amber Light, Film Grain Texture)"
         voice = "Tegas, tenang, berwibawa tapi akrab, tempo teratur 126 WPM"
 
-    # Deteksi Format Khusus dari Niche / Kata Kunci
-    if any(k in combined for k in ["faceless", "tanpa wajah", "tanpa muka", "b-roll asmr", "asmr"]):
-        content_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
-    elif any(k in combined for k in ["skit", "parodi", "komedi", "lucu", "2 orang", "dua orang", "roleplay"]):
+    # Deteksi Format Khusus dari Lensa Komunikasi & Niche / Kata Kunci
+    if any(k in comm_lower for k in ["satir", "parodi", "komedi"]) or any(k in combined for k in ["skit", "parodi", "komedi", "lucu", "2 orang", "dua orang", "roleplay"]):
         content_format = "🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang)"
-    elif any(k in combined for k in ["debat", "dialektika", "skeptis", "bantah mitos"]):
+        theme = "🎭 Skit Komedi / Parodi Relatable (Humor Situasi Sehari-hari)"
+    elif any(k in comm_lower for k in ["kritis", "debat", "kontra-arus"]) or any(k in combined for k in ["debat", "dialektika", "skeptis", "bantah mitos"]):
         content_format = "🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif)"
-    elif any(k in combined for k in ["micro-drama", "drama", "kisah nyata", "plot twist", "haru"]):
+        theme = "🥊 Bongkar Mitos & Realita Pahit (Hard Truth / Kontras)"
+    elif any(k in comm_lower for k in ["drama", "high-stakes"]) or any(k in combined for k in ["micro-drama", "drama", "kisah nyata", "plot twist", "haru"]):
         content_format = "🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata)"
+        theme = "📖 Storytelling Pengalaman Nyata (Relatable & Emosional)"
+    elif any(k in comm_lower for k in ["taktis", "efisiensi"]):
+        theme = "🛠️ Tutorial Taktis Langkah Demi Langkah (Actionable Playbook)"
+        if any(k in combined for k in ["faceless", "tanpa wajah", "tanpa muka", "b-roll asmr", "asmr"]):
+            content_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
+    elif any(k in comm_lower for k in ["otoritatif", "riset"]):
+        theme = "💡 Edukasi Solutif & Hack Cepat (Value-Bomb)"
+    elif any(k in comm_lower for k in ["empatik", "kawan"]):
+        theme = "📖 Storytelling Pengalaman Nyata (Relatable & Emosional)"
+        slang = "🤝 Aku - Kamu / Teman-teman (Hangat, Empatik, Ramah Sahabat)"
+    elif any(k in combined for k in ["faceless", "tanpa wajah", "tanpa muka", "b-roll asmr", "asmr"]):
+        content_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
     elif any(k in combined for k in ["fabel", "analogi", "sejarah", "bedah kasus", "asal usul"]):
         content_format = "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
 

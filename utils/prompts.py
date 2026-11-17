@@ -87,20 +87,50 @@ def get_master_system_prompt(persona_key: str = "santai") -> str:
     return MASTER_STRATEGIST_SYSTEM_PROMPT + "\n\n" + directive
 
 
-TREND_RADAR_PROMPT = """Analisis tren konten video pendek untuk Niche: "{niche}" dengan kata kunci spesifik: "{keyword}" pada platform "{platform}".
+class SafeTrendRadarFormatString(str):
+    """
+    Template string aman untuk TREND_RADAR_PROMPT.
+    Otomatis menyisipkan default value untuk communication_style jika pemanggil versi lama hanya mengoper niche, keyword, platform.
+    """
+    def format(self, *args, **kwargs):
+        defaults = {
+            "communication_style": "🔬 Otoritatif & Berbasis Riset (The Scientific Practitioner — Data Metrik & Kausalitas)",
+            "niche": "Umum",
+            "keyword": "Topik Populer",
+            "platform": "TikTok / Reels"
+        }
+        for k, v in defaults.items():
+            if k not in kwargs:
+                kwargs[k] = v
+        return super().format(*args, **kwargs)
 
-Tugasmu:
-Sebagai mesin intelijen konten berstandar tinggi, temukan celah pasar (Content Gap Analysis) yang sedang hangat dicari audiens namun BELUM DIJAWAB SECARA BERBOBOT oleh kreator lain (kebanyakan kreator hanya membuat konten dangkal/lemas).
+
+TREND_RADAR_PROMPT = SafeTrendRadarFormatString("""Analisis tren konten video pendek untuk Niche: "{niche}" dengan kata kunci spesifik: "{keyword}" pada platform "{platform}".
+
+[LENSA GAYA KOMUNIKASI & POSITIONING STRATEGIS KREATOR]:
+{communication_style}
+
+TUGAS UTAMA INTELIJEN KONTEN (ANTI-KONTEN LEPAS & ANTI-AI SLOP):
+Sebagai mesin intelijen konten berstandar tinggi, temukan celah pasar (Content Gap Analysis) yang sedang hangat dicari audiens namun BELUM DIJAWAB SECARA BERBOBOT oleh kreator lain (kebanyakan kreator hanya membuat konten dangkal, klise, atau sekadar sensasi kosong).
+
+HUKUM LENSA GAYA KOMUNIKASI (STRATEGIC DELIVERY LENS):
+Wajib gunakan kacamata strategis [{communication_style}] dalam membedah kelemahan kompetitor dan merumuskan seluruh 5 sudut pandang konten:
+- Jika Otoritatif & Berbasis Riset: Utamakan bukti data metrik %, jurnal, dan penjelasan kausalitas ilmiah ('The Mechanism').
+- Jika Kritis & Kontra-Arus: Serang salah kaprah umum industri tanpa basa-basi, bongkar 'omong kosong' dan mitos usang dengan fakta keras lapangan.
+- Jika Satir, Parodi & Humor Relatable: Sorot paradoks dan ironi perilaku nyata audiens menggunakan analogi menggelitik, humor situasional, dan skenario komedi yang relatable (cocok untuk Skit 2 Karakter).
+- Jika Dramatik & High-Stakes: Bangun urgensi krisis mendalam, konsekuensi fatal jika diabaikan, dan plot twist emosional berstruktur 3 babak.
+- Jika Empatik & Kawan Senasib: Rangkul rasa insecure dan kelelahan audiens dengan hangat, posisikan diri sebagai sahabat seperjuangan yang solutif tanpa menggurui.
+- Jika Taktis & Efisiensi Ekstrem: Langsung ke checklist taktis, playbook langkah demi langkah, dan rasio hemat waktu konkret (Low-Effort High-Reward).
 
 Berikan output terstruktur dalam format Markdown berikut:
 ### 1. Ringkasan Sentimen & Gelombang Tren
-- Tren Mikro yang sedang meledak
+- Tren Mikro yang sedang meledak di platform {platform}
 - Mengapa audiens sedang panik / penasaran dengan topik ini sekarang
-- Celah Kualitas Kompetitor: Mengapa konten kompetitor saat ini terasa "lemas" dan belum memuaskan audiens
+- Celah Kualitas Kompetitor: Mengapa konten kompetitor saat ini terasa "lemas", dangkal, dan belum memuaskan audiens jika dilihat dari lensa {communication_style}
 - Tingkat Persaingan vs Potensi Viral (Skala 1-10)
 
 ### 2. 5 Sudut Pandang Konten (Viral Content Angles) Unik & Berbobot Tinggi
-Sajikan 5 angle tajam yang memadukan daya tarik viral dengan KEDALAMAN MATERI & DATA EMPIRIS:
+Sajikan 5 angle tajam yang memadukan daya tarik viral dengan KEDALAMAN MATERI, DATA EMPIRIS, serta karakter kuat dari lensa {communication_style}:
 1. **Angle Kontradiktif / Myth-Buster**: Membongkar mitos populer di niche ini menggunakan fakta ilmiah, data industri, atau logika kausalitas terbalik.
 2. **Angle Rahasia Orang Dalam / Insider Secret**: Membongkar mekanisme kerja nyata, tools/software spesifik, atau taktik teknis yang jarang diungkap publik.
 3. **Angle Realita Pahit / Hard Truth**: Membedah akar masalah struktural mengapa audiens gagal (bukan sekadar menyalahkan mereka).
@@ -108,15 +138,15 @@ Sajikan 5 angle tajam yang memadukan daya tarik viral dengan KEDALAMAN MATERI & 
 5. **Angle Prediksi Masa Depan / Warning**: Analisis tren dan pergeseran nyata yang wajib diantisipasi sebelum terlambat.
 
 Setiap angle WAJIB mencakup:
-- **Judul Konsep**: (Tajam, menggugah rasa penasaran, dan menjanjikan bobot isi nyata)
-- **Trigger Emosi Utama**: (FOMO, Penasaran Logis, Keinginan Efisiensi, dll)
+- **Judul Konsep**: (Tajam, menggugah rasa penasaran, berkarakter kuat sesuai lensa komunikasi, dan menjanjikan bobot isi nyata)
+- **Trigger Emosi Utama**: (FOMO, Penasaran Logis, Keinginan Efisiensi, Kaget/Mind-Blown, Empati, dll)
 - **Premis Cerita & Data Empiris (2-3 kalimat)**: (Jelaskan akar masalah, nama metode/bahan/tools konkret yang dibahas, dan bukti/angka terukurnya)
 - **Estimasi Potensi Viral**: (Tinggi / Sangat Tinggi)
 
 ### 3. Rekomendasi Format Video
-- Tipe format terbaik (Talking head dinamis, Screen-record tutorial, Skit 2 orang, atau B-roll sinematik).
+- Tipe format terbaik (Talking head dinamis, Skit komedi 2 orang, Debat dialektika, Micro-drama, atau Voiceover faceless ASMR).
 - Sound / Audio vibe yang cocok (Tempo BPM, mood musik, ketukan beat).
-"""
+""")
 
 VIDEO_REVERSE_ENGINEER_PROMPT = """Kamu menerima data transkrip dan informasi dari sebuah video kompetitor yang viral.
 

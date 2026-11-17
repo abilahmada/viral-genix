@@ -69,9 +69,18 @@ def render_trend_radar(ai_client):
                 ["Pemula Awam (Total Beginner)", "Menengah (Sudah Mengerti Istilah)", "Praktisi / Pro"]
             )
         with col_tone:
+            COMMUNICATION_STYLES = [
+                "🔬 Otoritatif & Berbasis Riset (The Scientific Practitioner — Data Metrik & Kausalitas)",
+                "🥊 Kritis & Kontra-Arus (The Unfiltered Challenger — Hantam Salah Kaprah Lapangan)",
+                "🎭 Satir, Parodi & Humor Relatable (The Satirical Realist — Komedi Situasional & Ironi)",
+                "🎬 Dramatik & High-Stakes (The Storyteller — Alur Krisis Emosional & Plot Twist)",
+                "🤝 Empatik & Kawan Senasib (The Relatable Ally — Hangat, Solutif Tanpa Menggurui)",
+                "⚡ Taktis & Efisiensi Ekstrem (The Actionable Hacker — Playbook Cepat & Hemat Waktu)"
+            ]
             tone = st.selectbox(
-                "Gaya Komunikasi / Tone:",
-                ["Tajam & Bongkar Mitos (No BS)", "Inspiratif & Solutif", "Kasual & Gaul", "Taktis & Ilmiah"]
+                "Gaya Komunikasi / Lensa Strategis:",
+                COMMUNICATION_STYLES,
+                index=0
             )
 
     st.markdown("---")
@@ -89,9 +98,10 @@ def render_trend_radar(ai_client):
 
         with st.spinner("🤖 AI sedang memindai pola percakapan audiens, menelaah sentimen, dan menyusun 5 sudut pandang unik..."):
             prompt = TREND_RADAR_PROMPT.format(
-                niche=f"{active_niche} (Level: {audience_level}, Tone: {tone})",
+                niche=f"{active_niche} (Level: {audience_level})",
                 keyword=keyword,
-                platform=platform
+                platform=platform,
+                communication_style=tone
             )
             result = ai_client.generate(prompt=prompt, system_prompt=get_master_system_prompt(st.session_state.get("creator_persona", "santai")))
             st.session_state["trend_radar_result"] = result
