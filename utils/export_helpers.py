@@ -258,7 +258,8 @@ def parse_master_consistency_anchor(storyboard_text: str) -> dict:
 def parse_content_angles(text: str, fallback_topic: str = "") -> list:
     """
     Mengekstraksi 5 Sudut Pandang Konten (Content Angles) dari hasil riset celah pasar (Tahap 1).
-    Menghasilkan list dictionary yang siap ditampilkan sebagai kartu / radio button interaktif di UI.
+    Menghasilkan list dictionary yang siap ditampilkan sebagai kartu / radio button interaktif di UI
+    tanpa ada teks yang terpotong.
     """
     if not text or not text.strip():
         return []
@@ -289,33 +290,52 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
         else:
             angle_name = f"Sudut Pandang #{idx+1}"
 
-        def _get_val(patterns):
-            for pat in patterns:
-                m = re.search(pat, block, re.IGNORECASE)
-                if m:
-                    return m.group(1).strip().strip('*').strip('_').strip('"').strip("'")
+        def _get_field_val(header_names, stop_headers):
+            h_pattern = r'(?:' + '|'.join(header_names) + r')'
+            s_pattern = r'(?:' + '|'.join(stop_headers) + r'|\d+\.|\Z)'
+            
+            # 1. Coba pencarian multiline hingga stop_header berikutnya
+            m = re.search(
+                r'[\*\-]?\s*\*{0,2}' + h_pattern + r'[^\:\n]*\*{0,2}\s*:\s*([\s\S]+?)(?=\n\s*[\*\-]?\s*\*{0,2}' + s_pattern + r')',
+                block,
+                re.IGNORECASE
+            )
+            if m:
+                val = m.group(1).strip()
+                val = re.sub(r'^[\s\*\_\'\"\>]+|[\s\*\_\'\"\>]+$', '', val)
+                return ' '.join(val.split())
+            
+            # 2. Fallback pencarian 1 baris
+            m_line = re.search(
+                r'[\*\-]?\s*\*{0,2}' + h_pattern + r'[^\:\n]*\*{0,2}\s*:\s*([^\n]+)',
+                block,
+                re.IGNORECASE
+            )
+            if m_line:
+                val = m_line.group(1).strip()
+                val = re.sub(r'^[\s\*\_\'\"\>]+|[\s\*\_\'\"\>]+$', '', val)
+                return ' '.join(val.split())
             return ""
 
-        title = _get_val([
-            r'[\*\-]\s*(?:\*\*)?Judul\s*(?:Konsep)?[^\:]*:\s*(?:_|\*|")?([^\n\*\"]+)',
-            r'Judul\s*Konsep\s*:\s*([^\n]+)',
-            r'Judul\s*:\s*([^\n]+)'
-        ])
+        title = _get_field_val(
+            ['Judul Konsep', 'Judul'],
+            ['Trigger Emosi', 'Premis', 'Estimasi Potensi', 'Potensi Viral']
+        )
 
-        premise = _get_val([
-            r'[\*\-]\s*(?:\*\*)?Premis\s*(?:Cerita\s*Singkat)?[^\:]*:\s*(?:_|\*|")?([^\n\*\"]+)',
-            r'Premis\s*:\s*([^\n]+)'
-        ])
+        premise = _get_field_val(
+            ['Premis Cerita & Data Empiris', 'Premis Cerita', 'Premis'],
+            ['Estimasi Potensi', 'Trigger Emosi', 'Potensi Viral', 'Judul']
+        )
 
-        trigger = _get_val([
-            r'[\*\-]\s*(?:\*\*)?Trigger\s*Emosi\s*(?:Utama)?[^\:]*:\s*(?:_|\*|")?([^\n\*\"]+)',
-            r'Trigger\s*Emosi\s*:\s*([^\n]+)'
-        ])
+        trigger = _get_field_val(
+            ['Trigger Emosi Utama', 'Trigger Emosi', 'Trigger'],
+            ['Estimasi Potensi', 'Premis', 'Judul', 'Potensi Viral']
+        )
 
-        viral_pot = _get_val([
-            r'[\*\-]\s*(?:\*\*)?Estimasi\s*Potensi\s*Viral[^\:]*:\s*(?:_|\*|")?([^\n\*\"]+)',
-            r'Potensi\s*Viral\s*:\s*([^\n]+)'
-        ])
+        viral_pot = _get_field_val(
+            ['Estimasi Potensi Viral', 'Potensi Viral'],
+            ['Trigger', 'Premis', 'Judul']
+        )
 
         # Jika title belum ada, ambil dari deskripsi pada first_line jika ada pemisah titik dua
         if not title and ":" in first_line:
@@ -330,7 +350,10 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
             other_lines = [l.strip().lstrip('*-').strip() for l in lines[1:] if len(l.strip()) > 10 and not l.strip().startswith("#")]
             premise = other_lines[0] if other_lines else title
 
-        full_concept = f"{title}. {premise}" if premise and premise != title else title
+        if premise and premise.lower() not in title.lower():
+            full_concept = f"{title}. {premise}"
+        else:
+            full_concept = title
 
         angles.append({
             "id": idx + 1,
@@ -340,17 +363,17 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
             "trigger": trigger or "Penasaran tinggi & validasi solusi",
             "viral_pot": viral_pot or "Sangat Tinggi 🔥",
             "full_concept": full_concept,
-            "display_label": f"[{angle_name}] {title[:60]}"
+            "display_label": f"#{idx+1} [{angle_name}]: {title}"
         })
 
     # Jika parsing menghasilkan < 2 angles, gunakan smart fallback berbasis keyword
     if len(angles) < 2 and fallback_topic:
         smart_angles = [
-            ("Angle Kontradiktif / Myth-Buster", f"Bongkar mitos terbesar tentang {fallback_topic} yang bikin banyak orang gagal", "Membongkar cara lama yang salah dan menyajikan solusi cepat."),
-            ("Angle Rahasia Orang Dalam / Insider Secret", f"Rahasia tersembunyi {fallback_topic} yang cuma diketahui top 1%", "Mengungkap teknik rahasia tanpa modal besar."),
-            ("Angle Realita Pahit / Hard Truth", f"Fakta pahit kenapa 90% orang gagal di {fallback_topic}", "Kejujuran brutal yang membuka mata penonton agar sadar."),
-            ("Angle Hack Cepat / Low Effort High Result", f"Cara tercepat kuasai {fallback_topic} dalam hitungan hari", "Langkah taktis 1-2-3 yang langsung bisa dipraktekkan hari ini."),
-            ("Angle Peringatan Masa Depan / Warning", f"Apa yang bakal terjadi kalau lu gak mulai {fallback_topic} sekarang", "Urgensi dan ketakutan tertinggal zaman (FOMO).")
+            ("Angle Kontradiktif / Myth-Buster", f"Bongkar mitos terbesar tentang {fallback_topic} yang bikin banyak orang gagal", "Membongkar cara lama yang salah dan menyajikan solusi cepat berbasis data."),
+            ("Angle Rahasia Orang Dalam / Insider Secret", f"Rahasia tersembunyi {fallback_topic} yang cuma diketahui top 1%", "Mengungkap teknik rahasia dan tools spesifik tanpa modal besar."),
+            ("Angle Realita Pahit / Hard Truth", f"Fakta pahit kenapa 90% orang gagal di {fallback_topic}", "Kejujuran brutal yang membuka mata penonton agar sadar akar masalah struktural."),
+            ("Angle Hack Cepat / Low Effort High Result", f"Cara tercepat kuasai {fallback_topic} dalam hitungan hari", "Langkah taktis 1-2-3 yang langsung bisa dipraktekkan hari ini dengan hasil terukur."),
+            ("Angle Peringatan Masa Depan / Warning", f"Apa yang bakal terjadi kalau lu gak mulai {fallback_topic} sekarang", "Urgensi dan ketakutan tertinggal pergeseran tren terbaru (FOMO).")
         ]
         angles = []
         for idx, (ang, tit, prem) in enumerate(smart_angles):
@@ -361,8 +384,8 @@ def parse_content_angles(text: str, fallback_topic: str = "") -> list:
                 "premise": prem,
                 "trigger": "FOMO & Solusi Instan",
                 "viral_pot": "Sangat Tinggi 🔥",
-                "full_concept": f"{tit} - {prem}",
-                "display_label": f"[{ang}] {tit[:60]}"
+                "full_concept": f"{tit}. {prem}",
+                "display_label": f"#{idx+1} [{ang}]: {tit}"
             })
 
     return angles
@@ -372,7 +395,7 @@ def parse_hook_variations(text: str, fallback_topic: str = "") -> list:
     """
     Mengekstraksi 10 Variasi Hook dari hasil perumusan hook (Tahap 2).
     Mendukung pengelompokan 4 pilar psikologi (FOMO, Curiosity, Gain, Empathy)
-    dan mengekstraksi Hook Verbal, Visual, Teks Layar, dan Skor Retensi.
+    dan mengekstraksi Hook Verbal, Visual, Teks Layar, dan Skor Retensi secara utuh tanpa terpotong.
     """
     if not text or not text.strip():
         return []
@@ -412,64 +435,89 @@ def parse_hook_variations(text: str, fallback_topic: str = "") -> list:
             if not chunk.strip():
                 continue
 
-            def _get_val(patterns):
-                for p in patterns:
-                    m = re.search(p, chunk, re.IGNORECASE)
-                    if m:
-                        return m.group(1).strip().strip('*').strip('_').strip('"').strip("'")
+            def _get_hook_field(header_names, stop_headers):
+                h_pattern = r'(?:' + '|'.join(header_names) + r')'
+                s_pattern = r'(?:' + '|'.join(stop_headers) + r'|\d+\.|\Z)'
+                
+                # 1. Coba pencarian multiline hingga stop_header berikutnya
+                m = re.search(
+                    r'[\*\-]?\s*\*{0,2}' + h_pattern + r'[^\:\n]*\*{0,2}\s*:\s*([\s\S]+?)(?=\n\s*[\*\-]?\s*\*{0,2}' + s_pattern + r')',
+                    chunk,
+                    re.IGNORECASE
+                )
+                if m:
+                    val = m.group(1).strip()
+                    val = re.sub(r'^[\s\*\_\'\"\>]+|[\s\*\_\'\"\>]+$', '', val)
+                    return ' '.join(val.split())
+                
+                # 2. Fallback pencarian 1 baris
+                m_line = re.search(
+                    r'[\*\-]?\s*\*{0,2}' + h_pattern + r'[^\:\n]*\*{0,2}\s*:\s*([^\n]+)',
+                    chunk,
+                    re.IGNORECASE
+                )
+                if m_line:
+                    val = m_line.group(1).strip()
+                    val = re.sub(r'^[\s\*\_\'\"\>]+|[\s\*\_\'\"\>]+$', '', val)
+                    return ' '.join(val.split())
                 return ""
 
-            verbal = _get_val([
-                r'[\*\-]?\s*\*{0,2}Hook\s*Verbal(?:\s*\(Audio\))?\*{0,2}\s*:\s*(?:_|\*|")?([^\n\*\"]+?)(?:_|\*|")?(?=\n\s*[\*\-]\s*\*{0,2}(?:Instruksi|Teks|Visual|Skor)|\Z)',
-                r'[\*\-]?\s*\*{0,2}Audio(?:\s*\(Hook\))?\*{0,2}\s*:\s*(?:_|\*|")?([^\n\*\"]+?)(?:_|\*|")?(?=\n\s*[\*\-]\s*\*{0,2}(?:Instruksi|Teks|Visual|Skor)|\Z)',
-                r'[\*\-]?\s*\*{0,2}Hook\*{0,2}\s*:\s*(?:_|\*|")?([^\n\*\"]+?)(?:_|\*|")?(?=\n\s*[\*\-]\s*\*{0,2}(?:Instruksi|Teks|Visual|Skor)|\Z)',
-                r'[\*\-]\s*\*{0,2}Hook\s*Verbal[^\:]*:\s*([^\n]+)'
-            ])
+            verbal = _get_hook_field(
+                ['Hook Verbal', 'Audio', 'Hook Audio', 'Hook'],
+                ['Instruksi Visual', 'Visual', 'Teks di Layar', 'Text on Screen', 'Pijakan Fakta', 'Skor Retensi', 'Skor']
+            )
 
             if not verbal or len(verbal) < 8:
                 continue
 
-            visual = _get_val([
-                r'[\*\-]?\s*\*{0,2}Instruksi\s*Visual[^\:]*:\s*([^\n]+)',
-                r'[\*\-]?\s*\*{0,2}Visual\s*(?:B-Roll)?\*{0,2}\s*:\s*([^\n]+)',
-                r'Visual\s*:\s*([^\n]+)'
-            ])
+            visual = _get_hook_field(
+                ['Instruksi Visual', 'Visual', 'B-Roll'],
+                ['Teks di Layar', 'Text on Screen', 'Pijakan Fakta', 'Skor Retensi', 'Skor', 'Hook Verbal']
+            )
 
-            screen = _get_val([
-                r'[\*\-]?\s*\*{0,2}Teks\s*(?:di\s*)?Layar[^\:]*:\s*([^\n]+)',
-                r'[\*\-]?\s*\*{0,2}Text\s*on\s*Screen\*{0,2}\s*:\s*([^\n]+)'
-            ])
+            screen = _get_hook_field(
+                ['Teks di Layar', 'Text on Screen', 'Teks Layar'],
+                ['Pijakan Fakta', 'Skor Retensi', 'Skor', 'Instruksi Visual', 'Hook Verbal']
+            )
 
-            score = _get_val([
-                r'[\*\-]?\s*\*{0,2}Skor\s*Retensi[^\:]*:\s*([^\n]+)',
-                r'[\*\-]?\s*\*{0,2}Skor\*{0,2}\s*:\s*([^\n]+)'
-            ])
+            fact_anchor = _get_hook_field(
+                ['Pijakan Fakta', 'Nilai Materi', 'Fakta Empiris'],
+                ['Skor Retensi', 'Skor', 'Teks di Layar', 'Instruksi Visual']
+            )
+
+            score = _get_hook_field(
+                ['Skor Retensi', 'Skor'],
+                ['Variasi', 'Kategori', 'Pilar', 'Hook']
+            )
             score_num = re.search(r'\d+', score).group(0) if re.search(r'\d+', score) else "94"
 
             # Cegah duplikasi
             if any(h["verbal"] == verbal for h in hooks):
                 continue
 
+            cat_short = cat_pillar.split()[0] + " " + cat_pillar.split()[1] if len(cat_pillar.split()) > 1 else cat_pillar
             hooks.append({
                 "id": hook_counter,
                 "category": cat_pillar,
                 "verbal": verbal,
                 "visual": visual or "Close-up kreator bicara tegas ke lensa kamera HP",
                 "screen_text": screen or "PERHATIKAN INI! ⚠️",
+                "fact_anchor": fact_anchor or "Materi edukasi taktis terukur",
                 "score": f"{score_num}/100",
-                "display_label": f"[{cat_pillar.split()[1]}] \"{verbal[:60]}...\" (Skor: {score_num})"
+                "display_label": f"#{hook_counter} [{cat_short}] \"{verbal}\" (Skor: {score_num})"
             })
             hook_counter += 1
 
     # Fallback jika parsing blok hanya menghasilkan < 3 hooks
     if len(hooks) < 3:
         all_verbals = re.findall(
-            r'[\*\-]?\s*\*{0,2}Hook\s*Verbal(?:\s*\(Audio\))?\*{0,2}\s*:\s*(?:_|\*|")?([^\n\*\"]+)',
+            r'[\*\-]?\s*\*{0,2}(?:Hook\s*Verbal(?:\s*\(Audio\))?|Hook\s*Audio|Hook\s*Verbal)[^\:\n]*\*{0,2}\s*:\s*([^\n]+)',
             text,
             re.IGNORECASE
         )
         for cl_v in all_verbals:
-            clean = cl_v.strip().strip('"').strip('*').strip('_')
+            clean = cl_v.strip()
+            clean = re.sub(r'^[\s\*\_\'\"\>]+|[\s\*\_\'\"\>]+$', '', clean)
             if len(clean) > 8 and not any(h["verbal"] == clean for h in hooks):
                 hooks.append({
                     "id": len(hooks) + 1,
@@ -477,8 +525,9 @@ def parse_hook_variations(text: str, fallback_topic: str = "") -> list:
                     "verbal": clean,
                     "visual": "Kreator menatap langsung ke arah lensa kamera",
                     "screen_text": "INFO PENTING 💡",
+                    "fact_anchor": "Fakta penting terukur",
                     "score": "95/100",
-                    "display_label": f"Hook #{len(hooks)+1}: \"{clean[:65]}...\""
+                    "display_label": f"#{len(hooks)+1} [🔥 Hook Pilihan] \"{clean}\" (Skor: 95)"
                 })
 
     # Fallback terakhir jika text masih belum menghasilkan hook sama sekali
@@ -494,14 +543,16 @@ def parse_hook_variations(text: str, fallback_topic: str = "") -> list:
             ("🤝 Validasi & Empati", f"Gua tahu lu udah hampir nyerah soal {fallback_topic}, tapi dengerin gua sebentar aja.", "94")
         ]
         for idx, (cat, vb, sc) in enumerate(default_templates):
+            cat_short = cat.split()[0] + " " + cat.split()[1] if len(cat.split()) > 1 else cat
             hooks.append({
                 "id": idx + 1,
                 "category": cat,
                 "verbal": vb,
                 "visual": "Kreator tatapan fokus ke lensa kamera, ekspresi serius",
                 "screen_text": "RAHASIA TERBONGKAR 🔥",
+                "fact_anchor": f"Nilai praktis {fallback_topic}",
                 "score": f"{sc}/100",
-                "display_label": f"[{cat.split()[1]}] \"{vb[:60]}...\" (Skor: {sc})"
+                "display_label": f"#{idx+1} [{cat_short}] \"{vb}\" (Skor: {sc})"
             })
 
     return hooks

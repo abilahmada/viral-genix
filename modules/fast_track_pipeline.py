@@ -248,7 +248,7 @@ def render_fast_track_pipeline(ai_client):
                 st.markdown("#### 🎯 Pilih 1 dari 5 Sudut Pandang Konten yang Dihasilkan:")
                 st.caption("Klik salah satu angle di bawah untuk otomatis mengisi konsep cerita, atau pilih '✍️ Kustom' untuk menulis konsep sendiri.")
 
-                angle_labels = [f"Angle #{a['id']}: {a['angle_name']} — {a['title']}" for a in detected_angles]
+                angle_labels = [a["display_label"] for a in detected_angles]
                 angle_labels.append("✍️ Kustom (Ketik Konsep Cerita Sendiri)")
 
                 selected_angle_label = st.radio(
@@ -258,28 +258,35 @@ def render_fast_track_pipeline(ai_client):
                     key="pipe_angle_radio"
                 )
 
-                chosen_angle_obj = next((a for a in detected_angles if f"Angle #{a['id']}: {a['angle_name']}" in selected_angle_label), None)
+                chosen_angle_obj = next((a for a in detected_angles if a["display_label"] == selected_angle_label), None)
+
+                # Sinkronisasi dinamis ketika radio button berganti
+                if "prev_pipe_angle_radio" not in st.session_state or st.session_state["prev_pipe_angle_radio"] != selected_angle_label:
+                    st.session_state["prev_pipe_angle_radio"] = selected_angle_label
+                    if chosen_angle_obj:
+                        st.session_state["pipe_custom_concept_text"] = chosen_angle_obj["full_concept"]
+                    elif "Kustom" in selected_angle_label:
+                        st.session_state["pipe_custom_concept_text"] = st.session_state.get("pipe_chosen_concept", f"Bongkar rahasia: {kw_hint}")
 
                 if chosen_angle_obj:
                     angle_card_html = (
                         f'<div style="background:#f0f9ff; border-left:4px solid #0284c7; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#0f172a;">'
                         f'<div style="font-weight:700; color:#0369a1; margin-bottom:4px;">💡 {chosen_angle_obj["title"]}</div>'
-                        f'<div style="margin-bottom:4px;"><b>📖 Premis:</b> {chosen_angle_obj["premise"]}</div>'
+                        f'<div style="margin-bottom:4px;"><b>📖 Premis & Data Empiris:</b> {chosen_angle_obj["premise"]}</div>'
                         f'<div style="display:flex; gap:16px; font-size:0.8rem; color:#475569;">'
                         f'<span><b>⚡ Emosi:</b> {chosen_angle_obj["trigger"]}</span>'
                         f'<span><b>🔥 Potensi Viral:</b> {chosen_angle_obj["viral_pot"]}</span>'
                         f'</div></div>'
                     )
                     st.markdown(angle_card_html, unsafe_allow_html=True)
-                    active_concept_text = chosen_angle_obj["full_concept"]
-                else:
-                    active_concept_text = st.session_state.get("pipe_chosen_concept", f"Bongkar rahasia: {kw_hint}")
 
+                concept_default = chosen_angle_obj["full_concept"] if chosen_angle_obj else f"Bongkar rahasia: {kw_hint}"
                 chosen_concept = st.text_area(
                     "Konsep / Premis Cerita yang Dipilih (Bisa Diedit Bebas):",
-                    value=active_concept_text,
+                    value=st.session_state.get("pipe_custom_concept_text", concept_default),
                     placeholder="Contoh: Bongkar rahasia cara affiliate tanpa modal...",
-                    height=75
+                    height=85,
+                    key="pipe_custom_concept_text"
                 )
 
                 col_next1, _ = st.columns([2, 1])
@@ -289,9 +296,10 @@ def render_fast_track_pipeline(ai_client):
                             st.warning("⚠️ Mohon isi atau tentukan Konsep Cerita sebelum lanjut ke Tahap 2.")
                         else:
                             final_niche = get_clean_niche(niche, custom_niche_input)
+                            d_title = chosen_angle_obj["title"] if chosen_angle_obj else chosen_concept[:60]
                             if not st.session_state.get("current_pipeline_draft_id"):
                                 new_draft = create_draft({
-                                    "title": chosen_concept[:50],
+                                    "title": d_title,
                                     "niche": final_niche or niche,
                                     "keyword": st.session_state.get("pipe_keyword", keyword),
                                     "platform": platform,
@@ -302,12 +310,15 @@ def render_fast_track_pipeline(ai_client):
                                 st.session_state["current_pipeline_draft_id"] = new_draft["id"]
                             else:
                                 update_draft(st.session_state["current_pipeline_draft_id"], {
-                                    "title": chosen_concept[:50],
+                                    "title": d_title,
                                     "content_angle": chosen_concept,
                                     "target_audience": target_aud
                                 })
                             
+                            st.session_state["pipe_chosen_concept"] = chosen_concept
                             st.session_state["pipe_topic_for_hook"] = chosen_concept
+                            st.session_state["pipe_hook_topic_input"] = chosen_concept
+                            st.session_state["pipe_story_topic"] = chosen_concept
                             st.session_state["pipeline_step"] = 2
                             st.rerun()
 
@@ -388,7 +399,16 @@ def render_fast_track_pipeline(ai_client):
 
                 chosen_hook_obj = next((h for h in parsed_hooks if h["display_label"] == selected_hook_label), None)
 
+                # Sinkronisasi dinamis ketika radio button berganti
+                if "prev_pipe_hook_radio" not in st.session_state or st.session_state["prev_pipe_hook_radio"] != selected_hook_label:
+                    st.session_state["prev_pipe_hook_radio"] = selected_hook_label
+                    if chosen_hook_obj:
+                        st.session_state["pipe_custom_hook_text"] = chosen_hook_obj["verbal"]
+                    elif "Kustom" in selected_hook_label:
+                        st.session_state["pipe_custom_hook_text"] = st.session_state.get("pipe_chosen_hook", "Stop scroll kalau kamu gak mau rugi waktu dan duit sia-sia!")
+
                 if chosen_hook_obj:
+                    fact_pill = f"<div style='margin-top:4px; font-size:0.78rem; color:#4338ca;'><b>📊 Pijakan Fakta:</b> {chosen_hook_obj.get('fact_anchor', '')}</div>" if chosen_hook_obj.get('fact_anchor') else ""
                     hook_card_html = (
                         f'<div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:6px; margin:8px 0 12px 0; font-size:0.86rem; color:#1e1b4b;">'
                         f'<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">'
@@ -397,18 +417,18 @@ def render_fast_track_pipeline(ai_client):
                         f'</div>'
                         f'<div style="margin-bottom:4px;"><b>🎥 Aksi Kamera (Visual):</b> {chosen_hook_obj["visual"]}</div>'
                         f'<div style="font-size:0.8rem; color:#475569;"><b>📝 Teks di Layar:</b> {chosen_hook_obj["screen_text"]}</div>'
+                        f'{fact_pill}'
                         f'</div>'
                     )
                     st.markdown(hook_card_html, unsafe_allow_html=True)
-                    active_hook_text = chosen_hook_obj["verbal"]
-                else:
-                    active_hook_text = st.session_state.get("pipe_chosen_hook", "Stop scroll kalau kamu gak mau rugi waktu dan duit sia-sia!")
 
+                hook_default = chosen_hook_obj["verbal"] if chosen_hook_obj else st.session_state.get("pipe_chosen_hook", "Stop scroll kalau kamu gak mau rugi waktu dan duit sia-sia!")
                 chosen_hook_text = st.text_area(
                     "Naskah Hook Verbal Terpilih (Bisa Anda Sempurnakan / Edit):",
-                    value=active_hook_text,
+                    value=st.session_state.get("pipe_custom_hook_text", hook_default),
                     placeholder="Contoh: Stop scroll kalau kamu gak mau boncos tiap bulan...",
-                    height=75
+                    height=85,
+                    key="pipe_custom_hook_text"
                 )
 
                 col_prev2, col_next2 = st.columns([1, 2])
@@ -427,6 +447,7 @@ def render_fast_track_pipeline(ai_client):
                                     "status": "📝 Skrip Selesai"
                                 })
                             st.session_state["pipe_chosen_hook"] = chosen_hook_text
+                            st.session_state["pipe_story_topic"] = hook_topic
                             st.session_state["pipeline_step"] = 3
                             st.rerun()
 
@@ -455,7 +476,7 @@ def render_fast_track_pipeline(ai_client):
                 st.info(f"**Hook Terpilih:** *\"{current_pipe_hook or '(Belum dipilih - kembali ke Tahap 2)'}\"*")
                 story_topic_final = st.text_area(
                     "Topik Konten:",
-                    value=st.session_state.get("pipe_hook_topic_input", ""),
+                    value=st.session_state.get("pipe_story_topic") or st.session_state.get("pipe_hook_topic_input", ""),
                     placeholder="Contoh: Bahas 3 langkah praktis mulai dari riset produk, cara buat video tanpa muka, sampai cara dapat komisi pertama...",
                     height=80,
                     key="pipe_story_topic"
@@ -1247,9 +1268,6 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                 st.info("💡 Klik tombol **'🚀 Buat Kit Caption, Hashtag & Jam Upload Sekarang'** di atas untuk meracik copywriting ramah algoritma dan menyelesaikan paket produksi.")
 
             if "pipe_step5_result" in st.session_state:
-                with st.container(border=True):
-                    st.markdown(st.session_state["pipe_step5_result"])
-
                 pub_text = st.session_state["pipe_step5_result"]
                 kit = extract_copywriting_kit({
                     "publication_kit_md": pub_text,
@@ -1268,6 +1286,51 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                         "hashtags": kit["hashtags"][:10],
                         "status": "🚀 Siap Posting"
                     })
+
+                cap_a = kit.get("caption_storytelling", "").strip()
+                cap_b = kit.get("caption_punchy", "").strip()
+                cb = kit.get("comment_bait_question", "").strip()
+                tags_str = kit.get("hashtags_str", "").strip()
+                prime_time = kit.get("prime_time_recommendation", "").strip()
+
+                # Buat paket posting lengkap all-in-one (Caption + Pertanyaan Interaksi + 10 Hashtag)
+                full_ready_a = f"{cap_a}\n\n💬 {cb}\n\n{tags_str}"
+                full_ready_b = f"{cap_b}\n\n💬 {cb}\n\n{tags_str}"
+
+                st.markdown("#### 📋 Salin Caption Siap Posting (1-Klik Copy)")
+                st.caption("Klik tombol ikon salin 📋 di pojok kanan atas kotak untuk langsung menempelkan (paste) naskah ke TikTok, Instagram Reels, atau YouTube Shorts:")
+
+                tab_cap_a, tab_cap_b, tab_elements = st.tabs([
+                    "🌟 Variasi A: Storytelling Lengkap (Siap Paste)",
+                    "⚡ Variasi B: To-The-Point Agitatif (Siap Paste)",
+                    "🔍 Bedah Elemen Terpisah (Caption / Comment Bait / Hashtags)"
+                ])
+
+                with tab_cap_a:
+                    st.markdown("**📝 Paket Lengkap Variasi A (Caption Storytelling + Comment Bait + 10 Hashtag):**")
+                    st.caption("Format terlengkap: tinggal klik ikon salin di kanan atas kotak ini dan langsung paste ke deskripsi postingan Anda:")
+                    st.code(full_ready_a, language="text")
+
+                with tab_cap_b:
+                    st.markdown("**📝 Paket Lengkap Variasi B (Caption Agitatif + Comment Bait + 10 Hashtag):**")
+                    st.caption("Format ringkas to-the-point: tinggal klik ikon salin di kanan atas kotak ini dan langsung paste ke deskripsi postingan Anda:")
+                    st.code(full_ready_b, language="text")
+
+                with tab_elements:
+                    col_el1, col_el2 = st.columns(2)
+                    with col_el1:
+                        st.markdown("**💬 Pertanyaan Pemancing Komentar (Comment Bait):**")
+                        st.code(cb, language="text")
+                        st.markdown("**⏰ Rekomendasi Jam Tayang (Prime Time):**")
+                        st.code(prime_time, language="text")
+                    with col_el2:
+                        st.markdown("**🏷️ 10 Hashtag SEO Algoritma:**")
+                        st.code(tags_str, language="text")
+                        st.markdown("**📖 Naskah Caption Murni Variasi A (Tanpa Hashtags):**")
+                        st.code(cap_a, language="text")
+
+                with st.expander("📄 Tampilkan Laporan Analisis SEO & Copywriting Utuh", expanded=False):
+                    st.markdown(pub_text)
 
                 st.markdown("---")
                 st.markdown("### 📦 Paket Produksi Lengkap Selesai!")
