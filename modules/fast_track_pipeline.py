@@ -370,6 +370,7 @@ def render_fast_track_pipeline(ai_client):
                             st.session_state["pipe_comm_style"] = angle_type
                             st.session_state["pipe_angle_type"] = angle_type
                             st.session_state["pipe_content_format_select"] = rec_fmt
+                            st.session_state["pipe_hook_format_select"] = rec_fmt
                             st.session_state["pipe_format_val"] = rec_fmt
 
                             # Sinkronisasi Cerdas ke Tahap 2 (Pre-select Hook Tone sesuai Lensa Komunikasi)
@@ -414,7 +415,7 @@ def render_fast_track_pipeline(ai_client):
                 if active_d:
                     active_draft_fmt = active_d.get("content_format")
 
-            current_fmt_session = st.session_state.get("pipe_content_format_select") or active_draft_fmt
+            current_fmt_session = st.session_state.get("pipe_hook_format_select") or st.session_state.get("pipe_content_format_select") or active_draft_fmt
             if not current_fmt_session and st.session_state.get("pipe_step1_result"):
                 parsed_a = parse_content_angles(st.session_state["pipe_step1_result"])
                 if parsed_a and parsed_a[0].get("recommended_format"):
@@ -427,8 +428,8 @@ def render_fast_track_pipeline(ai_client):
                     fmt_idx = f_i
                     break
 
-            if st.session_state.get("pipe_content_format_select") not in FORMAT_OPTIONS:
-                st.session_state["pipe_content_format_select"] = FORMAT_OPTIONS[fmt_idx]
+            if st.session_state.get("pipe_hook_format_select") not in FORMAT_OPTIONS:
+                st.session_state["pipe_hook_format_select"] = FORMAT_OPTIONS[fmt_idx]
 
             col1, col2 = st.columns([1.15, 1], gap="medium")
             with col1:
@@ -451,7 +452,7 @@ def render_fast_track_pipeline(ai_client):
                     "🎭 Model & Format Konten:",
                     FORMAT_OPTIONS,
                     index=fmt_idx,
-                    key="pipe_content_format_select",
+                    key="pipe_hook_format_select",
                     help="Model konten menentukan formula aksi kamera visual dan gaya dialog hook 3 detik pertama."
                 )
 
