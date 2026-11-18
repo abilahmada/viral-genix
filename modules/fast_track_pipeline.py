@@ -369,8 +369,6 @@ def render_fast_track_pipeline(ai_client):
                             st.session_state["pipe_story_topic"] = chosen_concept
                             st.session_state["pipe_comm_style"] = angle_type
                             st.session_state["pipe_angle_type"] = angle_type
-                            st.session_state["pipe_content_format_select"] = rec_fmt
-                            st.session_state["pipe_hook_format_select"] = rec_fmt
                             st.session_state["pipe_format_val"] = rec_fmt
 
                             # Sinkronisasi Cerdas ke Tahap 2 (Pre-select Hook Tone sesuai Lensa Komunikasi)
@@ -415,7 +413,7 @@ def render_fast_track_pipeline(ai_client):
                 if active_d:
                     active_draft_fmt = active_d.get("content_format")
 
-            current_fmt_session = st.session_state.get("pipe_hook_format_select") or st.session_state.get("pipe_content_format_select") or active_draft_fmt
+            current_fmt_session = st.session_state.get("pipe_format_val") or active_draft_fmt
             if not current_fmt_session and st.session_state.get("pipe_step1_result"):
                 parsed_a = parse_content_angles(st.session_state["pipe_step1_result"])
                 if parsed_a and parsed_a[0].get("recommended_format"):
@@ -427,9 +425,6 @@ def render_fast_track_pipeline(ai_client):
                 if f_opt.split()[1].lower() in str(current_fmt_session).lower() or str(current_fmt_session).lower() in f_opt.lower():
                     fmt_idx = f_i
                     break
-
-            if st.session_state.get("pipe_hook_format_select") not in FORMAT_OPTIONS:
-                st.session_state["pipe_hook_format_select"] = FORMAT_OPTIONS[fmt_idx]
 
             col1, col2 = st.columns([1.15, 1], gap="medium")
             with col1:
@@ -452,7 +447,7 @@ def render_fast_track_pipeline(ai_client):
                     "🎭 Model & Format Konten:",
                     FORMAT_OPTIONS,
                     index=fmt_idx,
-                    key="pipe_hook_format_select",
+                    key="pipe_step2_format_widget",
                     help="Model konten menentukan formula aksi kamera visual dan gaya dialog hook 3 detik pertama."
                 )
 
@@ -567,7 +562,6 @@ def render_fast_track_pipeline(ai_client):
                                 })
                             st.session_state["pipe_chosen_hook"] = chosen_hook_text
                             st.session_state["pipe_story_topic"] = hook_topic
-                            st.session_state["pipe_content_format_select"] = hook_format
                             st.session_state["pipe_format_val"] = hook_format
                             st.session_state["pipeline_step"] = 3
                             st.rerun()
@@ -619,15 +613,12 @@ def render_fast_track_pipeline(ai_client):
                 "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
             ]
 
-            raw_saved_fmt = st.session_state.get("pipe_content_format_select") or (active_draft_obj.get("content_format") if active_draft_obj else "") or autopilot.get("content_format", FORMAT_OPTIONS[0])
+            raw_saved_fmt = st.session_state.get("pipe_format_val") or (active_draft_obj.get("content_format") if active_draft_obj else "") or autopilot.get("content_format", FORMAT_OPTIONS[0])
             fmt_idx = 0
             for f_i, f_opt in enumerate(FORMAT_OPTIONS):
                 if f_opt.split()[1].lower() in str(raw_saved_fmt).lower() or str(raw_saved_fmt).lower() in f_opt.lower():
                     fmt_idx = f_i
                     break
-
-            if st.session_state.get("pipe_content_format_select") not in FORMAT_OPTIONS:
-                st.session_state["pipe_content_format_select"] = FORMAT_OPTIONS[fmt_idx]
 
             # -------------------------------------------------------------
             # ZONA 1: THE CREATIVE CORE (2-COLUMN BALANCED COCKPIT)
@@ -647,7 +638,7 @@ def render_fast_track_pipeline(ai_client):
                     "🎭 Format & Model Eksekusi Konten:",
                     options=FORMAT_OPTIONS,
                     index=fmt_idx,
-                    key="pipe_content_format_select",
+                    key="pipe_step3_format_widget",
                     help="Pilih format penyampaian: Talking head, Skit komedi 2 orang, micro-drama emosional, video tanpa wajah (faceless ASMR), debat dialektika, atau analogi fabel."
                 )
                 format_notes = {

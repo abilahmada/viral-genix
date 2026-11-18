@@ -155,7 +155,6 @@ def render_hook_cta_lab(ai_client):
                     st.session_state["pipe_topic_for_hook"] = st.session_state.get("last_hook_topic", topic_input)
                     st.session_state["pipe_story_topic"] = st.session_state.get("last_hook_topic", topic_input)
                     hook_fmt = st.session_state.get("last_hook_format", lab_format)
-                    st.session_state["pipe_content_format_select"] = hook_fmt
                     st.session_state["pipe_format_val"] = hook_fmt
                     st.session_state["pipeline_step"] = 3
                     st.session_state["_target_nav"] = "⚡ Generator Konten (Pipeline & Sprint)"
