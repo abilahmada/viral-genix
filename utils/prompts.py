@@ -265,7 +265,7 @@ class SafeFormatString(str):
             "director_instructions": "Mode Auto-Pilot Cerdas: Sutradara AI merancang setting lokasi, gaya visual, palet warna, dan vokal secara mandiri dan kontekstual sesuai topik konten.",
             "visual_style": "Live Action Sinematik (4K UHD)",
             "environment": "Setting lokasi kontekstual",
-            "color_grading": "Moody Warm Cinematic",
+            "color_grading": "Kontekstual Sesuai Mood Topik (Cool / Pure White / High-Contrast / Pastel / Warm)",
             "voice_style": "Santai & Percaya Diri",
             "content_theme": "Edukasi Solutif & Praktis",
             "target_audience": "Audiens target digital native",
@@ -336,6 +336,18 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
    - ATURAN MUTLAK PER KLIP: Setiap klip berdurasi 4 - 7 detik dengan 8 - 14 kata, sehingga seluruh kata dramatis tersampaikan utuh tanpa terpotong di video AI!
 
 4. KONSISTENSI VISUAL, VOKAL & SETTING LOKASI KONTEKSTUAL (ANTI-STUDIO GENERIK):
+   - 🚨 DILARANG SELALU MENGGUNAKAN DEFAULT 'WARM / TEAL & ORANGE' SEBAGAI COLOR GRADING!
+     Palet warna dan tata cahaya WAJIB 100% kontekstual mengikuti psikologi topik & emosi:
+     * Gadget / Tech / AI / Coding: Clean High-Key Tech & Cool Daylight (5600K-6500K) dengan aksen Cyan/Blue rim light.
+     * Skincare / Perawatan / Medis: Clean High-Key Pure White Diffused (5600K, soft pastel rosy, zero yellow tint).
+     * Otomotif / Mesin / Industri: Industrial Slate Metallic (6000K cool white, kontras bayangan tajam).
+     * Investigasi / Debat / Skeptis: Cold Documentary Contrast (Desaturated charcoal, deep shadow, tone dingin tanpa rona hangat).
+     * Bisnis / Finansial / Karir: Crisp Clean Corporate Neutral (5200K daylight, kontras tajam berwibawa).
+     * Fitness / Olahraga: High-Energy Athletic Contrast (Cool daylight, dramatic rim separation).
+     * Kuliner / Masak: Warm Delicious Appetizing (Kodak Vision3 500T, golden honey tones, 3200K tungsten backlight).
+     * Kopi / Kafe / Cerita Nostalgia: Artisan Warm Amber & Cozy Espresso Bokeh.
+     * Skit Komedi / Parodi: Vibrant Commercial Sitcom Pop (Terang benderang, saturasi warna ceria).
+     * Micro-Drama / Krisis Emosional: Chiaroscuro Low-Key (Bayangan dingin muram beralih ke subtle golden hope).
    - 🚨 DILARANG KERAS MENGGUNAKAN 'Studio Minimalis Modern' / 'Studio Kerja Minimalis' SEBAGAI DEFAULT MALAS!
      Setting lokasi fisik WAJIB 100% kontekstual, nyata, dan hidup sesuai dengan niche topik:
      * Masak / Resep / Kuliner: Dapur rumah estetik, pantry marmer putih, area kompor stainless steel.
@@ -448,7 +460,7 @@ Susun output dalam 4 BAGIAN TERSTRUKTUR:
 - **🧬 Master Visual Style Lock (English Prompt Prefix)**: (Formula prompt AI bahasa Inggris baku 9:16 vertical yang menetapkan gaya visual, kamera/lens, lighting, dan render engine)
 - **👤 Master Character / Subject Anchor**: (Spesifikasi subjek yang identik di setiap scene: jika Faceless tulis 'Faceless - Hands-in-action only, no face'; jika karakter tentukan usia, pakaian spesifik atas-bawah yang seragam antar scene)
 - **🏞️ Master Environment Anchor**: (Spesifikasi setting fisik lokasi yang sangat relevan, hidup dan kontekstual untuk topik ini, bukan studio generik)
-- **🎨 Master Color Grading & Lighting Anchor**: (Spesifikasi palet warna, key light, rim light, shadow contrast, dan film emulation LUT yang mendukung mood topik)
+- **🎨 Master Color Grading & Lighting Anchor**: (Tentukan palet warna dan pencahayaan kontekstual: misal Clean High-Key Cool Daylight untuk Tech/AI, Pure Pastel White untuk Skincare, Cold Documentary Contrast untuk Investigasi/Debat, Crisp Corporate Neutral untuk Bisnis, atau Warm Golden HANYA jika Kuliner/Kafe. DILARANG default warm jika tidak relevan!)
 - **🎙️ Master Voice Profile Anchor**: (Panduan karakter vokal, target tempo ~125-140 WPM, intonasi, artikulasi, dan acuan setting ElevenLabs / voice talent)
 
 ### BAGIAN 1: TABEL STORYBOARD DETIK DEMI DETIK

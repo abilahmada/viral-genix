@@ -24,9 +24,17 @@ from utils.vault_manager import (
     create_draft,
     update_draft,
     get_draft,
+    load_vault,
     generate_draft_bundle_zip,
     extract_copywriting_kit,
-    extract_closing_bridge
+    extract_closing_bridge,
+    save_last_active_session,
+    get_last_active_session,
+    clear_last_active_session,
+    set_url_draft_param,
+    get_url_draft_param,
+    clear_url_draft_param,
+    restore_draft_to_pipeline_session
 )
 from utils.export_helpers import (
     markdown_table_to_dataframe,
@@ -73,6 +81,15 @@ def render_fast_track_pipeline(ai_client):
     # TAB 1: PANDUAN ALUR 1 VIDEO (STEP-BY-STEP WIZARD)
     # =========================================================================
     with tab_single:
+        # -------------------------------------------------------------
+        # AUTO-RECOVERY SAAT HALAMAN DI-REFRESH / RELOAD BROWSER
+        # -------------------------------------------------------------
+        if not st.session_state.get("current_pipeline_draft_id"):
+            url_draft_id = get_url_draft_param()
+            if url_draft_id and get_draft(url_draft_id):
+                restore_draft_to_pipeline_session(url_draft_id)
+                st.toast("🔄 Sesi pekerjaan dipulihkan otomatis dari riwayat URL!", icon="⚡")
+
         # Inisialisasi State Pipeline
         if "pipeline_step" not in st.session_state:
             st.session_state["pipeline_step"] = 1
@@ -87,13 +104,25 @@ def render_fast_track_pipeline(ai_client):
 
         current_step = st.session_state["pipeline_step"]
 
+        # Sinkronisasi parameter URL dan sesi disk untuk auto-recovery
+        active_id = st.session_state.get("current_pipeline_draft_id")
+        if active_id:
+            set_url_draft_param(active_id)
+            save_last_active_session(active_id, current_step)
+
         # STEPPER HEADER (Indikator & Navigasi Tahap yang Dapat Diklik + Tombol Reset Cepat)
         col_stepper, col_new_top = st.columns([4.2, 1.2])
         with col_new_top:
             if st.button("➕ Draf Baru", key="btn_quick_reset_top", use_container_width=True, help="Bersihkan form untuk membuat konten baru dari Tahap 1"):
+                clear_url_draft_param()
+                clear_last_active_session()
                 st.session_state["current_pipeline_draft_id"] = None
                 st.session_state["pipeline_step"] = 1
-                for k in ["pipe_step1_result", "pipe_step2_result", "pipe_step3_result", "pipe_step4_result", "pipe_step5_result"]:
+                for k in [
+                    "pipe_step1_result", "pipe_step2_result", "pipe_step3_result", "pipe_step4_result", "pipe_step5_result",
+                    "pipe_format_val", "pipe_chosen_hook", "pipe_topic_for_hook", "pipe_story_topic", "pipe_chosen_concept",
+                    "pipe_custom_concept_text", "pipe_custom_hook_text", "pipe_final_cta"
+                ]:
                     if k in st.session_state:
                         del st.session_state[k]
                 st.rerun()
@@ -116,8 +145,7 @@ def render_fast_track_pipeline(ai_client):
                         st.session_state["pipeline_step"] = s_num
                         st.rerun()
 
-        # Banner informasi draf yang sedang diedit
-        active_id = st.session_state.get("current_pipeline_draft_id")
+        # Banner informasi draf yang sedang diedit ATAU banner pemulihan draf terakhir
         if active_id:
             active_d = get_draft(active_id)
             d_title = active_d.get("title", active_id) if active_d else active_id
@@ -127,6 +155,49 @@ def render_fast_track_pipeline(ai_client):
                 f'</div>',
                 unsafe_allow_html=True
             )
+        else:
+            # Deteksi sesi sebelumnya yang tersimpan di disk jika user tidak sengaja me-refresh halaman
+            last_sess = get_last_active_session()
+            if last_sess and last_sess.get("draft_id"):
+                last_d = get_draft(last_sess["draft_id"])
+                if last_d:
+                    with st.container(border=True):
+                        c_rec1, c_rec2, c_rec3 = st.columns([2.5, 1.2, 0.4])
+                        with c_rec1:
+                            st.markdown(
+                                f"💡 **Sesi Terakhir Terdeteksi:** <b style='color:#4f46e5;'>\"{last_d.get('title', 'Konten')}\"</b><br>"
+                                f"<span style='font-size:0.8rem; color:#64748b;'>Posisi Terakhir: <b>Tahap {last_sess.get('step', 1)}</b> • Niche: {last_d.get('niche', 'Umum')} • Format: {last_d.get('content_format', '-')}</span>",
+                                unsafe_allow_html=True
+                            )
+                        with c_rec2:
+                            if st.button("⚡ Pulihkan & Lanjutkan", type="primary", use_container_width=True, key="btn_resume_last_sess"):
+                                restore_draft_to_pipeline_session(last_d, target_step=last_sess.get("step", 1))
+                                set_url_draft_param(last_d["id"])
+                                st.rerun()
+                        with c_rec3:
+                            if st.button("✕", use_container_width=True, key="btn_dismiss_sess", help="Tutup banner pemulihan"):
+                                clear_last_active_session()
+                                st.rerun()
+
+        # Riwayat & Selector Pemulihan Draf dari Brankas Konten (Quick Vault Picker)
+        vault_items = load_vault()
+        if vault_items:
+            with st.expander("📂 Riwayat Proyek & Buka Draf Tersimpan dari Brankas", expanded=False):
+                d_opts = {d["id"]: f"[{d.get('status', 'Draf')[:10]}] {d.get('title', 'Konten')[:42]} ({d.get('updated_at', '')[:16]})" for d in vault_items}
+                c_sel, c_btn = st.columns([3, 1])
+                with c_sel:
+                    chosen_restore_id = st.selectbox(
+                        "Pilih draf yang ingin dibuka kembali di Pipeline:",
+                        options=list(d_opts.keys()),
+                        format_func=lambda x: d_opts[x],
+                        key="quick_pipe_vault_selector"
+                    )
+                with c_btn:
+                    if st.button("⚡ Buka Draf Terpilih", type="primary", use_container_width=True, key="btn_apply_vault_draft"):
+                        restore_draft_to_pipeline_session(chosen_restore_id)
+                        set_url_draft_param(chosen_restore_id)
+                        save_last_active_session(chosen_restore_id, st.session_state.get("pipeline_step", 1))
+                        st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -882,11 +953,15 @@ def render_fast_track_pipeline(ai_client):
 
                     color_options = [
                         "-- ⚡ Ikuti Rekomendasi Auto-Pilot --",
-                        "Moody Teal & Warm Orange Sinematik (Hollywood Blockbuster Look)",
-                        "Clean High-Key SaaS & Tech (Bright Natural, Cool Blue Accent)",
-                        "Dark Documentary (High Contrast, Deep Shadow, Desaturated Tone)",
-                        "Pastel Dreamy Aesthetic (Soft Glow, Warm Highlights, Airy Feel)",
+                        "Clean High-Key Tech & Cool Daylight (5600K Cool White, Modern Minimalist)",
+                        "Pure High-Key Clinical & Soft Pastel (5600K Diffused White, Rosy Skin Tone)",
+                        "Cold Documentary Contrast (Desaturated Charcoal, Deep Shadow Raw)",
+                        "Clean Corporate Professional (5200K Daylight, Deep Navy & Crisp Focus)",
+                        "Warm Delicious Food Grade (Kodak Vision3 500T, Rich Golden Appetizing)",
+                        "Moody Teal & Warm Amber Sinematik (Hollywood Blockbuster Look)",
+                        "Artisan Warm Amber (Soft Wood Bokeh, Cozy Coffee Shop Look)",
                         "Vibrant Pop Energetic (Saturasi Tinggi, TikTok Trend Vibe)",
+                        "Moody Chiaroscuro Low-Key (A24 Indie Drama, Melancholic Shadow)",
                         "✏️ Kustom (Ketik Palet Warna Sendiri)"
                     ]
 
@@ -1012,7 +1087,7 @@ TUGAS DIREKSI SUTRADARA AI (Rancang secara mandiri dan spesifik):
 1. FORMAT EKSEKUSI KONTEN: Patuhi secara ketat format '{selected_format}'. Jika Skit 2 Karakter, wajib gunakan tag dialog per peran (contoh: [Si Boros] vs [Si Cermat]) dan arahan kamera shot-reverse-shot. Jika Faceless ASMR, 100% tanpa wajah dengan tag [Voiceover] dan aksi tangan macro. Jika Debat, tampilkan duel [Si Skeptis] vs [Si Praktisi]. Jika Micro-Drama, hadirkan alur plot twist emosional.
 2. ENVIRONMENT / LOKASI: Ciptakan setting lokasi fisik yang PALING ASLI & KONTEKSTUAL untuk topik ini (Contoh: jika masak/resep -> Dapur rumah estetik; jika kecantikan/skincare -> Kamar mandi marmer putih bersih / vanity mirror; jika tech/coding -> Dark tech desk ambient neon; jika otomotif -> Garasi modern atau jalanan kota; jika bisnis/finansial -> Coworking space modern / meja kerja rapi; jika parenting -> Ruang keluarga hangat; jika olahraga/diet -> Gym atau ruang santai).
 3. TIPE VISUAL: Tentukan gaya visual terbaik (Realistis Sinematik 4K / UGC bernuansa otentik yang paling mengikat emosi audiens).
-4. COLOR GRADING: Palet warna dan pencahayaan sinematik yang memperkuat mood topik (Warm Golden, Clean High-Key Bright, Moody Teal & Orange, Vibrant Pop, dsb).
+4. COLOR GRADING: Palet warna dan tata cahaya 100% ADAPTIF terhadap topik & emosi: DILARANG selalu default ke Warm/Teal & Orange! Gunakan Cool Daylight (5600K-6500K) + Cyan untuk Tech/AI/Digital; Pure High-Key Pastel White untuk Skincare/Medis; Cold Desaturated Charcoal untuk Investigasi/Debat; Crisp Corporate Neutral untuk Bisnis; Warm Golden HANYA jika kuliner/kafe/nostalgia.
 5. VOICE STYLE: Karakter vokal, tempo bicara natural, dan artikulasi yang paling meyakinkan audiens.
 6. PERSONA & DIKSI AUDIENS: Sapaan (Lu-Gua / Aku-Kamu / Bestie / Saya-Anda) dan kosakata percakapan yang paling relate dengan penonton topik ini.
 7. KEDALAMAN MATERI, OTORITAS & BUKTI EMPIRIS (ANTI-KONTEN UMUM & ANTI-AI SLOP):

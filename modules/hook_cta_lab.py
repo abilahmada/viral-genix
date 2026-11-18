@@ -284,18 +284,22 @@ def render_hook_cta_lab(ai_client):
                 lab_color_choice = st.selectbox(
                     "🎨 Color Grading & Palet Warna:",
                     [
-                        "Moody Teal & Warm Orange Sinematik (Hollywood Blockbuster Look)",
-                        "Clean High-Key SaaS & Tech (Bright Natural, Cool Blue Accent)",
-                        "Dark Documentary (High Contrast, Deep Shadow, Desaturated Tone)",
-                        "Pastel Dreamy Aesthetic (Soft Glow, Warm Highlights, Airy Feel)",
+                        "Clean High-Key Tech & Cool Daylight (5600K Cool White, Modern Minimalist)",
+                        "Pure High-Key Clinical & Soft Pastel (5600K Diffused White, Rosy Skin Tone)",
+                        "Cold Documentary Contrast (Desaturated Charcoal, Deep Shadow Raw)",
+                        "Clean Corporate Professional (5200K Daylight, Deep Navy & Crisp Focus)",
+                        "Warm Delicious Food Grade (Kodak Vision3 500T, Rich Golden Appetizing)",
+                        "Moody Teal & Warm Amber Sinematik (Hollywood Blockbuster Look)",
+                        "Artisan Warm Amber (Soft Wood Bokeh, Cozy Coffee Shop Look)",
                         "Vibrant Pop Energetic (Saturasi Tinggi, TikTok Trend Vibe)",
+                        "Moody Chiaroscuro Low-Key (A24 Indie Drama, Melancholic Shadow)",
                         "✏️ Kustom (Ketik Palet Warna Sendiri)"
                     ],
                     key="lab_color_select"
                 )
                 if "Kustom" in lab_color_choice:
                     lab_custom_col = st.text_input("Palet Warna Kustom:", placeholder="Contoh: High contrast monochrome...", key="lab_custom_col")
-                    selected_lab_col = lab_custom_col if lab_custom_col.strip() else "Moody Warm Cinematic"
+                    selected_lab_col = lab_custom_col if lab_custom_col.strip() else "Clean High-Key Natural"
                 else:
                     selected_lab_col = lab_color_choice
 

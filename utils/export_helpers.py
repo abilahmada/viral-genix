@@ -886,13 +886,25 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                         clean_env = "Smart Workspace Modern dengan Meja Kayu & Tanaman Indoor (Warm Daylight)"
 
             clean_vis_style = vis_style_val or (master_vis if master_vis and "live action" in master_vis.lower() else "Realistis Sinematik / Live Action")
-            clean_color = color_val or (master_color or "Moody Warm Cinematic")
             clean_voice = voice_val or (master_voice or "Santai & Empatik")
 
             # Resolusi Sinematografi & Prompt AI Video Kelas Sutradara Pro (Hollywood/Commercial-Grade)
             scene_num_int = int(s_num) if s_num.isdigit() else len(scenes) + 1
             cine_context = f"{title_clean} {vis_val} {clean_audio_txt} {clean_env} {storyboard_text[:350]}"
             pro_cine = get_contextual_pro_cinematography(cine_context, scene_num=scene_num_int, scene_type=title_clean)
+
+            # Resolusi Cerdas Color Grading (Anti-Default Warm & 100% Adaptif Sesuai Naskah)
+            raw_c = color_val.strip().strip('()').strip() if color_val else ""
+            if not raw_c or any(ph in raw_c.lower() for ph in ["sesuai", "konsisten", "master", "anchor", "color grading anchor"]):
+                raw_c = master_color.strip().strip('()').strip() if master_color else ""
+
+            # Jika kosong atau masih terjebak generic warm padahal topik bukan kuliner/kafe
+            is_culinary = any(k in f"{cine_context} {clean_env}".lower() for k in ["masak", "kopi", "cafe", "kuliner", "resep", "food"])
+            if not raw_c or (raw_c.lower() in ["moody warm cinematic", "moody warm", "warm", "default"] and not is_culinary):
+                clean_color = pro_cine["color_lut"]
+            else:
+                clean_color = raw_c
+
             final_ai_prompt = build_pro_ai_video_prompt(
                 base_prompt=ai_prompt_val,
                 niche_or_topic=cine_context,
@@ -1839,7 +1851,7 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
     emotion = "👀 Rasa Penasaran Ekstrem (Curiosity Gap - Wajib Nonton Sampai Akhir)"
     visual = "🎥 Realistis Sinematik / Live Action (Talent Manusia / UGC 4K)"
     env = "Smart Workspace Modern dengan Meja Kayu & Tanaman Indoor (Warm Daylight)"
-    color = "Moody Teal & Warm Orange Sinematik (Hollywood Blockbuster Look)"
+    color = "Clean High-Key Natural (5400K Neutral Daylight, Balanced Modern Contrast)"
     voice = "Santai & Empatik (Bestie Vibe, Akrab, Mengalir Luwes)"
     aud = existing_audience.strip() if existing_audience and existing_audience.strip() else "Penonton usia 20-35 tahun (Digital Native)"
 
@@ -1864,7 +1876,7 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         emotion = "👀 Rasa Penasaran Ekstrem & Kelegaan Solutif Kulit"
         visual = "🎥 Live Action Clean High-Key 4K (Macro Skin Texture Focus)"
         env = "Vanity Mirror Kamar Mandi Marmer Putih Bersih (Clean Bright Ring Light & Rak Serum)"
-        color = "Pastel Clean Skin-Tone Glow (Soft Warm White, Natural Rosy)"
+        color = "Pastel Clean Skin-Tone Glow (5600K Pure White, Soft Rosy Tone)"
         voice = "Empatik, ramah, artikulasi jelas, tempo mengalir luwes 128 WPM"
 
     # 3. MAKEUP, KOSMETIK & RIASAN
@@ -1876,7 +1888,7 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         emotion = "👀 Rasa Penasaran Ekstrem (Curiosity Gap - Wajib Nonton Sampai Akhir)"
         visual = "🎥 Realistis Sinematik / Live Action (Macro Beauty Close-Up)"
         env = "Meja Rias Vanity Estetik dengan Cermin LED & Rak Kosmetik Rapi"
-        color = "Vibrant Soft Glow (Warm Golden Highlight & Crisp Clean Focus)"
+        color = "Clean Beauty High-Key (Bright Diffused Ring Light, Crisp Clean Rosy)"
         voice = "Santai, ceria, tempo bicara hangat dan bersahabat 130 WPM"
 
     # 4. FASHION, OUTFIT, HIJAB, GAMIS & STREETWEAR
@@ -1900,7 +1912,7 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         emotion = "😱 FOMO & Ketakutan Rusak (Loss Aversion Mesin)"
         visual = "🎥 Cinematic Urban Garage 4K (Low Angle & Engine Macro)"
         env = "Garasi Modern Bersih dengan Tool Rack Rapi & Pencahayaan Neon Cool White"
-        color = "Industrial Urban Contrast (Deep Metallic Grey, Warm Orange Fill)"
+        color = "Industrial Urban Contrast (Deep Metallic Slate Grey, Cool White 6000K, Crisp Edge Light)"
         voice = "Tegas, maskulin, berwibawa, tempo tenang tapi berenergi 130 WPM"
 
     # 6. FITNESS, GYM, DIET, KALORI & OLAHRAGA
@@ -1960,7 +1972,7 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         emotion = "😱 FOMO & Dorongan Pertumbuhan Finansial Nyata"
         visual = "🎥 Live Action UGC Sinematik 4K (Dinamis Punch-In Dashboard & Layar)"
         env = "Smart Workspace Modern / Meja Kerja Rapi dengan Laptop & Tanaman Indoor"
-        color = "Moody Teal & Warm Orange Sinematik (Hollywood Blockbuster Look)"
+        color = "Clean High-Key Natural (5400K Neutral Daylight, Balanced Modern Contrast)"
         voice = "Santai tapi tegas, penuh keyakinan, artikulasi padat 132 WPM"
 
     # 11. KEUANGAN PRIBADI, SAHAM, BEBAS UTANG PINJOL & INVESTASI
@@ -2106,6 +2118,19 @@ def get_smart_autopilot_presets(niche: str = "", hook: str = "", topic: str = ""
         content_format = "🎞️ Voiceover Faceless Sinematik (Tanpa Wajah — Audio Narasi + B-Roll ASMR)"
     elif any(k in combined for k in ["fabel", "analogi", "sejarah", "bedah kasus", "asal usul"]):
         content_format = "📖 Analogi Fabel / Bedah Kasus & Sejarah Unik"
+
+    # Penyesuaian Dinamis Color Grading dari Lensa Komunikasi & Nada Topik
+    if any(k in comm_lower for k in ["kritis", "debat", "kontra-arus", "investigasi", "skeptis"]) or any(k in combined for k in ["debat", "skeptis", "bongkar mitos"]):
+        color = "Cold Documentary Contrast (Desaturated Charcoal, 5800K Cool White)"
+    elif any(k in comm_lower for k in ["satir", "parodi", "komedi"]):
+        color = "Vibrant Pop Sitcom High-Key (Bright Commercial Tone, Saturated Colors)"
+    elif any(k in comm_lower for k in ["taktis", "efisiensi", "otoritatif"]):
+        if not any(k in combined for k in ["masak", "kopi", "cafe", "kuliner"]):
+            color = "Clean High-Key Tech & Neutral Daylight (5600K Cool White, Crisp Modern Contrast)"
+    elif any(k in comm_lower for k in ["drama", "high-stakes"]) or any(k in combined for k in ["micro-drama", "plot twist", "haru"]):
+        color = "Moody Chiaroscuro Low-Key (A24 Indie Drama, Deep Melancholic Shadows)"
+    elif any(k in comm_lower for k in ["cerita hangat", "nostalgia"]):
+        color = "Artisan Warm Amber (Soft Tungsten Glow, Kodak Vision3 500T Warmth)"
 
     return {
         "content_format": content_format,
@@ -2306,11 +2331,28 @@ def get_contextual_pro_cinematography(niche_or_topic: str = "", scene_num: int =
             cam = "Direct eye-level medium shot, warm welcoming smile, natural hand gesture inviting audience action"
         
         lens = "Shot on 35mm Arri Signature Prime Lens f/1.8, creamy shallow depth of field, subtle Black Pro-Mist 1/8"
-        lighting = "Masterclass corporate documentary lighting: soft 45-degree Rembrandt key light, volumetric warm window daylight rim glow"
-        color_lut = "Moody Teal & Warm Amber Sinematik (Hollywood Blockbuster & Bloomberg aesthetic), rich dynamic range"
+        if any(w in text_lower for w in ["kritis", "investigasi", "skeptis", "bongkar", "mitos", "debat"]):
+            lighting = "Cold documentary high-contrast: harsh 5800K directional key light with deep crisp shadows"
+            color_lut = "Cold Investigative Documentary LUT, desaturated slate charcoal, high-contrast monochrome depth"
+            badge = "🔍 Arri 35mm Prime f/1.8 | 5800K Cold Key & Desaturated Charcoal"
+        elif any(w in text_lower for w in ["tech", "ai", "coding", "software", "digital", "data", "saas", "gadget", "pc", "laptop"]):
+            lighting = "Clean keynote tech lighting: 6000K cool daylight key light, subtle cyan edge rim separation"
+            color_lut = "Clean High-Key Tech & Cool Cyan LUT, crisp modern contrast, deep obsidian blacks"
+            badge = "⚡ Arri 35mm Prime f/1.8 | 6000K Cool Key & Electric Cyan Edge"
+        elif any(w in text_lower for w in ["medis", "dokter", "klinik", "kesehatan", "gigi", "skincare"]):
+            lighting = "Clean clinical high-key: 5600K diffused surgical-pure softbox wrap-around light, zero harsh shadow"
+            color_lut = "Pure High-Key Clinical White LUT, clean pastel skin tones, crisp spotless clarity"
+            badge = "🔬 Arri 35mm Prime f/1.8 | 5600K Pure White Softbox & Clinical Clean"
+        elif any(w in text_lower for w in ["kuliner", "makan", "kafe", "kopi", "resep", "food", "masak"]):
+            lighting = "Warm 3200K tungsten backlight with golden ambient bounce fill"
+            color_lut = "Warm Appetizing Food Grade, Kodak Vision3 500T, rich golden honey tones"
+            badge = "🍳 Arri 35mm Prime f/1.8 | 3200K Tungsten & Warm Honey Amber"
+        else:
+            lighting = "Clean modern commercial lighting: soft 5400K natural daylight key, neutral wrap-around fill"
+            color_lut = "Clean High-Key Natural Commercial LUT, 5400K neutral daylight, balanced dynamic range"
+            badge = "🎬 Arri 35mm Prime f/1.8 | 5400K Natural Daylight & Clean Commercial LUT"
         physics = "Authentic skin micro-textures, natural facial expressions with micro-twitches, architectural depth, 24fps cinema cadence"
         editing = "Punchy J-cut audio leading visual transition, micro-zoom on power words, zero dead air"
-        badge = "🎬 Arri 35mm Prime f/1.8 | Rembrandt 45° Key & Volumetric Daylight"
 
     full_suffix = f"{lens}, {lighting}, {color_lut}, {physics}, master commercial cinematography --ar 9:16 --v 6.1 --style raw"
 
@@ -2363,7 +2405,11 @@ def build_pro_ai_video_prompt(
     if is_faceless and "no face" not in action_core.lower():
         action_core = f"{action_core}, faceless composition, hands only, no human face in frame"
     env_str = f"set in {env}" if env else "authentic detailed setting"
-    color_str = f"{color}" if color else cine["color_lut"]
+    clean_c_arg = color.strip().strip('()').strip() if color else ""
+    if not clean_c_arg or any(ph in clean_c_arg.lower() for ph in ["sesuai", "master", "anchor", "konsisten"]):
+        color_str = cine["color_lut"]
+    else:
+        color_str = clean_c_arg
 
     pro_prompt = (
         f"{cine['camera_motion']}, {action_core}, {env_str}, "
