@@ -608,13 +608,13 @@ class AIClient:
             voice_anchor = "Santai, bersahabat, tempo bicara riang 130 WPM, intonasi menggugah selera"
             all_dialogues = [
                 "Stop buang tangkai daun bawang, ini rahasia kaldu gurih alami restoran bintang lima!",
-                "Sebagian besar orang langsung buang bagian ini ke tong sampah karena dikira keras, akhirnya kaldu masakan lu hambar dan boros micin sintetis.",
-                "Padahal asam amino glutamat alami tertinggi ngumpul di serat tangkai—cukup rebus bareng air dingin di suhu delapan puluh derajat Celsius.",
+                "Banyak orang buang bagian ini karena dikira sampah, akhirnya kuah masakan hambar dan boros micin.",
+                "Padahal asam glutamat tertinggi ngumpul di sini—cukup rebus bareng air dingin di suhu delapan puluh derajat.",
                 "Uji rasa membuktikan intensitas gurihnya naik empat puluh persen, hemat micin sintetis sampai tujuh puluh persen.",
                 "Teknik shock termal: celupkan tangkai ke air es sepuluh detik sebelum direbus untuk kunci klorofil aromatik.",
                 "Gunakan rasio emas: seratus gram tangkai daun bawang untuk setiap satu liter air kaldu dasar.",
                 "Kombinasikan dengan dua butir lada putih utuh yang digeprek kasar untuk memicu aroma gurih sedap.",
-                "Simpan sisa potongan di wadah kedap udara dalam freezer, tahan tiga bulan dan siap cemplung kapan saja.",
+                "Simpan potongan di wadah kedap udara dalam freezer, tahan tiga bulan siap cemplung kapan pun.",
                 "Hindari merebus hingga mendidih bergolak keras di atas seratus derajat agar kaldu tidak terasa getir.",
                 "Resep takaran lengkap sop bintang lima sudah aku rangkum di caption, langsung save video ini sekarang!"
             ]
@@ -642,9 +642,9 @@ class AIClient:
             voice_anchor = "Punchy, percaya diri, artikulasi renyah, tempo 135 WPM"
             all_dialogues = [
                 "Stop bikin prompt panjang lebar, trik ini bikin respon AI sepuluh kali lebih cerdas!",
-                "Lu pasti sering ngetik prompt tiga paragraf panjang, tapi responnya tetep ngaco dan halusinasi, bikin waktu lu kebuang dua jam sia-sia.",
-                "Masalahnya bukan di AI-nya, tapi context window yang tercemar—solusinya pakai teknik Few-Shot Formatting dengan dua contoh konkret.",
-                "Data akurasi melonjak dari enam puluh persen ke sembilan puluh lima persen, selesai dalam dua menit.",
+                "Sering ngetik prompt tiga paragraf tapi respon AI tetep ngaco? Waktu lu kebuang dua jam sia-sia.",
+                "Context window lu tercemar! Kuncinya pakai teknik Few-Shot Formatting dengan dua contoh output konkret.",
+                "Data akurasi melonjak dari enam puluh persen ke sembilan puluh lima persen, selesai dua menit.",
                 "Terapkan Negative Constraints: instruksikan AI melarang kata klise seperti 'menyelami', 'krusial', atau 'game-changer'.",
                 "Pasang Role-Prompting Anchor dengan spesifikasi otoritas: posisikan AI sebagai Chief Editor berpengalaman sepuluh tahun.",
                 "Paksa Chain-of-Thought: wajibkan AI menuliskan langkah penalaran logis sebelum memunculkan jawaban akhir.",
@@ -657,7 +657,7 @@ class AIClient:
                 ("The Curiosity Lock & Agitation (Halusinasi & Waktu Terbuang)", "Cut ke B-Roll monitor menyorot teks merah error dan ekspresi frustrasi talent", "SFX: Warning Drone + Vinyl Stop", "Validasi Frustrasi & Stakes"),
                 ("The Mechanism (Few-Shot Formatting Framework)", "Split screen: jendela prompt terstruktur rapi dengan contoh input-output Markdown", "SFX: Clean Keyboard Clack + Ding", "The Mechanism & Solusi Logis"),
                 ("Proof & Demonstration (Metrik Akurasi 95%)", "Layar monitor menampilkan grafik benchmarking dari 60% melonjak ke 95%", "SFX: High-Tech UI Sweep", "Bukti Data Empiris Terukur"),
-                ("Step 1: Negative Constraints Anti-Klise", "Layar monitor menyorot baris instruksi larangan kata klise diblok highlight kuning", "SFX: Fast Typing Rhythm", "Eliminasi Halusinasi"),
+                ("Step 1: Negative Constraints Anti-Klise", "Layar monitor menyorot baris instruaran kata klise diblok highlight kuning", "SFX: Fast Typing Rhythm", "Eliminasi Halusinasi"),
                 ("Step 2: Role-Prompting Anchor Otoritas", "Animasi UI badge 'Chief Editor 10+ Yrs Exp' disematkan ke avatar AI", "SFX: Digital Lock Click", "Otoritas & Kedalaman Output"),
                 ("Step 3: Chain-of-Thought Reasoning", "Layar memperlihatkan AI menulis penalaran premis sebelum merangkum poin utama", "SFX: Smooth Synth Rise", "Logika Kausalitas Matang"),
                 ("Actionable Value Bomb (Aturan Satu Kalimat Ajaib)", "Close-up wajah talent menatap lensa, gestur tangan mempertegas satu kalimat kunci", "SFX: Smooth UI Pop", "Free Taktis Value Bomb"),
@@ -676,11 +676,11 @@ class AIClient:
             voice_anchor = "Empatik, ramah, artikulasi jelas, tempo mengalir luwes 128 WPM"
             all_dialogues = [
                 "Stop pakai Niacinamide konsentrasi tinggi kalau kulitmu malah bruntusan dan makin memerah!",
-                "Banyak orang kemakan tren mikir makin tinggi persentasenya makin cepet glowing, padahal kadar sepuluh persen justru memicu histamin yang merusak skin barrier lu sampai bruntusan parah.",
-                "Jurnal dermatologi membuktikan kadar optimal itu cuma dua sampai empat persen—ini kunci turunin sebum empat puluh persen tanpa iritasi.",
-                "Kadar empat persen terbukti klinis menurunkan sebum empat puluh persen dalam dua minggu tanpa iritasi sama sekali.",
+                "Makin tinggi persen makin glowing? Salah! Kadar sepuluh persen justru picu histamin perusak skin barrier.",
+                "Jurnal dermatologi membuktikan kadar optimal cuma dua sampai empat persen, aman tanpa iritasi sama sekali.",
+                "Kadar empat persen terbukti klinis menurunkan sebum empat puluh persen dalam dua minggu tanpa iritasi.",
                 "Lapiskan dengan Hyaluronic Acid berkadar rendah untuk meningkatkan hidrasi transepidermal hingga enam puluh lima persen.",
-                "Pastikan formula produk berada di rentang pH netral lima koma lima sampai enam koma lima agar tidak merusak asam alami kulit.",
+                "Pilih serum dengan pH netral lima koma lima agar tidak merusak asam alami pelindung kulit.",
                 "Segel kelembaban dengan Ceramide tipe NP dan Phytosphingosine untuk memperkuat dinding pelindung kulit.",
                 "Triknya: aplikasikan di kulit setengah lembab, tunggu enam puluh detik, baru kunci pakai moisturizer Ceramide.",
                 "Hindari pemakaian berbarengan di telapak tangan dengan Vitamin C L-Ascorbic Acid berkadar asam tinggi.",
@@ -710,14 +710,14 @@ class AIClient:
             voice_anchor = "Tegas, maskulin, berwibawa, tempo tenang tapi berenergi 130 WPM"
             all_dialogues = [
                 "Bunyi mendecit di ruang mesin pas starter pagi jangan disemprot minyak rem kalau gak mau putus!",
-                "Banyak pemilik mobil nekat semprot pelumas atau minyak rem biar bunyi mendecitnya hilang instan, padahal cairan kimia itu bikin karet melar dan siap putus mendadak di jalan tol.",
-                "Biang kerok aslinya bukan kurang licin, tapi tegangan belt kendor—lu cuma butuh ukur defleksi sepuluh milimeter dan setel baut adjuster-nya.",
+                "Jangan nekat semprot pelumas ke fan belt! Cairan kimia bikin karet melar dan siap putus di tol.",
+                "Penyebab aslinya bukan kurang licin, tapi belt kendor. Cukup ukur defleksi dan setel baut adjuster.",
                 "Cukup ukur defleksi tali kipas: kalau ditekan jempol amblas lebih dari sepuluh milimeter, wajib kencangkan baut adjuster.",
                 "Gunakan kunci ring dua belas untuk menyetel baut adjuster dengan torsi presisi dua puluh lima Newton meter.",
                 "Periksa keselarasan alur pulley kruk as dan alternator menggunakan penggaris baja agar belt tidak aus sebelah.",
                 "Dengarkan menggunakan stetoskop mekanik untuk memastikan suara bukan berasal dari lahar bearing alternator yang aus.",
                 "Pertolongan pertama darurat: semprotkan silicon spray khusus karet, suaranya langsung hilang total tanpa merusak serat tali.",
-                "Ganti fan belt baru setiap empat puluh ribu kilometer dan selalu pilih material berbahan karet sintetis EPDM tahan panas.",
+                "Ganti fan belt tiap empat puluh ribu kilometer, selalu pilih material karet sintetis EPDM tahan panas.",
                 "Simpan video ini sekarang di bookmark ponselmu, biar gak panik pas mobil mendadak bunyi di jalan!"
             ]
             all_scene_labels = [
@@ -748,14 +748,14 @@ class AIClient:
             hook_custom_clean = hook_val if (hook_val and len(hook_val.split()) <= 20) else "Stop bakar budget iklan kalau checkout conversion rate di landing page kamu masih di bawah satu persen!"
             all_dialogues = [
                 hook_custom_clean,
-                "Lu udah bakar budget jutaan buat iklan tapi nol penjualan karena penonton langsung kabur begitu lihat form checkout yang ruwet dan bikin ragu.",
-                "Kuncinya bukan gonta-ganti materi iklan, tapi hilangkan gesekan pakai psikologi Risk-Reversal Offer dan ringkas formulir jadi dua kolom saja.",
-                "Split-test membuktikan checkout rate melonjak dari satu koma dua persen menjadi tiga koma delapan persen dalam empat hari.",
+                "Bakar budget iklan tapi nol penjualan? Penonton kabur karena form checkout lu ruwet dan bikin ragu.",
+                "Kuncinya hilangkan gesekan! Terapkan garansi Risk-Reversal dan ringkas formulir checkout jadi dua kolom saja.",
+                "Split-test membuktikan checkout rate melonjak dari satu koma dua persen ke tiga koma delapan persen.",
                 "Pasang tiga testimoni spesifik lengkap dengan foto profil asli tepat di bawah tombol utama checkout.",
                 "Pecah formulir pembelian menjadi dua tahap micro-commitment: nama dan WhatsApp di langkah pertama, pembayaran di langkah kedua.",
                 "Sematkan indikator stok terbatas riil untuk mengurangi penundaan pembeli tanpa manipulasi timer palsu.",
-                "Cek sekarang juga: pangkas field alamat lengkap menjadi kode pos otomatis, tingkat drop-off langsung turun tiga puluh persen.",
-                "Tawarkan satu produk pelengkap berdiskon khusus di halaman konfirmasi order untuk menaikkan Average Order Value dua puluh lima persen.",
+                "Pangkas field alamat jadi kode pos otomatis, tingkat drop-off pembeli langsung turun tiga puluh persen.",
+                "Tawarkan add-on diskon di halaman konfirmasi untuk menaikkan Average Order Value dua puluh lima persen.",
                 "Checklist lengkap optimasi landing page konversi tinggi sudah gue share di link profil, ambil sekarang selagi free!"
             ]
             all_scene_labels = [

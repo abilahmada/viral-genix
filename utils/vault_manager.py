@@ -672,3 +672,179 @@ Niche: {draft.get('niche', '')} | Platform: {draft.get('platform', '')}
     zip_buffer.seek(0)
     return zip_buffer.getvalue()
 
+
+# =============================================================================
+# AUTO-RECOVERY & PERSISTENT SESSION HELPERS (KEBAL TERHADAP REFRESH / F5)
+# =============================================================================
+SESSION_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "last_active_session.json")
+
+def save_last_active_session(draft_id: str, step: int = 1) -> bool:
+    """Menyimpan ID draf dan nomor tahap yang terakhir aktif untuk auto-recovery jika browser me-reload."""
+    try:
+        os.makedirs(os.path.dirname(SESSION_FILE), exist_ok=True)
+        with open(SESSION_FILE, "w", encoding="utf-8") as f:
+            json.dump({
+                "draft_id": draft_id,
+                "step": step,
+                "timestamp": time.time()
+            }, f, indent=2)
+        return True
+    except Exception:
+        return False
+
+def get_last_active_session() -> Optional[Dict[str, Any]]:
+    """Membaca sesi terakhir yang tersimpan jika ada."""
+    try:
+        if os.path.exists(SESSION_FILE):
+            with open(SESSION_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict) and data.get("draft_id"):
+                    return data
+    except Exception:
+        pass
+    return None
+
+def clear_last_active_session():
+    """Menghapus sesi aktif ketika user sengaja membuat draf baru."""
+    try:
+        if os.path.exists(SESSION_FILE):
+            os.remove(SESSION_FILE)
+    except Exception:
+        pass
+
+def set_url_draft_param(draft_id: str):
+    """Menyimpan query param ?draft=... ke URL browser agar kebal terhadap reload / F5."""
+    try:
+        import streamlit as st
+        if hasattr(st, "query_params"):
+            st.query_params["draft"] = draft_id
+        elif hasattr(st, "experimental_set_query_params"):
+            st.experimental_set_query_params(draft=draft_id)
+    except Exception:
+        pass
+
+def get_url_draft_param() -> Optional[str]:
+    """Membaca query param ?draft=... dari URL browser."""
+    try:
+        import streamlit as st
+        if hasattr(st, "query_params"):
+            return st.query_params.get("draft")
+        elif hasattr(st, "experimental_get_query_params"):
+            params = st.experimental_get_query_params()
+            if "draft" in params and params["draft"]:
+                return params["draft"][0]
+    except Exception:
+        pass
+    return None
+
+def clear_url_draft_param():
+    """Membersihkan query param URL ketika user mereset draf."""
+    try:
+        import streamlit as st
+        if hasattr(st, "query_params"):
+            if "draft" in st.query_params:
+                del st.query_params["draft"]
+        elif hasattr(st, "experimental_set_query_params"):
+            st.experimental_set_query_params()
+    except Exception:
+        pass
+
+def restore_draft_to_pipeline_session(draft_or_id: Any, target_step: Optional[int] = None) -> bool:
+    """
+    Memulihkan draf konten secara menyeluruh ke dalam st.session_state,
+    sehingga alur kerja berlanjut tanpa ada data yang hilang setelah refresh.
+    """
+    import streamlit as st
+    if isinstance(draft_or_id, dict):
+        item = draft_or_id
+        draft_id = item.get("id")
+    else:
+        draft_id = str(draft_or_id)
+        item = get_draft(draft_id)
+
+    if not item:
+        return False
+
+    from utils.niche_data import COMPREHENSIVE_NICHES
+
+    st.session_state["current_pipeline_draft_id"] = draft_id
+    st.session_state["pipe_keyword"] = item.get("keyword", "")
+    st.session_state["pipe_keyword_input"] = item.get("keyword", "")
+
+    raw_niche = item.get("niche", "")
+    matched_niche = None
+    if raw_niche:
+        for cn in COMPREHENSIVE_NICHES:
+            if raw_niche.lower() in cn.lower() or cn.lower() in raw_niche.lower():
+                matched_niche = cn
+                break
+    st.session_state["pipe_niche"] = matched_niche if matched_niche else "✍️ Custom Niche (Ketik Niche Sendiri)"
+    if not matched_niche and raw_niche:
+        st.session_state["pipe_custom_niche"] = raw_niche
+
+    plat_opts = ["TikTok", "Instagram Reels", "YouTube Shorts", "TikTok / Reels"]
+    raw_plat = item.get("platform", "TikTok")
+    st.session_state["pipe_platform"] = raw_plat if raw_plat in plat_opts else "TikTok"
+
+    st.session_state["pipe_audience"] = item.get("target_audience", "Penonton umum")
+    if item.get("content_format"):
+        st.session_state["pipe_format_val"] = item.get("content_format")
+    if item.get("content_theme"):
+        st.session_state["pipe_theme_select"] = item.get("content_theme")
+    if item.get("audience_slang"):
+        st.session_state["pipe_slang_select"] = item.get("audience_slang")
+    if item.get("emotional_trigger"):
+        st.session_state["pipe_emotion_select"] = item.get("emotional_trigger")
+    if item.get("environment"):
+        st.session_state["pipe_env_select"] = item.get("environment")
+    if item.get("color_grading"):
+        st.session_state["pipe_color_select"] = item.get("color_grading")
+    if item.get("voice_style"):
+        st.session_state["pipe_voice_select"] = item.get("voice_style")
+    if item.get("visual_style"):
+        st.session_state["pipe_visual_style_select"] = item.get("visual_style")
+
+    concept_text = item.get("content_angle") or item.get("title", "")
+    st.session_state["pipe_chosen_concept"] = concept_text
+    st.session_state["pipe_custom_concept_text"] = concept_text
+    st.session_state["pipe_topic_for_hook"] = concept_text
+    st.session_state["pipe_hook_topic_input"] = concept_text
+    st.session_state["pipe_story_topic"] = concept_text
+    st.session_state["pipe_chosen_hook"] = item.get("hook_verbal", "")
+    st.session_state["pipe_custom_hook_text"] = item.get("hook_verbal", "")
+    st.session_state["pipe_product_input"] = item.get("product_name", "")
+
+    if item.get("communication_style"):
+        st.session_state["pipe_comm_style"] = item.get("communication_style")
+        st.session_state["pipe_comm_style_select"] = item.get("communication_style")
+        st.session_state["pipe_angle_type"] = item.get("communication_style")
+    if item.get("cta_goal"):
+        st.session_state["pipe_cta_target"] = item.get("cta_goal")
+        st.session_state["pipe_final_cta"] = item.get("cta_goal")
+
+    if item.get("research_notes"):
+        st.session_state["pipe_step1_result"] = item.get("research_notes", "")
+    if item.get("storyboard_table_md"):
+        st.session_state["pipe_step3_result"] = item.get("storyboard_table_md", "")
+    if item.get("closing_bridge_script"):
+        st.session_state["pipe_step4_result"] = item.get("closing_bridge_script", "")
+    if item.get("publication_kit_md"):
+        st.session_state["pipe_step5_result"] = item.get("publication_kit_md", "")
+
+    # Tentukan nomor tahap tujuan
+    if target_step is not None:
+        st.session_state["pipeline_step"] = target_step
+    else:
+        if item.get("publication_kit_md"):
+            st.session_state["pipeline_step"] = 5
+        elif item.get("closing_bridge_script"):
+            st.session_state["pipeline_step"] = 4
+        elif item.get("storyboard_table_md"):
+            st.session_state["pipeline_step"] = 3
+        elif item.get("hook_verbal"):
+            st.session_state["pipeline_step"] = 2
+        else:
+            st.session_state["pipeline_step"] = 1
+
+    return True
+

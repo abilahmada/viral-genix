@@ -18,7 +18,10 @@ from utils.vault_manager import (
     extract_copywriting_kit,
     extract_clean_speech_dialogue,
     extract_closing_bridge,
-    STATUS_OPTIONS
+    STATUS_OPTIONS,
+    restore_draft_to_pipeline_session,
+    set_url_draft_param,
+    save_last_active_session
 )
 from utils.export_helpers import prepare_markdown_download
 from utils.niche_data import COMPREHENSIVE_NICHES
@@ -751,60 +754,9 @@ def _render_kanban_card(item: dict, prefix: str):
 
         # Tombol aksi utama langsung terlihat di kartu (1-Click Open Pipeline)
         if st.button("⚡ Buka di Pipeline Wizard", key=f"open_pipe_{prefix}_{draft_id}", type="primary", use_container_width=True):
-            st.session_state["current_pipeline_draft_id"] = draft_id
-            st.session_state["pipe_keyword"] = item.get("keyword", "")
-            st.session_state["pipe_keyword_input"] = item.get("keyword", "")
-            raw_niche = item.get("niche", "")
-            matched_niche = None
-            if raw_niche:
-                for cn in COMPREHENSIVE_NICHES:
-                    if raw_niche.lower() in cn.lower() or cn.lower() in raw_niche.lower():
-                        matched_niche = cn
-                        break
-            st.session_state["pipe_niche"] = matched_niche if matched_niche else "✍️ Custom Niche (Ketik Niche Sendiri)"
-            if not matched_niche and raw_niche:
-                st.session_state["pipe_custom_niche"] = raw_niche
-
-            plat_opts = ["TikTok", "Instagram Reels", "YouTube Shorts", "TikTok / Reels"]
-            raw_plat = item.get("platform", "TikTok")
-            st.session_state["pipe_platform"] = raw_plat if raw_plat in plat_opts else "TikTok"
-
-            st.session_state["pipe_audience"] = item.get("target_audience", "Penonton umum")
-            if item.get("content_format"):
-                st.session_state["pipe_content_format_select"] = item.get("content_format")
-                st.session_state["pipe_format_val"] = item.get("content_format")
-            if item.get("content_theme"):
-                st.session_state["pipe_theme_select"] = item.get("content_theme")
-            if item.get("audience_slang"):
-                st.session_state["pipe_slang_select"] = item.get("audience_slang")
-            if item.get("emotional_trigger"):
-                st.session_state["pipe_emotion_select"] = item.get("emotional_trigger")
-            st.session_state["pipe_topic_for_hook"] = item.get("content_angle") or item.get("title", "")
-            st.session_state["pipe_hook_topic_input"] = item.get("content_angle") or item.get("title", "")
-            st.session_state["pipe_chosen_hook"] = item.get("hook_verbal", "")
-            st.session_state["pipe_story_topic"] = item.get("content_angle") or item.get("title", "")
-            st.session_state["pipe_product_input"] = item.get("product_name", "")
-            if item.get("communication_style"):
-                st.session_state["pipe_comm_style"] = item.get("communication_style")
-                st.session_state["pipe_comm_style_select"] = item.get("communication_style")
-                st.session_state["pipe_angle_type"] = item.get("communication_style")
-            if item.get("cta_goal"):
-                st.session_state["pipe_cta_target"] = item.get("cta_goal")
-
-            if item.get("storyboard_table_md"):
-                st.session_state["pipe_step3_result"] = item.get("storyboard_table_md", "")
-            if item.get("publication_kit_md"):
-                st.session_state["pipe_step5_result"] = item.get("publication_kit_md", "")
-
-            # Arahkan ke Tahap 3 (Storyboard & Naskah) jika draf sudah memiliki skrip,
-            # atau Tahap 1 jika draf baru/ide, agar pengguna tidak langsung terlempar ke penutup (Tahap 5).
-            if item.get("storyboard_table_md"):
-                st.session_state["pipeline_step"] = 3
-            elif item.get("hook_verbal"):
-                st.session_state["pipeline_step"] = 2
-            else:
-                st.session_state["pipeline_step"] = 1
-
+            restore_draft_to_pipeline_session(item)
+            set_url_draft_param(draft_id)
+            save_last_active_session(draft_id, st.session_state.get("pipeline_step", 1))
             st.session_state["_target_nav"] = "⚡ Generator Konten (Pipeline & Sprint)"
             st.session_state["active_nav"] = "⚡ Generator Konten (Pipeline & Sprint)"
             st.rerun()
