@@ -208,6 +208,23 @@ def parse_master_consistency_anchor(storyboard_text: str) -> dict:
                 return m.group(1).strip().strip('*').strip('_').strip('"')
         return ""
 
+    def _get_multiline_field(start_patterns, stop_patterns):
+        stop_re = '|'.join(stop_patterns)
+        for sp in start_patterns:
+            pat = rf'(?:{sp})[^\:\n]*\s*:\s*([\s\S]+?)(?=\n\s*[\*\-]?\s*\*{0,2}(?:{stop_re})|\n\s*###|\Z)'
+            m = re.search(pat, storyboard_text, re.IGNORECASE)
+            if m:
+                raw_block = m.group(1).strip()
+                # Bersihkan markdown formatting yang berlebihan
+                clean_lines = []
+                for line in raw_block.split('\n'):
+                    l_str = line.strip()
+                    if l_str:
+                        clean_lines.append(l_str)
+                if clean_lines:
+                    return '\n'.join(clean_lines)
+        return ""
+
     anchor["content_format"] = _get_val([
         r'[\*\-]\s*(?:\🎭\s*)?Format\s*(?:Eksekusi\s*)?Konten[^\:]*:\s*([^\n]+)',
         r'Format\s*(?:Eksekusi\s*)?Konten[^\:]*:\s*([^\n]+)',
@@ -237,11 +254,33 @@ def parse_master_consistency_anchor(storyboard_text: str) -> dict:
         r'Visual\s*Style\s*Lock[^\:]*:\s*([^\n]+)',
         r'Style\s*Lock[^\:]*:\s*([^\n]+)'
     ])
-    anchor["character_anchor"] = _get_val([
-        r'[\*\-]\s*(?:\👤\s*)?Master\s*Character[^\:]*:\s*([^\n]+)',
-        r'Character\s*(?:/|dan)?\s*Subject\s*Anchor[^\:]*:\s*([^\n]+)',
-        r'Subjek\s*Karakter[^\:]*:\s*([^\n]+)'
-    ])
+
+    # Ekstraksi Multi-Line Character Anchor (Mendukung 2 Karakter pada Skit Komedi / Debat Dialektika)
+    char_multi = _get_multiline_field(
+        [
+            r'[\*\-]?\s*(?:\👤\s*)?Master\s*Character',
+            r'[\*\-]?\s*Character\s*(?:/|dan)?\s*Subject\s*Anchor',
+            r'[\*\-]?\s*Subjek\s*Karakter'
+        ],
+        [
+            r'(?:\🏞️\s*)?Master\s*Environment',
+            r'(?:\🎨\s*)?Master\s*Color',
+            r'(?:\🎙️\s*)?Master\s*Voice',
+            r'Environment\s*Anchor',
+            r'Color\s*Grading',
+            r'Voice\s*Profile',
+            r'BAGIAN\s*1'
+        ]
+    )
+    if char_multi:
+        anchor["character_anchor"] = char_multi
+    else:
+        anchor["character_anchor"] = _get_val([
+            r'[\*\-]\s*(?:\👤\s*)?Master\s*Character[^\:]*:\s*([^\n]+)',
+            r'Character\s*(?:/|dan)?\s*Subject\s*Anchor[^\:]*:\s*([^\n]+)',
+            r'Subjek\s*Karakter[^\:]*:\s*([^\n]+)'
+        ])
+
     anchor["environment_anchor"] = _get_val([
         r'[\*\-]\s*(?:\🏞️\s*)?Master\s*Environment[^\:]*:\s*([^\n]+)',
         r'Environment\s*Anchor[^\:]*:\s*([^\n]+)',
@@ -804,16 +843,16 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
             diff = est_audio_dur - duration_sec
 
             # Evaluasi Presisi Sinkronisasi Audio vs Visual untuk Generator AI (Kling, Runway, Luma)
-            # Batas aman per klip AI video 5-10 detik: dialog ideal 10 - 15 kata (maks 16 kata)
-            if words_in_scene > 16:
+            # Batas aman per klip AI video 5-10 detik: dialog ideal 12 - 18 kata (maksimal 20 kata agar aliran kalimat mulus & berbobot)
+            if words_in_scene > 24:
                 sync_status = "overflow"
-                sync_badge = f"🚨 Rawan Terpotong AI ({words_in_scene} kata > 16)"
+                sync_badge = f"🚨 Rawan Terpotong AI ({words_in_scene} kata > 20)"
                 sync_badge_color = "#dc2626"
                 sync_badge_bg = "#fef2f2"
                 sync_badge_border = "#fecaca"
-                sync_note = f"Dialog ini memiliki {words_in_scene} kata (~{est_audio_dur}s). Di generator AI video (Kling/Runway klip 5-10s), dialog di atas 16 kata rawan terpotong di akhir. Disarankan kompres ke <= 15 kata!"
+                sync_note = f"Dialog ini memiliki {words_in_scene} kata (~{est_audio_dur}s). Di generator AI video (Kling/Runway klip 5-10s), dialog di atas 20 kata rawan terpotong di akhir. Disarankan pecah shot atau kompres ke 12-18 kata!"
                 is_synced = False
-            elif diff >= 2:
+            elif diff >= 3:
                 sync_status = "overflow"
                 sync_badge = f"🚨 Dialog Kepanjangan (+{diff}s)"
                 sync_badge_color = "#dc2626"
@@ -821,7 +860,7 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                 sync_badge_border = "#fecaca"
                 sync_note = f"Dialog butuh ~{est_audio_dur}s ({words_in_scene} kata), sedangkan durasi klip visual tertulis {duration_sec}s. Vokal berisiko terpotong {diff} detik di generator AI video!"
                 is_synced = False
-            elif diff <= -4 and duration_sec >= 8:
+            elif diff <= -4 and duration_sec >= 9:
                 sync_status = "underflow"
                 sync_badge = f"⚠️ Hening Visual (+{abs(diff)}s)"
                 sync_badge_color = "#d97706"
@@ -829,26 +868,34 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                 sync_badge_border = "#fde68a"
                 sync_note = f"Dialog selesai di detik ke-{est_audio_dur} ({words_in_scene} kata), menyisakan jeda hening {abs(diff)}s pada klip {duration_sec}s."
                 is_synced = False
+            elif words_in_scene > 20:
+                sync_status = "warning"
+                sync_badge = f"⚠️ Dialog Agak Panjang ({words_in_scene} kata)"
+                sync_badge_color = "#d97706"
+                sync_badge_bg = "#fffbeb"
+                sync_badge_border = "#fde68a"
+                sync_note = f"Dialog ini memiliki {words_in_scene} kata (~{est_audio_dur}s). Masih dapat muat di klip video 8-10s, namun disarankan pecah shot agar ritme visual lebih sinematik."
+                is_synced = True
             else:
                 sync_status = "synced"
                 sync_badge = f"✅ Pas di AI Video ({words_in_scene} kata ~{est_audio_dur}s)"
                 sync_badge_color = "#10b981"
                 sync_badge_bg = "#ecfdf5"
                 sync_badge_border = "#a7f3d0"
-                sync_note = f"Panjang dialog ({words_in_scene} kata) sangat ideal dan aman untuk klip video AI 5-10 detik."
+                sync_note = f"Panjang dialog ({words_in_scene} kata) sangat ideal dan aman untuk klip video AI 5-10 detik dengan aliran kalimat yang mulus dan berbobot."
                 is_synced = True
 
-            # Keamanan klip: Durasi <= 12s, dialog <= 16 kata, dan audio tidak overflow klip
-            is_clip_safe = (duration_sec <= 12) and (words_in_scene <= 16) and (diff < 2)
+            # Keamanan klip: Durasi <= 12s, dialog <= 20 kata, dan audio tidak overflow klip
+            is_clip_safe = (duration_sec <= 12) and (words_in_scene <= 20) and (diff < 3)
             if is_clip_safe:
                 clip_status = "safe"
-                clip_status_text = "✅ Aman AI Video (<= 16 kata)"
-            elif words_in_scene > 20 or duration_sec > 15:
+                clip_status_text = "✅ Aman AI Video (<= 20 kata)"
+            elif words_in_scene > 24 or duration_sec > 15:
                 clip_status = "danger"
-                clip_status_text = "🚨 Rawan Terpotong (> 20 kata / > 15s)"
+                clip_status_text = "🚨 Rawan Terpotong (> 24 kata / > 15s)"
             else:
                 clip_status = "warning"
-                clip_status_text = "⚠️ Perhatian Durasi (> 16 kata)"
+                clip_status_text = "⚠️ Perhatian Durasi (> 20 kata)"
 
             # Resolusi Cerdas Setting Lokasi (Anti-Monoton & Anti-Studio Generik)
             # Jika scene bertuliskan "(Sesuai Master Anchor)" atau kosong, gunakan master_env
@@ -1013,15 +1060,15 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                 ideal_scene_dur = max(3, min(15, round(words_in_scene / 1.85) + (1 if words_in_scene > 5 else 0)))
                 diff = est_audio_dur - dur_sec
 
-                if words_in_scene > 16:
+                if words_in_scene > 24:
                     sync_status = "overflow"
-                    sync_badge = f"🚨 Rawan Terpotong AI ({words_in_scene} kata > 16)"
+                    sync_badge = f"🚨 Rawan Terpotong AI ({words_in_scene} kata > 20)"
                     sync_badge_color = "#dc2626"
                     sync_badge_bg = "#fef2f2"
                     sync_badge_border = "#fecaca"
-                    sync_note = f"Dialog ini memiliki {words_in_scene} kata (~{est_audio_dur}s). Di generator AI video klip 5-10s, dialog di atas 16 kata rawan terpotong di akhir. Disarankan kompres ke <= 15 kata!"
+                    sync_note = f"Dialog ini memiliki {words_in_scene} kata (~{est_audio_dur}s). Di generator AI video klip 5-10s, dialog di atas 20 kata rawan terpotong di akhir. Disarankan pecah shot atau kompres ke 12-18 kata!"
                     is_synced = False
-                elif diff >= 2:
+                elif diff >= 3:
                     sync_status = "overflow"
                     sync_badge = f"🚨 Dialog Kepanjangan (+{diff}s)"
                     sync_badge_color = "#dc2626"
@@ -1029,7 +1076,7 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                     sync_badge_border = "#fecaca"
                     sync_note = f"Dialog butuh ~{est_audio_dur}s ({words_in_scene} kata), sedangkan klip hanya {dur_sec}s. Audio berisiko terpotong {diff} detik di generator video AI!"
                     is_synced = False
-                elif diff <= -4 and dur_sec >= 8:
+                elif diff <= -4 and dur_sec >= 9:
                     sync_status = "underflow"
                     sync_badge = f"⚠️ Hening Visual (+{abs(diff)}s)"
                     sync_badge_color = "#d97706"
@@ -1037,25 +1084,33 @@ def parse_storyboard_scenes(storyboard_text: str) -> list:
                     sync_badge_border = "#fde68a"
                     sync_note = f"Dialog selesai di detik ke-{est_audio_dur} ({words_in_scene} kata), klip {dur_sec}s memiliki {abs(diff)}s jeda hening tanpa suara."
                     is_synced = False
+                elif words_in_scene > 20:
+                    sync_status = "warning"
+                    sync_badge = f"⚠️ Dialog Agak Panjang ({words_in_scene} kata)"
+                    sync_badge_color = "#d97706"
+                    sync_badge_bg = "#fffbeb"
+                    sync_badge_border = "#fde68a"
+                    sync_note = f"Dialog ini memiliki {words_in_scene} kata (~{est_audio_dur}s). Masih dapat muat di klip 8-10s, disarankan pecah shot agar lebih sinematik."
+                    is_synced = True
                 else:
                     sync_status = "synced"
                     sync_badge = f"✅ Pas di AI Video ({words_in_scene} kata ~{est_audio_dur}s)"
                     sync_badge_color = "#10b981"
                     sync_badge_bg = "#ecfdf5"
                     sync_badge_border = "#a7f3d0"
-                    sync_note = f"Panjang dialog ({words_in_scene} kata) sangat ideal dan aman untuk klip video AI 5-10 detik."
+                    sync_note = f"Panjang dialog ({words_in_scene} kata) sangat ideal dan aman untuk klip video AI 5-10 detik dengan aliran kalimat yang mulus dan berbobot."
                     is_synced = True
 
-                is_clip_safe = (dur_sec <= 12) and (words_in_scene <= 16) and (diff < 2)
+                is_clip_safe = (dur_sec <= 12) and (words_in_scene <= 20) and (diff < 3)
                 if is_clip_safe:
                     clip_status = "safe"
-                    clip_status_text = "✅ Aman AI Video (<= 16 kata)"
-                elif words_in_scene > 20 or dur_sec > 15:
+                    clip_status_text = "✅ Aman AI Video (<= 20 kata)"
+                elif words_in_scene > 24 or dur_sec > 15:
                     clip_status = "danger"
-                    clip_status_text = "🚨 Rawan Terpotong (> 20 kata / > 15s)"
+                    clip_status_text = "🚨 Rawan Terpotong (> 24 kata / > 15s)"
                 else:
                     clip_status = "warning"
-                    clip_status_text = "⚠️ Perhatian Durasi (> 16 kata)"
+                    clip_status_text = "⚠️ Perhatian Durasi (> 20 kata)"
 
                 clean_env_tbl = master_env or "Smart Workspace Modern dengan Tanaman Indoor (Warm Daylight)"
                 cine_context_tbl = f"{default_titles[t_idx]} {vis_val} {aud_val} {clean_env_tbl} {storyboard_text[:350]}"
@@ -1275,16 +1330,16 @@ def apply_synced_timeline_to_markdown(storyboard_text: str, synced_scenes: list)
     return updated_text
 
 
-def compress_storyboard_dialogues_to_safe_words(storyboard_text: str, max_words: int = 15) -> str:
+def compress_storyboard_dialogues_to_safe_words(storyboard_text: str, max_words: int = 18) -> str:
     """
-    Mengompresi seluruh kalimat dialog per scene pada storyboard agar memiliki maksimal 12-15 kata,
+    Mengompresi seluruh kalimat dialog per scene pada storyboard agar memiliki ideal 12-18 kata (maks 20 kata),
     sehingga pas dengan durasi render AI video (5-10 detik) dan 100% bebas dari risiko terpotong di akhir.
     Tetap mempertahankan angka metrik (%, °C, dll) dan esensi kausalitas pesan.
     """
     if not storyboard_text:
         return storyboard_text
 
-    def _trim_sentence(txt: str, limit: int = 15) -> str:
+    def _trim_sentence(txt: str, limit: int = 18) -> str:
         clean_in = txt.strip().strip('"').strip()
         words = clean_in.split()
         if len(words) <= limit:
@@ -1375,11 +1430,11 @@ def compress_storyboard_dialogues_to_safe_words(storyboard_text: str, max_words:
     return "\n".join(new_lines)
 
 
-def shard_storyboard_scenes_by_clauses(storyboard_text: str, max_words_per_shot: int = 15) -> str:
+def shard_storyboard_scenes_by_clauses(storyboard_text: str, max_words_per_shot: int = 18) -> str:
     """
-    Memecah (sharding) scene yang memiliki dialog panjang menjadi 2 klip/scene terpisah berkesinambungan
+    Memecah (sharding) scene yang memiliki dialog panjang (> 18-20 kata) menjadi 2 klip/scene terpisah berkesinambungan
     TANPA memotong atau mengurangi satu kata pun dari dialog dramatisnya!
-    Setiap potongan klausa mendapatkan angle kamera, B-Roll, SFX, dan durasi klip mandiri (4-7 detik),
+    Setiap potongan klausa mendapatkan angle kamera, B-Roll, SFX, dan durasi klip mandiri (5-8 detik),
     sehingga 100% aman anti-terpotong di generator video AI (Kling, Runway, Luma) sekaligus membuat
     pergantian shot visual lebih sinematik dan dinamis.
     """

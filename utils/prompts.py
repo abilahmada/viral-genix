@@ -297,27 +297,28 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
 {director_instructions}
 
 ⚠️ ATURAN MUTLAK SINKRONISASI AUDIO-VISUAL & DISIPLIN RETENSI (ANTI-TERPOTONG AI VIDEO):
-1. HUKUM PECAH SCENE SINEMATIK & ANTI-TERPOTONG AI VIDEO (MICRO-SCENE SHARDING):
-   - 🚨 HUKUM MUTLAK PRESERVASI KATA DRAMATIS & KEDALAMAN MATERI:
-     * DILARANG KERAS MEMOTONG ATAU MENGURANGI KATA-KATA DRAMATIS, EMOSIONAL, MAUPUN ANGKA DATA!
-     * Generator video AI (Kling AI, Runway Gen-3, Luma, HeyGen) merender per klip berdurasi default 5 hingga 10 detik.
-     * Kecepatan bicara bahasa Indonesia natural adalah ~1.8 kata per detik. Jika 1 klip berisi lebih dari 14-16 kata, kata-kata terakhir akan terpotong oleh AI generator.
-   - 🎬 SOLUSI SUTRADARA KELAS ATAS: PECAH SCENE MENJADI LEBIH BANYAK KLIP (MICRO-SHOTS 4 - 7 DETIK)!
-     * Bebaskan jumlah scene! Video 60 detik SANGAT DISARANKAN memiliki 7 HINGGA 10 SCENE PENDEK (Shot A, Shot B, Shot C).
-     * Video 90 detik: 10 - 14 Scene! Video 120 detik: 12 - 18 Scene!
-     * SETIAP SCENE HANYA MENAMPUNG 1 KLAUSA / 1 TARIKAN NAFAS DRAMATIS (8 - 14 KATA).
-     * Contoh Pemecahan Alami (Sharding):
-       - Scene 2 (5s / 11 kata): "Sebagian besar orang langsung buang bagian ini ke tong sampah karena dikira keras..."
-       - Scene 3 (5s / 10 kata): "Akhirnya kaldu masakan lu hambar, dan boncos boros micin sintetis!"
-       - Scene 4 (5s / 11 kata): "Padahal asam amino glutamat alami tertinggi justru menumpuk di serat tangkai ini!"
-       - Scene 5 (6s / 11 kata): "Cukup rebus bareng air dingin di suhu delapan puluh derajat Celsius."
-     * Dengan cara ini:
-       1. TIDAK ADA SATU KATA DRAMATIS PUN YANG DIBUANG ATAU DIKOMPRESI!
-       2. Setiap klip berdurasi 4-7 detik, 100% AMAN ANTI-TERPOTONG di Kling AI / Runway / Luma!
-       3. Pergantian sudut kamera dan B-roll tiap 5-7 detik membuat video jauh lebih dinamis, sinematik, dan memicu retensi visual tinggi!
+1. HUKUM PECAH SCENE SINEMATIK & ALIRAN KATA MULUS (SMOOTH CADENCE & ANTI-TERPOTONG AI VIDEO):
+   - 🚨 HUKUM MUTLAK PRESERVASI KATA DRAMATIS, KEDALAMAN MATERI & ALIRAN MULUS:
+     * DILARANG memotong kata terlalu pendek atau kaku sehingga kalimat terdengar canggung dan terburu-buru!
+     * Generator video AI modern (Kling AI, Runway Gen-3 Alpha, Luma, HeyGen) merender per klip berdurasi default 5 hingga 10 detik.
+     * Kecepatan bicara natural bahasa Indonesia adalah ~1.8 hingga 2.2 kata per detik.
+     * 🎯 RENTANG EMAS DIALOG PER SCENE: 12 HINGGA 18 KATA (Toleransi Nyaman 10 - 20 Kata / Durasi Klip 5 - 9 Detik).
+     * Dengan rentang 12-18 kata:
+       1. Kalimat mengalir sangat luwes (*smooth narrative flow*), tidak kaku atau terputus sebelum pemikiran tuntas.
+       2. Memiliki ruang cukup (+2-3 kata) untuk menampung metrik angka empiris dan kausalitas logis (*The Mechanism*) tanpa terburu-buru.
+       3. 100% AMAN ANTI-TERPOTONG pada generator video AI (Kling / Runway / HeyGen)!
+   - 🎬 PEMBAGIAN SCENE SINEMATIK BERBOBOT (KLIP 5 - 8 DETIK):
+     * Video 60 detik: Rancang 6 HINGGA 9 SCENE BERBOBOT (Shot A, Shot B, Shot C).
+     * Video 90 detik: 9 - 13 Scene! Video 120 detik: 12 - 16 Scene!
+     * SETIAP SCENE MENAMPUNG 1 PEMIKIRAN DRAMATIS UTUH DENGAN BOBOT ISI TINGGI (12 - 18 KATA).
+     * Contoh Naskah Mengalir Luwes & Berbobot (Smooth Flow):
+       - Scene 2 (7s / 16 kata): "Sebagian besar orang langsung buang tangkai ini ke tong sampah karena dikira sisa sampah keras."
+       - Scene 3 (7s / 15 kata): "Akhirnya kuah kaldu masakan lu hambar, dan boncos beli micin sintetis berkali-kali!"
+       - Scene 4 (8s / 17 kata): "Padahal asam amino glutamat alami tertinggi justru menumpuk di serat tangkai daun bawang ini!"
+       - Scene 5 (7s / 16 kata): "Cukup rebus bareng air dingin di suhu delapan puluh derajat Celsius untuk kunci klorofil aromatik."
    - 🚨 ATURAN KHUSUS HOOK PEMBUKA (SCENE 1):
-     * JIKA Hook pendek & punchy (3-6 kata): Tetapkan durasi Scene 1 = 3-4 detik.
-     * JIKA Hook panjang/bercerita (8-14 kata): Durasi Scene 1 WAJIB DITULIS 6 - 8 DETIK agar vokal tidak terpotong saat rendering AI video!
+     * JIKA Hook pendek & punchy (5-8 kata): Tetapkan durasi Scene 1 = 3-5 detik.
+     * JIKA Hook mengalir bercerita (10-16 kata): Durasi Scene 1 WAJIB DITULIS 6 - 8 DETIK agar vokal tidak terpotong saat rendering AI video!
    - 🚨 TIMELINE KUMULATIF BERKESINAMBUNGAN:
      * Detik awal dan detik akhir setiap scene di Bagian 1 dan Bagian 2 HARUS dihitung mengalir berkesinambungan sesuai durasi riil masing-masing scene!
 
@@ -329,11 +330,11 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
 3. DURASI TOTAL ADAPTIF & FLEKSIBILITAS JUMLAH SCENE (PREFERENSI LEBIH BANYAK SCENE):
    - Rancang JUMLAH SCENE secara granular sesuai kebutuhan materi ({topic}):
      * 🎬 KONTEN RINGKAS (30 - 45 Detik): Rancang 4 HINGGA 6 SCENE PENDEK.
-     * 🎬 KONTEN STANDAR (50 - 60 Detik): Rancang 7 HINGGA 10 SCENE GRANULAR (Sangat direkomendasikan agar tidak ada scene kepanjangan)!
-     * 🎬 KONTEN MENDALAM / MULTI-POIN (75 - 90 Detik): Rancang 10 HINGGA 14 SCENE! (Pecah langkah taktis dan bukti data ke dalam klip-klip mandiri).
-     * 🎬 KONTEN PANJANG / MASTERCLASS DEEP-DIVE (90 - 120 Detik): Rancang 12 HINGGA 18 SCENE GRANULAR! (Breakdown menyeluruh: Anatomi Masalah, Rincian Langkah, Data Lab, B-Roll Mikro, Mitigasi Blunder, Actionable Blueprint, dan Closing CTA).
-     * 🎬 OTOMATIS FLEKSIBEL (Default): Analisis kedalaman materi secara cerdas. Kembangkan secara bebas menjadi 7 hingga 12+ scene agar materi tuntas dan kata dramatis tidak terpotong!
-   - ATURAN MUTLAK PER KLIP: Setiap klip berdurasi 4 - 7 detik dengan 8 - 14 kata, sehingga seluruh kata dramatis tersampaikan utuh tanpa terpotong di video AI!
+     * 🎬 KONTEN STANDAR (50 - 60 Detik): Rancang 6 HINGGA 9 SCENE GRANULAR (Sangat direkomendasikan agar naskah mengalir berbobot)!
+     * 🎬 KONTEN MENDALAM / MULTI-POIN (75 - 90 Detik): Rancang 9 HINGGA 13 SCENE! (Pecah langkah taktis dan bukti data ke dalam klip-klip mandiri).
+     * 🎬 KONTEN PANJANG / MASTERCLASS DEEP-DIVE (90 - 120 Detik): Rancang 12 HINGGA 16 SCENE GRANULAR! (Breakdown menyeluruh: Anatomi Masalah, Rincian Langkah, Data Lab, B-Roll Mikro, Mitigasi Blunder, Actionable Blueprint, dan Closing CTA).
+     * 🎬 OTOMATIS FLEKSIBEL (Default): Analisis kedalaman materi secara cerdas. Kembangkan secara bebas menjadi 6 hingga 10+ scene agar materi tuntas dan kata dramatis tidak terpotong!
+   - PANDUAN EMAS PER KLIP: Setiap klip berdurasi 5 - 8 detik dengan 12 - 18 kata utuh (toleransi nyaman 10 - 20 kata), sehingga naskah mengalir mulus (*smooth cadence*), berbobot, dan seluruh kata dramatis tersampaikan tuntas tanpa terpotong di video AI!
 
 4. KONSISTENSI VISUAL, VOKAL & SETTING LOKASI KONTEKSTUAL (ANTI-STUDIO GENERIK):
    - 🚨 DILARANG SELALU MENGGUNAKAN DEFAULT 'WARM / TEAL & ORANGE' SEBAGAI COLOR GRADING!
@@ -429,6 +430,7 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
       - Visual: Medium close-up, push-in, shallow depth of field, dan cutaway B-roll dinamis.
    2. 🎭 Skit Komedi / Parodi Situasional (POV 2 Karakter Bertolak Belakang):
       - Menghadirkan 2 karakter dengan sifat bertolak belakang (misal: `[Si Boros]` vs `[Si Cermat]`, `[User Pemula]` vs `[AI Pro]`, `[Karyawan]` vs `[Bos]`).
+      - WAJIB definisikan profil LENGKAP KEDUA KARAKTER di BAGIAN 0 (Karakter 1 & Karakter 2): nama/peran, rentang usia, pakaian spesifik atas-bawah yang unik dan kontras agar konsisten di-lock AI video generator, serta ciri fisik/ekspresi khas masing-masing. DILARANG HANYA MERANGKUM 1 KARAKTER!
       - WAJIB berikan tag nama karakter di setiap baris dialog: `[Nama Karakter]: "..."`.
       - Visual: Sudut kamera berganti antar scene (Shot-reverse-shot, over-the-shoulder, deadpan reaction) untuk menciptakan ilusi 2 orang berinteraksi dengan timing humor yang renyah.
    3. 🎬 Micro-Drama & Storytelling Emosional (Plot Twist & Narasi Kisah Nyata):
@@ -442,6 +444,7 @@ STORYBOARD_TABLE_PROMPT = SafeFormatString("""Buatkan skrip video pendek lengkap
       - Master Character Anchor: "Faceless Creator (Hands-in-action only, aesthetic sleeves/accessories, no face visible in frame)".
    5. 🥊 Debat Dialektika (Si Skeptis Penasaran vs Si Praktisi Solutif):
       - Format adu argumen antara `[Si Skeptis]`: mewakili keraguan dan pertanyaan kritis audiens ("Ah masa cuma begini bisa berhasil? Bohong kali!") bergantian dengan `[Si Praktisi]`: membungkam keraguan dengan tenang memakai data konkret, uji lab, dan logika kausalitas ("Nih liat analitiknya, konversi naik 42%...").
+      - WAJIB definisikan profil LENGKAP KEDUA KARAKTER di BAGIAN 0: [Karakter 1: Si Skeptis] & [Karakter 2: Si Praktisi] dengan pakaian dan ciri visual yang kontras agar mudah dibedakan generator video AI.
       - Tag dialog bergantian: `[Si Skeptis]: "..."` dan `[Si Praktisi]: "..."`.
       - Visual: Split-screen visual atau cut-to-cut framing kontras (cool vs warm, gelisah vs tenang berwibawa).
    6. 📖 Analogi Fabel / Bedah Kasus & Sejarah Unik:
@@ -458,21 +461,21 @@ Susun output dalam 4 BAGIAN TERSTRUKTUR:
 - **🗣️ Gaya Sapaan & Diksi**: (Tentukan gaya sapaan: Lu-Gua / Aku-Kamu / Bestie / Saya-Anda yang paling relate)
 - **⚡ Trigger Emosi Dominan**: (Tentukan pemicu psikologis utama retensi penonton)
 - **🧬 Master Visual Style Lock (English Prompt Prefix)**: (Formula prompt AI bahasa Inggris baku 9:16 vertical yang menetapkan gaya visual, kamera/lens, lighting, dan render engine)
-- **👤 Master Character / Subject Anchor**: (Spesifikasi subjek yang identik di setiap scene: jika Faceless tulis 'Faceless - Hands-in-action only, no face'; jika karakter tentukan usia, pakaian spesifik atas-bawah yang seragam antar scene)
+- **👤 Master Character / Subject Anchor**: (Spesifikasi subjek yang identik di setiap scene: Jika Faceless tulis 'Faceless - Hands-in-action only, no face'; jika Single Talent tentukan usia, gender, pakaian atas-bawah seragam; JIKA Skit Komedi / Debat Dialektika WAJIB rinci KEDUA KARAKTER sekaligus: [Karakter 1: Nama/Peran, Usia, Ciri Fisik/Ekspresi, Pakaian Atas-Bawah Spesifik] & [Karakter 2: Nama/Peran, Usia, Ciri Fisik/Ekspresi, Pakaian Atas-Bawah Kontras Spesifik] agar konsisten di-lock AI video generator!)
 - **🏞️ Master Environment Anchor**: (Spesifikasi setting fisik lokasi yang sangat relevan, hidup dan kontekstual untuk topik ini, bukan studio generik)
 - **🎨 Master Color Grading & Lighting Anchor**: (Tentukan palet warna dan pencahayaan kontekstual: misal Clean High-Key Cool Daylight untuk Tech/AI, Pure Pastel White untuk Skincare, Cold Documentary Contrast untuk Investigasi/Debat, Crisp Corporate Neutral untuk Bisnis, atau Warm Golden HANYA jika Kuliner/Kafe. DILARANG default warm jika tidak relevan!)
 - **🎙️ Master Voice Profile Anchor**: (Panduan karakter vokal, target tempo ~125-140 WPM, intonasi, artikulasi, dan acuan setting ElevenLabs / voice talent)
 
 ### BAGIAN 1: TABEL STORYBOARD DETIK DEMI DETIK
-Format tabel Markdown presisi (WAJIB SINKRON: Durasi 5-8 detik tiap baris dan dialog MAKSIMAL 12-16 KATA agar 100% pas dan TIDAK TERPOTONG di generator video AI Kling/Runway. Sertakan label pembicara seperti [Kreator], [Nama Karakter], [Voiceover], atau [Si Skeptis]/[Si Praktisi]. Tampilkan seluruh baris dari Scene 1 hingga Scene N):
-| Detik | Visual / B-Roll Camera Direction | Skrip Audio (Word for Word - Sertakan Tag Karakter/Voiceover, Maks 12-16 Kata) | Aset B-Roll & SFX | Pemicu Psikologis / Pacing |
+Format tabel Markdown presisi (WAJIB SINKRON: Durasi 6-9 detik tiap baris dan dialog IDEAL 12-18 KATA [maksimal 20 kata] agar aliran kalimat mulus, berbobot, dan 100% pas tidak terpotong di generator video AI Kling/Runway/HeyGen. Sertakan label pembicara seperti [Kreator], [Nama Karakter], [Voiceover], atau [Si Skeptis]/[Si Praktisi]. Tampilkan seluruh baris dari Scene 1 hingga Scene N):
+| Detik | Visual / B-Roll Camera Direction | Skrip Audio (Word for Word - Sertakan Tag Karakter/Voiceover, Ideal 12-18 Kata) | Aset B-Roll & SFX | Pemicu Psikologis / Pacing |
 |---|---|---|---|---|
 
-### BAGIAN 2: LEMBAR KERJA PRODUKSI PER SCENE (MICRO-SHOTS 4-7 DETIK & DIALOG MAKSIMAL 8-14 KATA UTUH)
-Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang jumlah scene adaptif granular: 4-6 scene untuk 30-45s, 7-10 scene untuk 60s, 10-14 scene untuk 75-90s, dan 12-18 scene untuk 90-120s agar seluruh kata dramatis tetap utuh dan aman 100% di generator video AI):
+### BAGIAN 2: LEMBAR KERJA PRODUKSI PER SCENE (MICRO-SHOTS 5-9 DETIK & DIALOG IDEAL 12-18 KATA UTUH)
+Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang jumlah scene adaptif granular: 4-6 scene untuk 30-45s, 7-10 scene untuk 60s, 10-14 scene untuk 75-90s, dan 12-18 scene untuk 90-120s agar seluruh kata dramatis tetap utuh, mengalir mulus, dan aman 100% di generator video AI):
 
 ### 🎬 SCENE 1 [00:00 - 00:0X]: The Hook (Penahan Scroll)
-- **⏱️ Durasi**: X Detik (Detik 0 s/d X, WAJIB SINKRON dengan jumlah kata: jika 4-6 kata = 3-4s; jika 8-12 kata = 6-8s)
+- **⏱️ Durasi**: X Detik (Detik 0 s/d X, WAJIB SINKRON dengan jumlah kata: jika 6-10 kata = 4-5s; jika 12-16 kata = 6-8s)
 - **🎨 Tipe Visual**: (Sesuai Master Visual Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor, misal: Dapur Bersih - Area Kompor / Vanity Mirror Marmer Putih / Garasi Depan Kap Mesin)
 - **🎨 Color Grading**: (Sesuai Master Color Grading Anchor)
@@ -480,14 +483,14 @@ Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang 
 - **🎭 Delivery & Level Energi Talent**: (Level energi suara 1-10, ekspresi wajah, tatapan mata langsung ke lensa kamera)
 - **🎯 Relevansi Audiens & Diksi**: (Alasan pemilihan kata dan emosi ini untuk menarik audiens)
 - **🎥 Visual & Kamera**: (Angle kamera, framing, pergerakan dinamis, ekspresi talent)
-- **🎙️ Dialog Audio (Word for Word)**: (Sertakan tag karakter/voiceover di awal, misal: [Kreator]: "..." atau [Voiceover]: "..." atau [Si Boros]: "...". Kalimat hook pembuka yang jumlah katanya sinkron persis dengan durasi: MAKSIMAL 6-12 KATA)
+- **🎙️ Dialog Audio (Word for Word)**: (Sertakan tag karakter/voiceover di awal, misal: [Kreator]: "..." atau [Voiceover]: "..." atau [Si Boros]: "...". Kalimat hook pembuka yang jumlah katanya sinkron persis dengan durasi: IDEAL 10-16 KATA, maksimal 18 kata)
 - **🎞️ B-Roll & Aset Visual**: (Footage pendukung / visual kontekstual)
 - **🔊 SFX & Transisi**: (Sound effect spesifik dan jenis transisi editor)
 - **🎯 Catatan Editor & Pacing**: (Instruksi pemotongan jeda hening / ritme beat)
 - **🔑 Prompt AI Video/Image (English)**: (Prompt sutradara pro komersial 6-layer siap copas untuk Kling / Runway Gen-3 / Midjourney / Sora: [Camera Motion] + [Subject Micro-Action] + [Contextual Environment & Props] + [Lens & Optics: 35mm anamorphic f/1.8] + [Studio Lighting & LUT] + [Texture Physics: subsurface scattering, 24fps, 8k uhd --ar 9:16])
 
 ### 🎬 SCENE 2 [00:0X - 00:YY]: The Curiosity Lock & Deep Agitation (Penguatan Masalah & Pembuktian Jebakan)
-- **⏱️ Durasi**: Y Detik (Detik X s/d YY, WAJIB SINKRON dengan kata dialog: MAKSIMAL 12 - 16 KATA = 6 - 8 DETIK)
+- **⏱️ Durasi**: Y Detik (Detik X s/d YY, WAJIB SINKRON dengan kata dialog: IDEAL 12 - 18 KATA = 6 - 9 DETIK, toleransi maksimal 20 kata)
 - **🎨 Tipe Visual**: (Konsisten dengan Master Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor)
 - **🎨 Color Grading**: (Konsisten dengan Master Anchor)
@@ -495,14 +498,14 @@ Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang 
 - **🎭 Delivery & Level Energi Talent**: (Level energi 8.5/10, ekspresi empati serius, tatapan tajam membongkar salah kaprah)
 - **🎯 Relevansi Audiens & Diksi**: (Validasi kebiasaan umum audiens yang selama ini keliru)
 - **🎥 Visual & Kamera**: (Angle kamera membongkar masalah, ekspresi frustasi/kontras, B-roll problem close-up)
-- **🎙️ Dialog Audio (Word for Word)**: (DILARANG MEMBOCORKAN SOLUSI DI SINI! Terapkan Formula Agitasi Padat: Validasi salah kaprah + jebakan/akibat fatal. WAJIB KOMPRES KATA: MAKSIMAL 12 - 16 KATA agar tidak terpotong di video AI! Tahan tensi rasa penasaran. Sinkron durasi)
+- **🎙️ Dialog Audio (Word for Word)**: (DILARANG MEMBOCORKAN SOLUSI DI SINI! Terapkan Formula Agitasi Padat: Validasi salah kaprah + jebakan/akibat fatal. IDEAL 12 - 18 KATA [maksimal 20 kata] dengan aliran kalimat mulus dan berbobot tanpa terpotong di video AI! Tahan tensi rasa penasaran. Sinkron durasi)
 - **🎞️ B-Roll & Aset Visual**: (Visualisasi masalah, layar error, bahan terbuang, atau grafik kerugian nyata)
 - **🔊 SFX & Transisi**: (SFX ketegangan, vinyl stop / muted drop, transisi hard cut)
 - **🎯 Catatan Editor & Pacing**: (Pertahankan pacing tegang, potong jeda hening)
 - **🔑 Prompt AI Video/Image (English)**: ...
 
 ### 🎬 SCENE 3 [00:YY - 00:ZZ]: The Mechanism & Breakthrough (Mekanisme Solusi Spesifik & Aha! Moment)
-- **⏱️ Durasi**: Z Detik (Detik YY s/d ZZ, WAJIB SINKRON dengan kata dialog: MAKSIMAL 12 - 16 KATA = 6 - 8 DETIK)
+- **⏱️ Durasi**: Z Detik (Detik YY s/d ZZ, WAJIB SINKRON dengan kata dialog: IDEAL 12 - 18 KATA = 6 - 9 DETIK, toleransi maksimal 20 kata)
 - **🎨 Tipe Visual**: (Konsisten dengan Master Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor)
 - **🎨 Color Grading**: (Konsisten dengan Master Anchor)
@@ -510,14 +513,14 @@ Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang 
 - **🎭 Delivery & Level Energi Talent**: (Level energi 9/10, ekspresi antusias, pencerahan Aha! Moment)
 - **🎯 Relevansi Audiens & Diksi**: ...
 - **🎥 Visual & Kamera**: ...
-- **🎙️ Dialog Audio (Word for Word)**: (BARU DI SINI SOLUSI PERTAMA KALI DIUNGKAP! Sebutkan NAMA SPESIFIK alat/bahan/teknik dan jelaskan MEKANISME KERJA kausalitas logis mengapa ini memecahkan masalah di Scene 2. Berikan Aha! Moment. WAJIB MAKSIMAL 12 - 16 KATA agar pas di klip AI!)
+- **🎙️ Dialog Audio (Word for Word)**: (BARU DI SINI SOLUSI PERTAMA KALI DIUNGKAP! Sebutkan NAMA SPESIFIK alat/bahan/teknik dan jelaskan MEKANISME KERJA kausalitas logis mengapa ini memecahkan masalah di Scene 2. Berikan Aha! Moment. IDEAL 12 - 18 KATA [maksimal 20 kata] dengan klausa utuh dan berbobot!)
 - **🎞️ B-Roll & Aset Visual**: ...
 - **🔊 SFX & Transisi**: ...
 - **🎯 Catatan Editor & Pacing**: ...
 - **🔑 Prompt AI Video/Image (English)**: ...
 
 ### 🎬 SCENE 4 s/d SCENE (N-2): Core Steps, Case Studies, Proof & Multi-Point Demonstrations
-(PANDUAN FLEKSIBEL UNTUK VIDEO PANJANG: Rinci bagian isi ini menjadi beberapa scene berurutan bernomor [Scene 4, Scene 5, Scene 6, Scene 7, dst] sesuai kebutuhan materi. SETIAP SCENE HARUS 5-8 DETIK DENGAN MAKSIMAL 12-16 KATA agar klip video AI tidak terpotong! Contoh pembagian:
+(PANDUAN FLEKSIBEL UNTUK VIDEO PANJANG: Rinci bagian isi ini menjadi beberapa scene berurutan bernomor [Scene 4, Scene 5, Scene 6, Scene 7, dst] sesuai kebutuhan materi. SETIAP SCENE HARUS 6-9 DETIK DENGAN IDEAL 12-18 KATA [maksimal 20 kata] agar aliran nafas natural dan klip video AI tidak terpotong! Contoh pembagian:
 - SCENE 4: Langkah Taktis 1 / Komponen Utama Solusi
 - SCENE 5: Langkah Taktis 2 / Demonstrasi Penggunaan & Uji Coba Lapangan
 - SCENE 6: Proof Empiris / Data Metrik Perbandingan Sebelum vs Sesudah
@@ -525,7 +528,7 @@ Rinci setiap scene dari SCENE 1 sampai SCENE N secara berkesinambungan (Rancang 
 Setiap scene wajib dirinci dengan format atribut lengkap yang sama seperti scene sebelumnya).
 
 ### 🎬 SCENE (N-1) [00:AA - 00:BB]: Actionable Value Bomb (Golden Rule Langsung Eksekusi)
-- **⏱️ Durasi**: B Detik (Detik AA s/d BB, WAJIB SINKRON dengan kata dialog: MAKSIMAL 12 - 16 KATA = 6 - 8 DETIK)
+- **⏱️ Durasi**: B Detik (Detik AA s/d BB, WAJIB SINKRON dengan kata dialog: IDEAL 12 - 18 KATA = 6 - 9 DETIK, toleransi maksimal 20 kata)
 - **🎨 Tipe Visual**: (Konsisten dengan Master Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor)
 - **🎨 Color Grading**: (Konsisten dengan Master Anchor)
@@ -533,14 +536,14 @@ Setiap scene wajib dirinci dengan format atribut lengkap yang sama seperti scene
 - **🎭 Delivery & Level Energi Talent**: ...
 - **🎯 Relevansi Audiens & Diksi**: ...
 - **🎥 Visual & Kamera**: ...
-- **🎙️ Dialog Audio (Word for Word)**: (Berikan golden rule / langkah praktis gratis yang bisa langsung dipraktekkan hari ini tanpa harus beli apapun. WAJIB MAKSIMAL 12 - 16 KATA. Sinkron durasi)
+- **🎙️ Dialog Audio (Word for Word)**: (Berikan golden rule / langkah praktis gratis yang bisa langsung dipraktekkan hari ini tanpa harus beli apapun. IDEAL 12 - 18 KATA [maksimal 20 kata]. Sinkron durasi)
 - **🎞️ B-Roll & Aset Visual**: ...
 - **🔊 SFX & Transisi**: ...
 - **🎯 Catatan Editor & Pacing**: ...
 - **🔑 Prompt AI Video/Image (English)**: ...
 
 ### 🎬 SCENE N [00:BB - 00:CC]: The Call to Action (Jembatan Konversi Organik)
-- **⏱️ Durasi**: C Detik (Detik BB s/d CC, WAJIB SINKRON dengan kata dialog: MAKSIMAL 12 - 16 KATA = 6 - 8 DETIK)
+- **⏱️ Durasi**: C Detik (Detik BB s/d CC, WAJIB SINKRON dengan kata dialog: IDEAL 12 - 18 KATA = 6 - 9 DETIK, toleransi maksimal 20 kata)
 - **🎨 Tipe Visual**: (Konsisten dengan Master Anchor)
 - **🏞️ Setting Lokasi**: (Sebutkan setting fisik nyata spesifik scene ini yang selaras dengan Master Environment Anchor)
 - **🎨 Color Grading**: (Konsisten dengan Master Anchor)
@@ -548,14 +551,14 @@ Setiap scene wajib dirinci dengan format atribut lengkap yang sama seperti scene
 - **🎭 Delivery & Level Energi Talent**: ...
 - **🎯 Relevansi Audiens & Diksi**: ...
 - **🎥 Visual & Kamera**: ...
-- **🎙️ Dialog Audio (Word for Word)**: (Jembatan konversi organik penutup yang mengarahkan penonton ke template/alat/link bio sebagai akselerator efisiensi. WAJIB MAKSIMAL 12 - 16 KATA. Sinkron durasi)
+- **🎙️ Dialog Audio (Word for Word)**: (Jembatan konversi organik penutup yang mengarahkan penonton ke template/alat/link bio sebagai akselerator efisiensi. IDEAL 12 - 18 KATA [maksimal 20 kata]. Sinkron durasi)
 - **🎞️ B-Roll & Aset Visual**: ...
 - **🔊 SFX & Transisi**: ...
 - **🎯 Catatan Editor & Pacing**: ...
 - **🔑 Prompt AI Video/Image (English)**: ...
 
 ### BAGIAN 3: REKOMENDASI TEKNIS & SOUND
-- **Estimasi Jumlah Kata Audio Total**: (Maksimal rata-rata 12-16 kata per scene, total disesuaikan jumlah scene agar 100% aman anti-terpotong di klip AI video 5-10s)
+- **Estimasi Jumlah Kata Audio Total**: (Target rata-rata 12-18 kata per scene, total disesuaikan jumlah scene agar seluruh kalimat utuh, mengalir mulus berbobot, dan 100% aman anti-terpotong di klip AI video 5-10s)
 - **Rekomendasi Sound/Backsound**: (Tempo BPM, mood musik, referensi BGM)
 - **Tips Eksekusi Kreator**: (Lighting setup, mic gain, eye-contact to lens)
 """)

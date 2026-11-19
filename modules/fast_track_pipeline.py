@@ -1084,7 +1084,7 @@ DILARANG menggunakan template lokasi studio yang monoton/generik jika ada settin
 - NICHE INDUSTRI: {niche_source or 'Umum'}
 
 TUGAS DIREKSI SUTRADARA AI (Rancang secara mandiri dan spesifik):
-1. FORMAT EKSEKUSI KONTEN: Patuhi secara ketat format '{selected_format}'. Jika Skit 2 Karakter, wajib gunakan tag dialog per peran (contoh: [Si Boros] vs [Si Cermat]) dan arahan kamera shot-reverse-shot. Jika Faceless ASMR, 100% tanpa wajah dengan tag [Voiceover] dan aksi tangan macro. Jika Debat, tampilkan duel [Si Skeptis] vs [Si Praktisi]. Jika Micro-Drama, hadirkan alur plot twist emosional.
+1. FORMAT EKSEKUSI KONTEN: Patuhi secara ketat format '{selected_format}'. Jika Skit 2 Karakter / Debat Dialektika, WAJIB definisikan KEDUA KARAKTER LENGKAP di Bagian 0 (Karakter 1 & Karakter 2: nama, peran, usia, pakaian unik atas-bawah konsisten untuk AI video lock, ciri fisik & ekspresi kontras) dan WAJIB gunakan tag dialog per peran (contoh: [Si Boros] vs [Si Cermat] atau [Si Skeptis] vs [Si Praktisi]) dengan arahan kamera shot-reverse-shot. DILARANG HANYA MERANGKUM 1 KARAKTER! Jika Faceless ASMR, 100% tanpa wajah dengan tag [Voiceover] dan aksi tangan macro. Jika Micro-Drama, hadirkan alur plot twist emosional.
 2. ENVIRONMENT / LOKASI: Ciptakan setting lokasi fisik yang PALING ASLI & KONTEKSTUAL untuk topik ini (Contoh: jika masak/resep -> Dapur rumah estetik; jika kecantikan/skincare -> Kamar mandi marmer putih bersih / vanity mirror; jika tech/coding -> Dark tech desk ambient neon; jika otomotif -> Garasi modern atau jalanan kota; jika bisnis/finansial -> Coworking space modern / meja kerja rapi; jika parenting -> Ruang keluarga hangat; jika olahraga/diet -> Gym atau ruang santai).
 3. TIPE VISUAL: Tentukan gaya visual terbaik (Realistis Sinematik 4K / UGC bernuansa otentik yang paling mengikat emosi audiens).
 4. COLOR GRADING: Palet warna dan tata cahaya 100% ADAPTIF terhadap topik & emosi: DILARANG selalu default ke Warm/Teal & Orange! Gunakan Cool Daylight (5600K-6500K) + Cyan untuk Tech/AI/Digital; Pure High-Key Pastel White untuk Skincare/Medis; Cold Desaturated Charcoal untuk Investigasi/Debat; Crisp Corporate Neutral untuk Bisnis; Warm Golden HANYA jika kuliner/kafe/nostalgia.
@@ -1095,11 +1095,13 @@ TUGAS DIREKSI SUTRADARA AI (Rancang secara mandiri dan spesifik):
    - {f"Data/Fakta Spesifik Pengguna: {custom_evidence.strip()}" if custom_evidence.strip() else "Data Otoritas: AI wajib menyematkan metrik terukur konkret (persentase %, durasi waktu riil yang dipangkas, angka suhu/kadar/torsi/takaran presisi), nama alat/bahan/teknik spesifik tanpa kata kabur, dan membongkar salah kaprah umum."}
    - Kausalitas 'The Mechanism': Jelaskan secara gamblang MENGAPA solusi ini bekerja secara logis/ilmiah agar penonton mendapatkan sensasi 'Aha! Moment' dari seorang Subject Matter Expert sejati.
    - B-Roll Bukti Fisik: B-roll wajib menyorot bukti nyata fisik (alat ukur, layar dashboard analitik, makro perbandingan, dsb).
-8. JUMLAH SCENE & DURASI: {scene_req_text}"""
+8. ALIRAN KALIMAT MULUS & PANJANG DIALOG PER SCENE: Rancang dialog per scene dengan alur nafas alami yang mengalir mulus, berbobot, dan tidak terpotong kaku secara prematur (Target Sweet Spot: 12 - 18 KATA per scene, toleransi aman hingga 20 kata untuk klip 6-9 detik).
+9. JUMLAH SCENE & DURASI: {scene_req_text}"""
                         else:
                             director_instructions = f"""⚙️ MODE SUTRADARA: KUSTOM MANUAL (PILIHAN KHUSUS PENGGUNA)
 Wajib mematuhi instruksi kustom pengguna berikut:
-- Model & Format Eksekusi Konten: {selected_format} (Patuhi pembagian dialog dan staging format ini)
+- Model & Format Eksekusi Konten: {selected_format} (Patuhi pembagian dialog dan staging format ini. Untuk Skit 2 Karakter / Debat Dialektika, WAJIB definisikan KEDUA KARAKTER LENGKAP di Bagian 0 dengan ciri pakaian dan kepribadian kontras)
+- Aliran Kalimat & Panjang Dialog: Rancang dialog per scene dengan alur nafas alami mulus dan berbobot (Sweet Spot: 12-18 kata per scene, toleransi maks 20 kata).
 - Tipe Visual: {selected_visual_style}
 - Environment / Setting Lokasi: {selected_env}
 - Color Grading & Lighting: {selected_color}
@@ -1196,7 +1198,14 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                             col_anc1, col_anc2 = st.columns(2)
                             with col_anc1:
                                 if master_anchor.get("character_anchor"):
-                                    st.markdown(f"**👤 Subjek / Karakter Tetap:**\n> {master_anchor['character_anchor']}")
+                                    char_raw = master_anchor["character_anchor"].strip()
+                                    char_lines = [l.strip() for l in char_raw.split('\n') if l.strip()]
+                                    if len(char_lines) > 1:
+                                        st.markdown("**👥 Subjek / Karakter Tetap (Multi-Character):**")
+                                        for cl in char_lines:
+                                            st.markdown(f"> {cl}")
+                                    else:
+                                        st.markdown(f"**👤 Subjek / Karakter Tetap:**\n> {char_raw}")
                                 if master_anchor.get("environment_anchor"):
                                     st.markdown(f"**🏞️ Setting Lokasi Master:**\n> {master_anchor['environment_anchor']}")
                             with col_anc2:
@@ -1241,7 +1250,7 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                         with col_sync_act1:
                             if st.button("🧩 1-Klik Pecah Scene Panjang (Shot Sharding — 100% Pertahankan Kata Dramatis)", type="primary", use_container_width=True, key="btn_auto_shard_dialogues"):
                                 from utils.export_helpers import shard_storyboard_scenes_by_clauses
-                                sharded_md = shard_storyboard_scenes_by_clauses(sb_result, max_words_per_shot=14)
+                                sharded_md = shard_storyboard_scenes_by_clauses(sb_result, max_words_per_shot=18)
                                 st.session_state["pipe_step3_result"] = sharded_md
                                 if st.session_state.get("current_pipeline_draft_id"):
                                     update_draft(st.session_state["current_pipeline_draft_id"], {"storyboard_table_md": sharded_md})
@@ -1289,10 +1298,10 @@ Wajib mematuhi instruksi kustom pengguna berikut:
                                     f'</div>'
                                 )
                                 st.markdown(warn_html, unsafe_allow_html=True)
-                            elif sc.get("word_count", 0) > 16:
+                            elif sc.get("word_count", 0) > 20:
                                 warn_html = (
                                     f'<div style="background:#fffbeb; border-left:3px solid #f59e0b; padding:6px 12px; border-radius:4px; font-size:0.8rem; color:#92400e; margin:6px 0 10px 0;">'
-                                    f'⚠️ <b>Tips Anti-Terpotong AI Video:</b> Dialog ini memiliki <b>{sc.get("word_count")} kata (~{sc.get("est_audio_dur")} detik)</b>. Untuk render di Kling AI / Runway Gen-3 (klip 5-10s), klik tombol <b>\'🧩 1-Klik Pecah Scene Panjang\'</b> di atas agar scene ini dipecah menjadi 2 shot sinematik (Shot A & Shot B) tanpa mengurangi satu kata pun!'
+                                    f'⚠️ <b>Tips Anti-Terpotong AI Video:</b> Dialog ini memiliki <b>{sc.get("word_count")} kata (~{sc.get("est_audio_dur")} detik)</b>. Untuk render di Kling AI / Runway Gen-3 (klip 5-10s), jika ingin pergantian shot visual lebih sinematik, klik tombol <b>\'🧩 1-Klik Pecah Scene Panjang\'</b> di atas agar scene ini dipecah menjadi 2 shot (Shot A & Shot B) tanpa mengurangi satu kata pun!'
                                     f'</div>'
                                 )
                                 st.markdown(warn_html, unsafe_allow_html=True)
